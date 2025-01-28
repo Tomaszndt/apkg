@@ -1,0 +1,53 @@
+name="zshell"
+tags="utility, cli, shell"
+version="2.9c"
+cpu=68000
+require=""
+description="CLI with REAL pipes and TAB-FNCompletion"
+packager="lobotomius@gmail.com"
+source=("http://aminet.net/util/shell/ZShell.lha*2ccb195adb9cc3709493ffdfb22061f9b8424ca04052440173cb719a9899ddc1")
+upstream="http://aminet.net/package/util/shell/ZShell"
+
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    local zshell_info="4xAAAQAAAAAAwAAXADAAHwAGAAMAAUAC9+BAAwFgAAAAAAAAAAAAAAAAAAAAAAABAwBAAYl4QAGJ
+VAAAALwAAAAFAAAAAAAAAAAAABAAAAAAAAAwAB4AAgABSvgDAAAAAAAAAAAAAAAEAAAAAxUkAAAA
+A5cEAAAAAlF///////8gAAAAAAEjAAAAAAEnDAAAAAEvAwAAAAEjAMAAAAEjAwAAAAEjDAAAAAEj
+AAAAAAEgAAAAAAEgAAAAAAEgAAAAAAEgAAAAAAEgAAAAAAEgAAAAAAEgAAAAAAEgAAAAAAEgAAAA
+AAEgAAAAAAEgAAAAAAEgAAAAAAEgAAAAAAEgAAAAAAcgAAAAAAEgAAAAAAF///////////////+I
+AAAABCCIAAAABCCIAAAABCCAAAAAAACAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAA
+AAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiA
+AAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAiAAAAAAAif//////qAAAAA
+AAAAAAAAADAAHgACAAFMYAMAAAAAAAAAAAAAAHf////733f////733f////733///////2AAAAAA
+B2MAA/AAB2cMA/AAB28DA/AAB2MAw/AAB2MDA/AAB2MMA/AAB2MAA/AAB2AAAAAAB2AAAAAAB2AA
+AAAAB2AAAAAAB2AAAAAAB2AAAAAAB2AAAAAAB2AAAAAAB2AAAAAAB2AAAAAAB2AAAAAAB2AAAAAA
+B2AAAAAAB2AAAAAAB2AAAAAAB2AAAAAABX////////////////v////86tv////8aPv////9roAA
+AAAAAMAAAAAADsAAA/AADsAAA/AADsAAA/AADsAAA/AADsAAA/AADsAAA/AADsAAA/AADsAAAAAA
+DsAAAAAADsAAAAAADsAAAAAADsAAAAAADsAAAAAADsAAAAAADsAAAAAADsAAAAAADsAAAAAADsAA
+AAAADsAAAAAADsAAAAAADsAAAAAACMAAAAAADt///////oAAAAAAAAAAAAdjOnNob3cAAAAACAAA
+ABhIRUxQTUFOPUhFTFA6WlNoZWxsLmRvYwA="
+
+    copy "ZShell/ZShell" "C/ZShell"
+    copy "ZShell/ZSH" "C/ZSH"
+    copy "ZShell/ZStart.OS3" "S/ZStart"
+
+    copy "ZShell/ReadMe" "Locale/Readme/$name-$version/ReadMe"
+    copy "ZShell/ReadMe.info" "Locale/Readme/$name-$version/ReadMe.info"
+    copy "ZShell/ZShell.doc" "Locale/Readme/$name-$version/ZShell.doc"
+    copy "ZShell/ZShell.doc.info" "Locale/Readme/$name-$version/ZShell.doc.info"
+    copy "ZShell/ZShell.guide" "Locale/Help/$name-$version/ZShell.guide"
+    copy "ZShell/ZShell.guide.info" "Locale/Help/$name-$version/ZShell.guide.info"
+
+    echo "${zshell_info}" | base64 -d > ZShell.info
+    copy "ZShell.info" "System/ZShell.info"
+
+}
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,41 @@
+name="guigfx-library"
+tags="library, graphics, pixel"
+version="20.1"
+cpu=68040
+require="amigaos>3, render-library>30"
+description="Application layer for pixel graphics"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/dev/misc/guigfxlib.lha*c0be7adafd0595c094856a0434b34b7411c66daa7cb866d7b4c8c2da4cba3d35")
+upstream="https://aminet.net/package/dev/misc/renderlib68k"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+    # cd "RenderLib_v32" || exit 1
+
+    copy "libs/guigfx.library_68040" "Libs/guigfx.library"
+
+    for file in Prefs/Env-Archive/guigfx/*; do
+        copy "$file" "$file"
+    done
+
+    copy "COPYING" "Locale/License/$name-$version/"
+    copy "README" "Locale/Readme/$name-$version/"
+    copy "doc/examples" "Locale/Readme/$name-$version/"
+    copy "doc/history" "Locale/Readme/$name-$version/"
+    copy "doc/prefs" "Locale/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,43 @@
+name="scout"
+tags="utility, information"
+version="3.6"
+cpu=68000
+require="mui-nlist, identify-library"
+description="System monitor"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/moni/Scout_os3.lha*ac0e6af5a28987c3c1136d380f93b07aa628065316dd368d23af05bfa055958e"
+    )
+upstream="https://aminet.net/package/util/moni/Scout_os3"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    copy "Scout.info" "Utilities/"
+
+    cd "Scout" || exit 1
+
+    copy "Scout.os3" "Utilities/Scout/Scout"
+    copy "Scout.os3.info" "Utilities/Scout/Scout.info"
+
+    copy "Scout.readme" "Locale/Readme/$name-$version/"
+    copy "help/english/scout.doc" "Locale/Readme/$name-$version/"
+    copy "help/english/scout.pdf" "Locale/Readme/$name-$version/"
+    copy "help/english/scout.guide" "Locale/Help/"
+    copy "help/english/scout.guide.info" "Locale/Help/"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

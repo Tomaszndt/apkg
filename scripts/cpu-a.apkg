@@ -1,0 +1,75 @@
+name="cpu-a"
+tags="information, monitor, report"
+version="0.3.0"
+cpu=68020
+require="mui"
+description="System Information Tool"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/tdolphin-org/CPU-A/releases/download/v0.3.0/CPU-A.lha*b073df7c5d17ffc2dc2a7b96a133c8e99de2701643d985f352e3bac448fab376"
+    )
+upstream="https://github.com/tdolphin-org/CPU-A"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    local foldericon="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
+AAAAioqKvb2919fX"
+
+    echo "$foldericon" | base64 -d > "CPU-A.info"
+    copy "CPU-A.info" "Utilities/" 
+
+    cd "CPU-A" || exit 1
+
+    copy "LICENSE" "Locale/License/$name-$version/"
+    copy "LICENSE.info" "Locale/License/$name-$version/"
+    copy "CPU-A.readme" "Locale/Readme/$name-$version/"
+    copy "CPU-A.readme.info" "Locale/Readme/$name-$version/"
+
+    copy "CPU-A" "Utilities/CPU-A/"
+    copy "CPU-A.info" "Utilities/CPU-A/"
+    for file in images/cpu/*; do copy "$file" "Utilities/CPU-A/$file"; done
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,39 @@
+name="vice"
+tags="emulator, c64"
+version="3.1"
+cpu=68000
+require=""
+description="versatile commodore emulator"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/misc/emu/VICE-AmigaOS3-3.1.lha*6acf80a0c28b2913d610d8b2f35aabe1eee68595553898aba5bd077ba8b3ebf0")
+upstream="https://aminet.net/package/misc/emu/VICE-AmigaOS3-3.1"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    cd "VICE-AmigaOS3-3.1" || exit 1
+exit
+    copy "Classes/DataTypes/koala.datatype" "Classes/Datatypes/"
+    copy "Devs/DataTypes/Koala" "Devs/Datatypes/"
+    copy "Devs/DataTypes/Koala.info" "Devs/Datatypes/"
+
+    copy "aminet_readme.txt" "Locale/Readme/$name-$version/"
+    copy "Koala_DataType.guide" "Locale/Help/$name-$version/"
+    copy "Koala_DataType.guide.info" "Locale/Help/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

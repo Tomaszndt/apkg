@@ -1,0 +1,39 @@
+name="kla-datatype"
+tags="datatype, image, kla, koala, c64"
+version="39.4"
+cpu=68000
+require=""
+description="C64 multicolour koala picture datatype"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/dtype/Koala_DataType_V39_4.lha*61d1b8d621e097eec2c6e3c2a152855c392e7b97045bf16e14a1a9f1da0b255e")
+upstream="https://aminet.net/package/util/dtype/Koala_DataType_V39_4"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    cd "Koala_DataType_V39_4" || exit 1
+
+    copy "Classes/DataTypes/koala.datatype" "Classes/Datatypes/"
+    copy "Devs/DataTypes/Koala" "Devs/Datatypes/"
+    copy "Devs/DataTypes/Koala.info" "Devs/Datatypes/"
+
+    copy "aminet_readme.txt" "Locale/Readme/$name-$version/"
+    copy "Koala_DataType.guide" "Locale/Help/$name-$version/"
+    copy "Koala_DataType.guide.info" "Locale/Help/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

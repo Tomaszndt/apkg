@@ -1,0 +1,25 @@
+name="sqlite"
+tags="cli, database, sql"
+version="3.34.0-bin"
+cpu=68020
+require=""
+description="SQL database engine, main executable file only"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/biz/dbase/sqlite-3.34.0-amiga.lha*0655cd8d2fd27bc4e58c36661ae069bbc035b592f5e8ac3c4576ed884f4b0bbb")
+upstream="https://aminet.net/package/biz/dbase/sqlite-3.34.0-amiga"
+
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    # create target amiga os directory structure
+    makedir "C"
+    copy "sqlite-3.34.0-amiga/build-m68k-amigaos/bin/sqlite3" "C/sqlite3"
+
+}

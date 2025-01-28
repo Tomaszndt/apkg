@@ -1,0 +1,59 @@
+name="dockbot"
+tags="launcher, utility, dock"
+version="1.11"
+cpu=68040
+require="amigaos>3, iconlib>46.5, opentriton>2"
+description="A program launcher for OS 3"
+packager="lobotomius@gmail.com"
+source=("https://github.com/adkennan/DockBot/releases/download/v1.11/DockBot.lha*297d5a6eb7d4f82ddfe210a1222c62bb536539eba3a6d93a11c1d71bc453827a")
+upstream="https://aminet.net/package/util/wb/DockBot"
+
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    cd DockBot || exit 1
+
+    copy "doc/DockBot.guide" "Locale/Help/DockBot.guide"
+    copy "doc/DockBot.guide.info" "Locale/Help/DockBot.guide.info"
+    copy "doc/dockbot.doc" "Locale/Help/dockbot.doc"
+
+    copy "DockBot.prefs" "Prefs/Env-Archive/DockBot.prefs"
+
+    copy "src/Images/DockBot.info" "Utilities/DockBot/DockBot.info"
+    copy "src/Images/DockBotPrefs.info" "Utilities/DockBot/DockBotPrefs.info"
+    copy "src/Images/DockBotMin.info" "Utilities/DockBot/DockBotMin.info"
+    copy "src/Images/icons_hi" "Utilities/DockBot/icons_hi"
+    copy "src/Images/icons_med" "Utilities/DockBot/icons_med"
+
+    copy "extras/WBRun" "Utilities/DockBot/WBRun"
+
+    copy "extras/parm.library" "Utilities/DockBot/parm.library"
+    # copy "extras/Triton/triton.library" "Libs/triton.library"
+
+    copy "LICENCE" "Locale/Help/$name-$version/LICENCE"
+    copy "README.md" "Locale/Readme/$name-$version/README.md"
+
+    copy "src/Images/DockBotStart.info" "WBStartup/DockBotStart.info"
+
+    echo "CD SYS:Utilities/DockBot"$'\n'"WBRun DockBot" > "DockBotStart"
+    copy "DockBotStart" "WBStartup/DockBotStart"
+
+    cd "bin/68040/"
+    for f in $(find . -type f ); do 
+        copy "$f" "Utilities/DockBot/${f#*/}"
+    done
+
+    # copy "bin/68040/DockBot" "Utilities/DockBot/DockBot"
+    # copy "bin/68040/dockbot.library" "Utilities/DockBot/dockbot.library"
+    # copy "bin/68040/DockBotprefs" "Utilities/DockBot/DockBotPrefs"
+
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,27 @@
+name="64tass"
+tags="c64, compiler, cross-dev"
+version="1.59r3120"
+cpu=68000
+description="Optimizing macro assembler for the 65xx series of processors"
+require="amigaos>=2"
+packager="lobotomius@gmail.com"
+source=("http://aminet.net/dev/cross/64tass.lha*302c49949ff1c66621b04d4e354b25c1f03398849a8c04592e12c2a699f06d05")
+upstream="http://m68k.aminet.net/package/dev/cross/64tass"
+
+function build {
+
+
+	copy "64tass-1.59.3120-src/64tass.68k" "C/64tass"	
+
+	copy 64tass-1.59.3120-src/README "Locale/Readme/64tass-$version/README"
+
+	for f in 64tass-1.59.3120-src/LICENSE*; do
+		copy "$f" "Locale/License/$name-$version/${f##*/}"
+	done
+	
+	#typeset -a arr=();
+	#arr+=*.c; arr+=("Makefile.amigaos");
+	#zip -9 64tass.zip ${arr[@]}
+
+}
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,41 @@
+name="mare"
+version="1"
+cpu=68060
+require=""
+description="Mare by Ephidrena and Loonies and Skuggimadr"
+packager="lobotomius@gmail.com"
+source=("https://files.scene.org/get/parties/2022/function22/oldschool_demo/skm-lns-eph-mare.lha*d3e068766f7de732ec5637b33fe7fdd0de815ff8095a7d9d59dfffef3bde22ce")
+upstream="https://demozoo.org/productions/313118/"
+
+# functions
+#
+#  makedir   path
+#    relative to $pkgdir
+#
+#  copy $source $destination
+#    source relative to $srcdir, destination to $pkgdir
+#    creates directories as needed
+
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    # cd eph-lns-skm-mare || exit
+
+    total=$(find . ! -type d | wc -l)
+    tick=0
+
+    IFS=$'\n'
+    for file in $(find . ! -type d); do
+        echo -ne "installing $total files: $(( $tick * 100 / $total ))%\r"
+        tick=$(( tick += 1 ))
+        f="${file:2}"
+        copy "${f}" "Scene/Demo/Ephidrena Loonies Skuggimadr/Mare/${f#*/}"
+    done
+    unset IFS
+    echo ""
+
+}

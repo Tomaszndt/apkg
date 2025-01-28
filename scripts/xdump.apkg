@@ -1,0 +1,37 @@
+name="xdump"
+tags="dev, analysis"
+version="1.1"
+cpu=68000
+require=""
+description="binary file analysis tools"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/dev/misc/xdump.lha*e34bc8cbf14af70bd09afb31cee772e0bb0a42de96ef9b351c1841913d157652"
+)
+upstream="https://aminet.net/package/dev/misc/xdump"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    for file in xdata xdump xdumps xmeta codedatacheck; do copy "$file" "C/$file"; done
+
+    copy "xdump.readme" "Locale/Readme/$name-$version/"
+    copy "licence_680x0.txt" "Locale/License/$name-$version/"
+    for file in doc/*; do copy "$file" "Locale/Help/$name-$version/$file"; done
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

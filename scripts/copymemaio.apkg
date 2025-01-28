@@ -1,0 +1,43 @@
+# consider all fields obligatory
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="copymemaio"
+tags="patch, system, memory"
+version="5.0"
+cpu=68000
+require=""
+description="CopyMem() replacement"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/boot/CopyMemAIO.lha*5c8186a6a3c118e2bfc8772e532755f20ef719e031cb5f60b15bf232497e4972")
+upstream="https://aminet.net/package/util/boot/CopyMemAIO"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    copy "CopyMemAIO" "C/CopyMemAIO"
+    copy "CopyMemAIO.txt" "Locale/Readme/$name-$version/CopyMemAIO.txt"
+    copy "CopyMemAIO.txt.info" "Locale/Readme/$name-$version/CopyMemAIO.txt.info"
+    copy "AFD-COPYRIGHT" "Locale/License/$name-$version/AFD-COPYRIGHT"
+    copy "AFD-COPYRIGHT.info" "Locale/License/$name-$version/AFD-COPYRIGHT.info"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    user_patch "${root}S/User-Startup" "end" "" "$name-$version" "C:CopyMemAIO"
+}
+
+# vim: ts=4:syntax=sh:

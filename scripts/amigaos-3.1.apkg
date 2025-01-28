@@ -1,0 +1,25 @@
+name="amigaos"
+version="3.1"
+cpu=68020
+require=""
+description="amiga os 3.1"
+packager="lobotomius@gmail.com"
+source=("os31.zip*d84a6ddc05336e7507ec320536ea04071f44b315b3c988aa52860b138a2e0a94")
+upstream=""
+
+# $srcdir $pkgdir
+# copy makedir
+
+function build {
+	cd "$srcdir/"
+	
+	cp -r * "$pkgdir"
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

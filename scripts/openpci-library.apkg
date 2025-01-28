@@ -1,0 +1,38 @@
+name="openpci-library"
+tags="library, pci"
+version="2.1-beta4"
+cpu=68040
+require=""
+description="PCI support library"
+packager="lobotomius@gmail.com"
+source=(
+    "http://bvernoux.free.fr/openpci2.1_beta4_081009.zip*706c3c599ca7d78d3f53f897846075e5a81062ea1c938f2cefac5dc6f382e5fc"
+    )
+upstream="http://bvernoux.free.fr/DevPCI.php"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "openpci2.1_beta4_081009" || exit 1
+
+    copy "openpci.library" "Libs/openpci.library"
+    copy "README.openpci_V2.1" "Locale/Readme/$name-$version/README.openpci_V2.1"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,13 @@
+old
+other
+repo
+scripts-wip
+scripts-old
+test
+tmp
+apkg.log
+*.bash
+*.iff
+iff*
+*.c
+*.zip

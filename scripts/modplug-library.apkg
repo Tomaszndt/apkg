@@ -1,0 +1,40 @@
+name="modplug-library"
+tags="library, mod, music, sound, audio"
+version="1.0"
+cpu=68020
+require=""
+description="Renders mod music files as raw audio data"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/modplug-68k.lha*e3b5b10bdedcee4f5da3284b586e82ea8f09279c8218a44bb991359e147a41aa"
+    )
+upstream="https://aminet.net/package/util/libs/modplug-68k"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "modplug/usr/" || exit 1
+
+    copy "modplug.library" "Libs/modplug.library"
+    copy "COPYING" "Locale/License/$name-$version/COPYING"
+    for file in AUTHORS INSTALLATION modplug.readme README; do
+        copy "$file" "Locale/Readme/$name-$version/$file"
+    done
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

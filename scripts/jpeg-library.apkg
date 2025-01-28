@@ -1,0 +1,43 @@
+name="jpeg-library"
+version="6.2a"
+cpu=68040
+require="amigaos>3, mui > 3.8"
+description="shared library to load/save jpegs"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/jpeglibrary.lha*f98f357584424d60d51ede49f4a2634320d90fbbf3011a87c953d73b7ccf7769"
+)
+upstream="https://aminet.net/package/util/libs/jpeglibrary"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    # TODO https://sintonen.fi/sw/pmlib-10.8.6-fix.lha
+
+    cd "jpeg.library" || exit 1
+
+    copy "usr/Libs/jpeg.library_040std" "Libs/jpeg.library"
+    copy "usr/Prefs/JpegLibrary" "Prefs/"
+    copy "usr/Prefs/JpegLibrary.info" "Prefs/"
+
+    copy "usr/Prefs/JpegLibrary.guide" "Locale/Help/"
+
+    copy "Readme" "Locale/Readme/$name-$version/"
+    # copy "rewincy.info" "Locale/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

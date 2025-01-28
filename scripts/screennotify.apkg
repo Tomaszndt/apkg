@@ -1,0 +1,32 @@
+name="screennotify"
+tags="library, notification"
+version="1.0"
+cpu=68000
+require="amigaos>3"
+description="Notify on screen close/private/public"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/libs/ScreenNotify10.lha*7128e0defe25522043c29469cfaf2b8df4e2e31babda82db494f45ce4d80d3f9")
+upstream="https://aminet.net/package/util/libs/ScreenNotify10"
+
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    cd "ScreenNotify" || exit 1
+
+    copy "libs/screennotify.library" "Libs/screennotify.library"
+
+    copy "README" "Locale/Readme/$name-$version/README"
+    copy "README.info" "Locale/Readme/$name-$version/README.info"
+    copy "screennotify.doc" "Locale/Readme/$name-$version/screennotify.doc"
+    copy "screennotify.doc.info" "Locale/Readme/$name-$version/screennotify.doc.info"
+
+}
+
+# vim: ts=4:syntax=sh:

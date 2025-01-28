@@ -1,0 +1,39 @@
+name="absolutezero"
+tags="game, puzzle, platformer, redpill"
+version="1.1.0"
+cpu=68000
+require="amigaos>3"
+description="AGA puzzle platformer game"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/game/jump/AbsoluteZero.lha*6b4dda1c99840566e26ed5ec308beac6694d060668112ebe16e330f130cda654")
+upstream="https://aminet.net/package/game/jump/AbsoluteZero"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+    local file
+
+    cd "AbsoluteZero1.1" || exit 1
+
+    IFS=$'\n'
+    for file in $(find . -type f); do
+        copy "${file:2}" "Games/${file:2}"
+        # echo "${file:2}"
+    done
+    unset IFS
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

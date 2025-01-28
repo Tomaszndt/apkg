@@ -1,0 +1,42 @@
+name="ahi-paula"
+tags="ahi, sound, audio, paula, driver"
+version="4.33"
+cpu=68020
+require="ahi > 6"
+description="updated AHI Paula Driver"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/driver/audio/AHI-Paula.lha*62dfe60c2f85429b36a42484ca331caa0266d117e56c6e1ea6c0d7deb8a0dd7c")
+upstream="https://aminet.net/package/driver/audio/AHI-Paula"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "AHI-Paula" || exit 1
+
+    copy "Devs/AHI/paula.audio" "Devs/AHI/paula.audio"
+    copy "Devs/AudioModes/PAULA" "Devs/AudioModes/PAULA"
+
+    copy "AHI-Paula.readme" "Locale/Readme/$name-$version/AHI-Paula.readme"
+    for file in COPYING*; do
+        copy "$file" "Help/License/$name-$version/$file"
+    done
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

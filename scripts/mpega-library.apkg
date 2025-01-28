@@ -1,0 +1,43 @@
+# consider all fields obligatory
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="mpega-library"
+tags="library, audio, sound, mpeg"
+version="2.4"
+cpu=68040
+require=""
+description="MPEG Audio decoder library V2.4 (68020+)"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/libs/mpega_library.lha*4bf8cc22fe88ce20f85fe400ec670e08e1ef5fc85ae136a04384c0eb72abcc03")
+upstream="https://aminet.net/package/util/libs/mpega_library"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    cd "mpega_library" || exit 1
+
+    copy "libs/mpega040FPU.library" "Libs/mpega.library"
+    copy "mpega_library.doc" "Locale/Readme/$name-$version/mpega_library.doc"
+    copy "mpega_library.readme" "Locale/Readme/$name-$version/mpega_library.readme"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

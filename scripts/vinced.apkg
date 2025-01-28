@@ -1,0 +1,62 @@
+# treat all fields as obligatory
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="vinced"
+tags="utility, shell"
+version="1.11"
+cpu=68040
+require="amigaos>3, iconlib>46.4"
+description="A program launcher for OS 3"
+packager="lobotomius@gmail.com"
+source=("https://github.com/adkennan/DockBot/releases/download/v1.11/DockBot.lha*54d7d0474cdd04da81ddbad3c2a9547ccd9955770a4810888215898ab37a782f")
+upstream="https://github.com/adkennan/DockBot"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+
+    cd ViNCEd || exit 1
+
+    echo -en "$setvnc_decoded" | base64 -d > SetVNC.xz
+    xz -d SetVNC.xz
+    echo -en "$setvnc_info" | base64 -d > SetVNC.info
+
+    copy "SetVNC" "C/SetVNC"
+    copy "LIBS/vnc.library" "Libs/vnc.library"
+    copy "Guides/ViNCEd.guide" "Locale/Help/ViNCEd.guide"
+    copy "Guides/ViNCEd.guide.info" "Locale/Help/ViNCEd.guide.info"
+    copy "Guides/titlebar.guide" "Locale/Help/titlebar.guide"
+    copy "Guides/titlebar.guide.info" "Locale/Help/titlebar.guide.info"
+
+    copy "SetVNC.info" "Prefs/SetVNC.info" # HELPPATH amended
+
+    copy "Prefs/Env-Archive/XTerm.Prefs" "SYS:Prefs/Env-Archive"
+
+    for file in DEVS/DOSDrivers/*; do copy "$file" "Devs/DOSDrivers/${file##*/}"; done
+    for file in S/*; do copy "$file" "S/${file##*/}" "srwed"; done
+
+    copy "Shell_VNC.info" "System/ViNCEd.info"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+
+    tpatch "${root}S/User-startup" "end" "" "$name-$version" "C:SetVNC quiet mount override as CON:"
+
+}
+
+# vim: ts=4:syntax=sh:

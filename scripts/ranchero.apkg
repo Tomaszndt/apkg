@@ -1,0 +1,41 @@
+name="ranchero"
+tags="commodity, notification, popup"
+version="1.0"
+cpu=68020
+require="jpeg-library"
+description="Pop-up notification server like Ringhio"
+packager="lobotomius@gmail.com"
+source=(
+    "http://www.robthenerd.com/download.php?file=Ranchero.lha*bba903aa6694ed75e39e046b0f196d9a82e5128f4a1e4dfd271c48ad478fbc8e*Ranchero.lha"
+)
+upstream="http://www.robthenerd.com/projects/ranchero"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    # TODO https://sintonen.fi/sw/pmlib-10.8.6-fix.lha
+
+    cd "Ranchero" || exit 1
+
+    copy "Ranchero" "WBStartup/"
+    copy "Ranchero.info" "WBStartup/"
+
+    copy "Ranchero.readme" "Locale/Readme/$name-$version/"
+    # copy "rewincy.info" "Locale/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,33 @@
+name="reqtools-library"
+tags="library, requester"
+version="39.3"
+cpu=68020
+require="amigaos>2"
+description="V39.3 reqtools.library AROS back port"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/libs/ReqToolsLib.lha*2859744a8642f20fdfe843a41c5bdf487dfc8e440e31ccc633dbbc0539cc148b")
+upstream="https://aminet.net/package/util/libs/ReqToolsLib"
+
+# functions
+#
+#  makedir path
+#    relative to $pkgdir
+#
+#  copy $source $destination
+#    source relative to $srcdir, destination to $pkgdir
+#    creates directories as needed
+
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    copy "ReqToolsLib/reqtools.library" "Libs/reqtools.library"
+    copy "ReqToolsLib/LICENSE" "Locale/License/$name-$version/LICENSE"
+    copy "ReqToolsLib/README" "Locale/Readme/$name-$version/README"
+
+}
+
+# vim: ts=4:syntax=sh:

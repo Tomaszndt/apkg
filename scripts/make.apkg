@@ -1,0 +1,31 @@
+name="make"
+tags="dev, build, gnu, cli"
+version="4.4.1"
+cpu=68000
+require="amigaos>3"
+description="Port of GNU Make with SAS/C (no ixemul)"
+packager="lobotomius@gmail.com"
+source=("https://github.com/dmcoles/gnu_make_amiga/releases/download/4.41-06032024/make-4.4.1.lha*4b3c396a7ed70883ea5111035b8216944ffd3b9cdd6f3278d1affe7d286b6b90")
+upstream="https://github.com/dmcoles/gnu_make_amiga"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    copy "make" "C/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

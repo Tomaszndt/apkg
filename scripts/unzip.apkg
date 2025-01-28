@@ -1,0 +1,29 @@
+name="unzip"
+tags="utility, archive, unarchiver, cli"
+version="5.52"
+cpu=68000
+require=""
+description="unzip final 68K version"
+packager="lobotomius@gmail.com"
+source=("http://aminet.net/util/arc/UnZIP552.lha*3dd82117d4a809d1753ce4defcc65756f9a575687b51122f50f29ecd79a8a056")
+upstream="http://m68k.aminet.net/package/util/arc/UnZIP552"
+
+# root, cpu
+# pkgsrc, pkgdir, pkgname
+function build {
+
+	cd UnZIP552
+
+	copy UnZip "C/unzip"
+	copy fUnZip "C/funzip"
+	copy UnZipSFX "C/unzipsfx"
+	copy MakeSFX "C/makesfx"
+	
+	cd DOCS
+
+	for f in *; do
+		copy "$f" "$pkgdir/Locale/Readme/$name-$version/$f" "red"
+	done
+}
+
+# vim: ts=4:syntax=sh:

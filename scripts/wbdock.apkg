@@ -1,0 +1,27 @@
+name="wbdock"
+tags="utility, dock, launcher"
+version="2.907"
+cpu=68040
+require="amigaos>3, iconlib>46.5"
+description="Dock for WB 3.1 and above"
+packager="lobotomius@gmail.com"
+source=("https://thomas-rapp.hier-im-netz.de/amiga/wbdock2.lha*c2f894e39f677e1e658b8c626e634c7335bf90662114dca18dc48856708c238a")
+upstream="https://thomas-rapp.hier-im-netz.de/amiga/wbdock.html"
+
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    cd WBDock2 || exit 1
+
+    for file in FUNNYDOCK* LCARS* SPELLARIUM* WBDock WBDock.info wbex; do copy "$file" "Utilities/WBDock2/$file"; done
+
+}
+
+# vim: ts=4:syntax=sh:

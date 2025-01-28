@@ -1,0 +1,40 @@
+name="tunefinder"
+tags="tool, media, radio, sound, music"
+version="0.6"
+cpu=68000
+require="mui>3.8"
+description="Search+play online radio stations (MUI)"
+packager="lobotomius@gmail.com"
+source=(
+        "https://aminet.net/comm/misc/TuneFinderMUI.lha*ae207d8b54b2333a87c130e858e2cb932157006ce305d78c3706011fcd531389"
+    )
+upstream="https://aminet.net/package/util/arc/deark"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	local file
+
+    cd TuneFinderMUI || exit 1
+
+    copy "TuneFinderMUI" "Utilities/TuneFinder"
+    copy "TuneFinderMUI.info" "Utilities/TuneFinder.info"
+
+    copy "Docs/TuneFinderMUI.guide" "Locale/Help/TuneFinderMUI.guide"
+    copy "Docs/TuneFinderMUI.guide.info" "Locale/Help/TuneFinderMUI.guide.info"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

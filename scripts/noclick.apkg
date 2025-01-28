@@ -1,0 +1,35 @@
+name="noclick"
+tags="cli, floppy, utility"
+version="2.0"
+cpu=68000
+require=""
+description="NoClick enabler"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/disk/misc/NoClick.lha*33e169799a322bfffe7bc3ff0985428798ea30a8cf50793b1057aae728c72d63")
+upstream="https://aminet.net/package/disk/misc/NoClick"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+	
+    copy "NoClick/NoClick" "C/NoClick"
+    copy "NoClick/NoClick.readme" "Locale/Readme/$name-$version/NoClick.readme"
+    copy "NoClick/NoClick.info" "Utilities/NoClick.info"
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+
+    user_patch "${root}S/User-Startup" "end" "" "$name-$version" "C:NoClick"
+
+}
+
+# vim: ts=4:syntax=sh:

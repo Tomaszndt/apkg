@@ -1,0 +1,37 @@
+name="asyncio-library"
+tags="library, system, io"
+version="40.6"
+cpu=68020
+require=""
+description="Asyncio.library with WarpOS functions"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/asyncioppc.lha*b5a387c13dabba3b9fcebb08d4aefe580f8dd0e47a05799711e90dbebe20f4e6"
+    )
+upstream="https://aminet.net/package/util/libs/asyncioppc"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "asyncioppc" || exit 1
+
+    copy "libs/asyncio.library" "Libs/asyncio.library"
+    copy "asyncioppc.readme" "Locale/Readme/$name-$version/asyncioppc.readme"
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

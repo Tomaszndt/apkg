@@ -1,0 +1,65 @@
+name="xadmaster"
+tags="library, archive"
+version="12.1a"
+cpu=68020
+require=""
+description="Library to control the MC68K MMUs"
+packager="lobotomius@gmail.com"
+source=(
+        "https://aminet.net/util/arc/xadmaster020.lha*23a4e6829e2ed5477b84e4bd36a4e69a8eedce821063c4e7b31056c3eae54c90"
+        "https://aminet.net/util/arc/xadmaster-key.lha*837aab7e6bb13ce6be4424fe5a116ee9615a758ea490d5f6761ce0a4824b5f32"
+        "https://aminet.net/util/arc/xad_7z.lha*670678c7bb80874a61922f1a51213d42052f088a734bddfaa374fd659dad0a39"
+    )
+upstream="https://aminet.net/package/util/arc/xadmaster020"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	local file
+
+    cd xad || exit 1
+
+    copy "Libs/xadmaster.library" "Libs/xadmaster.library"
+    for file in Libs/xad/*; do
+        copy "$file" "$file"
+    done
+
+    for file in C/*; do
+        copy "$file" "$file"
+    done
+
+    for file in Docs/*; do
+        copy "$file" "Locale/Readme/$name-$version/${file##*/}"
+    done
+
+    copy "X-Systems.TXT" "Locale/Readme/$name-$version/X-Systems.TXT"
+    copy "xadmaster020.readme" "Locale/Readme/$name-$version/xadmaster020.readme"
+
+    copy "xadmaster.guide" "Locale/Help/xadmaster.guide"
+    copy "xadmaster.guide.info" "Locale/Help/xadmaster.guide.info"
+
+    cd ".."
+
+    copy "xadmaster.key" "S/xadmaster.key"
+
+    copy "xad_7z/OS3/7z" "Libs/xad/7z"
+    copy "xad_7z/xad_7z.readme" "Locale/Readme/$name-$version/xad_7z.readme"
+    
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+    :
+    # tpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+
+}
+
+# vim: ts=4:syntax=sh:

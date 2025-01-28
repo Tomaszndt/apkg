@@ -1,0 +1,37 @@
+# 1.1 more modern formats
+# 1.2 c64 formats
+name="testimages"
+tags="data, test, image"
+version="1.2"
+cpu=68000
+require=""
+description="various test images"
+packager="lobotomius@gmail.com"
+source=("https://www.dropbox.com/scl/fi/u4o5ma2mwyvswr2ci3njp/Images.zip?rlkey=mf46wwd6i951x516laow3m95u&st=sicunoca&dl=0#DTaj784nIx5OR0vAc3p2S-i3cA8t6Ufu9D5ZfHjeU10*37dc937d19c31bf82758df52dbf5519ae994c4f1c3c22280e6f262401a6a95fb*Images.zip")
+upstream=""
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    IFS=$'\n'
+    for file in $(find . -type f); do
+        copy "$file" "${file:2}"
+    done
+    unset IFS
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

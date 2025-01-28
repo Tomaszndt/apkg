@@ -1,0 +1,30 @@
+name="dirtree"
+tags=""
+version="1.2"
+cpu=68000
+require=""
+description="apkg directory structure"
+packager="lobotomius@gmail.com"
+source=()
+upstream=""
+
+function build {
+	cd "$srcdir"
+	
+	makedir "apkg"
+	
+	makedir "Dev"
+	makedir "Dev/doc"
+	makedir "Dev/source"
+
+	makedir "Locale"	
+	makedir "Locale/Readme"
+	makedir "Locale/License"
+	makedir "Locale/Manual"
+	
+	makedir "Tools/Disk"
+	makedir "Tools/Audio"
+	makedir "Tools/Image"
+	makedir "Tools/Game"
+	makedir "Tools/Development"
+}

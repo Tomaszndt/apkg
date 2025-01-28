@@ -1,0 +1,39 @@
+name="qoi-datatype"
+tags="datatype, image, qoi"
+version="0.6"
+cpu=68020
+require="amigaos>3.1"
+description="Quite OK Image Format datatype"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/dgaw/qoi-datatype/releases/download/v0.6/qoi-datatype.lha*07d208f95454c0ce17791ff89e16d2b23c1e400a3cf7f82292235ae0829c4e4e"
+    )
+upstream="https://github.com/dgaw/qoi-datatype"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    cd "qoi-datatype" || exit 1
+
+    copy "devs/datatypes/QOI" "Devs/DataTypes/"
+    copy "devs/datatypes/QOI.info" "Devs/DataTypes/"
+    copy "classes/datatypes/qoi.datatype" "Classes/DataTypes/"
+
+    copy "README.md" "Locale/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

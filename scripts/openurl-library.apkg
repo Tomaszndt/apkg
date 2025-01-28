@@ -1,0 +1,50 @@
+name="openurl-library"
+tags="library, internet"
+version="7.18"
+cpu=68020
+require=""
+description="Include clickable URLs in applications"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/jens-maus/libopenurl/releases/download/7.18/OpenURL-7.18.lha*0aa62aa3495a1acd761546f83d2414da7a85be2616f56fc4ba320bae1f971f83"
+    )
+upstream="https://github.com/jens-maus/libopenurl"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "OpenURL" || exit 1
+
+    copy "Libs/AmigaOS3/openurl.library" "Libs/"
+    copy "C/AmigaOS3/OpenURL" "C/"
+
+    copy "COPYING" "Locale/License/$name-$version/"
+    copy "COPYING.info" "Locale/License/$name-$version/"
+    copy "ReadMe" "Locale/Readme/$name-$version/"
+    copy "ReadMe.info" "Locale/Readme/$name-$version/"
+    copy "ChangeLog" "Locale/Readme/$name-$version/"
+    copy "ChangeLog.info" "Locale/Readme/$name-$version/"
+    copy "OpenURL.guide" "Locale/Help/"
+    copy "OpenURL.guide.info" "Locale/Help/"
+
+    copy "Prefs/AmigaOS3/OpenURL" "Prefs/"
+    copy "Prefs/AmigaOS3/OpenURL.info" "Prefs/"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

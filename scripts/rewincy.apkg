@@ -1,0 +1,41 @@
+name="rewincy"
+tags="commodity, switch, window"
+version="0.8"
+cpu=68020
+require=""
+description="Cycle through windows/screens"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/cdity/rewincy.lha*8eefb30fc00a49f5214a5d96ee04f5ebd429c448a49e98dff2d9838a46272c3f"
+)
+upstream="https://aminet.net/package/util/cdity/rewincy"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    # TODO https://sintonen.fi/sw/pmlib-10.8.6-fix.lha
+
+    cd "rewincy-v0.8" || exit 1
+
+    copy "rewincy" "WBStartup/"
+    copy "rewincy.info" "WBStartup/"
+
+    copy "rewincy.readme" "Locale/Readme/$name-$version/"
+    # copy "rewincy.info" "Locale/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

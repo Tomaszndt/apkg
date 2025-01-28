@@ -1,0 +1,40 @@
+name="igame"
+tags="game, whdload, launcher"
+version="2.4.6"
+cpu=68040
+require="mui>3.8, mui-nlist, mui-texteditor, mui-betterstring, guigfx-library"
+description="Frontend for launching WHDLoad games"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/MrZammler/iGame/releases/download/v2.4.6/iGame-v2.4.6-20240218.lha*976dfa13483e06b6b172bd46a98444f202755551200652789113c957a24f8aed")
+upstream="https://github.com/MrZammler/iGame"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "iGame-v2.4.6" || exit 1
+
+    for file in genres iGame iGame.guide iGame.guide.info igame.iff; do
+        copy "$file" "Games/iGame/"
+    done
+    copy "iGame.040" "Games/iGame/iGame"
+    copy "extras/icons/igame_drawer.info" "Games/iGame.info"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

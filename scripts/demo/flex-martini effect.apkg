@@ -1,0 +1,37 @@
+name="the martini effect"
+version="1"
+cpu=68060
+require=""
+description="The martini effect by FLEX"
+packager="lobotomius@gmail.com"
+source=("https://files.scene.org/get:nl-https/parties/2021/revision21/amiga-demo/flex-themartinieffect.lha*64e7f6b7788900e653260653ccb114c82efdab3610e9092a6b2693a7f0fd9caf")
+upstream="https://demozoo.org/productions/292543/"
+
+# functions
+#
+#  makedir path
+#    relative to $pkgdir
+#
+#  copy $source $destination
+#    source relative to $srcdir, destination to $pkgdir
+#    creates directories as needed
+
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+	
+    total=$(find . ! -type d | wc -l)
+    tick=0
+
+    IFS=$'\n'
+    for file in $(find . ! -type d ); do
+        echo -ne "installing $total files: $(( $tick * 100 / $total ))% \r"
+        tick=$(( tick += 1 ))
+        copy "${file:2}" "Scene/Demo/FLEX/the martini effect/${file:2}"
+    done
+    unset IFS
+
+}

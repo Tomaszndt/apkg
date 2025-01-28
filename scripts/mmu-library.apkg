@@ -1,0 +1,37 @@
+name="mmu-library"
+tags="library, mmu, cpu"
+version="47.9"
+cpu=68040
+require="amigaos>3"
+description="Library to control the MC68K MMUs"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/libs/MMULib.lha*9302468735a1bdb235f481aa9b147d6f4f9593d08956359c670bef5eb792a18a")
+upstream="https://aminet.net/package/util/libs/MMULib"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+	
+    cd MMULib || exit 1
+
+    copy "Libs/mmu.library" "Libs/mmu.library"
+    copy "Libs/68040.library" "Libs/68040.library"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+    :
+    # tpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+
+}
+
+# vim: ts=4:syntax=sh:

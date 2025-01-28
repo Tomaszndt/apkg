@@ -1,0 +1,70 @@
+# treat all fields as obligatory
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="opentriton"
+tags="gui, library"
+version="2.0"
+cpu=68020
+require="amigaos>3"
+description="OpenTriton GUI system"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/dev/gui/opentriton-usr.lha*6cfda028b7122859f0ef48fe6f0ec17e1b4159eb7dfaf82161f8d7d4de2bc765")
+upstream="https://aminet.net/package/dev/gui/opentriton-usr"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    local settings="UEsDBBQAAgAIACFdNlrCz4KqOQAAAJ4AAAAVABwAVHJpdG9uL19fR0xPQkFMX18udHJpVVQJAANN
+2ZBnPtqQZ3V4CwABBOgDAAAE6QMAAGNmYGBkAmIGZgYmIAmBxAKgRgYOIGYHYlYozQ4VZ8Khng1K
+czEGFOWnFyXmKqSkpiWW5pTsxqIBAFBLAwQKAAIAAAAhXTZapo5NuAQAAAAEAAAAEgAcAFRyaXRv
+bi9TY3JlZW5zLnRyY1VUCQADTdmQZwfakGd1eAsAAQToAwAABOkDAAAAAAADUEsDBBQAAgAIACFd
+NloT8D+4XgAAAHwAAAAWABwAVHJpdG9uL1RyaXRvblByZWZzLmFwcFVUCQADTdmQZ0HakGd1eAsA
+AQToAwAABOkDAABjYGDgDinKLMnPCyhKTStmYGAQgnAVQPzUotS85FSQqFVIRqoCpoyCawpQqIhr
+pYKhpaWJLpAwVUiqVAguSU1LzFOISs1MTy0C6mY20zMCUUZ6BkCK3chYz1TP0gIAUEsDBBQAAgAI
+ACFdNlrCz4KqOQAAAJ4AAAAWABwAVHJpdG9uL1RyaXRvblByZWZzLnRyaVVUCQADTdmQZ0DakGd1
+eAsAAQToAwAABOkDAABjZmBgZAJiBmYGJiAJgcQCoEYGDiBmB2JWKM0OFWfCoZ4NSnMxBhTlpxcl
+5iqkpKYlluaU7MaiAQBQSwECHgMUAAIACAAhXTZaws+CqjkAAACeAAAAFQAYAAAAAAAAAAAApIEA
+AAAAVHJpdG9uL19fR0xPQkFMX18udHJpVVQFAANN2ZBndXgLAAEE6AMAAATpAwAAUEsBAh4DCgAC
+AAAAIV02WqaOTbgEAAAABAAAABIAGAAAAAAAAAAAAKSBiAAAAFRyaXRvbi9TY3JlZW5zLnRyY1VU
+BQADTdmQZ3V4CwABBOgDAAAE6QMAAFBLAQIeAxQAAgAIACFdNloT8D+4XgAAAHwAAAAWABgAAAAA
+AAAAAACkgdgAAABUcml0b24vVHJpdG9uUHJlZnMuYXBwVVQFAANN2ZBndXgLAAEE6AMAAATpAwAA
+UEsBAh4DFAACAAgAIV02WsLPgqo5AAAAngAAABYAGAAAAAAAAAAAAKSBhgEAAFRyaXRvbi9Ucml0
+b25QcmVmcy50cmlVVAUAA03ZkGd1eAsAAQToAwAABOkDAABQSwUGAAAAAAQABABrAQAADwIAAAAA"
+
+    cd Triton || exit 1
+
+    copy "ReadMe" "Locale/Readme/Readme/$name-$version/ReadMe"
+    copy "Docs/History" "Locale/Readme/Readme/$name-$version/History"
+    copy "Docs/Triton.guide" "Locale/Help/Triton.guide"
+    copy "Docs/Triton.guide.info" "Locale/Help/Triton.guide.info"
+
+    copy "Prefs/Triton" "Prefs/Triton"
+    copy "Prefs/Triton.info" "Prefs/Triton.info"
+
+    copy "libs39/triton.library" "Libs/triton.library"
+
+    echo "$settings" | base64 -d > settings.zip && 
+    unzip -q settings.zip &&
+    for file in Triton/*; do copy "$file" "Prefs/Env-Archive/${file##*/}"; done
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

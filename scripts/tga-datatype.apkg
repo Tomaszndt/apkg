@@ -1,0 +1,40 @@
+name="tga-datatype"
+tags="datatype, tga, image, graphics"
+version="47.1"
+cpu=68000
+require="amigaos>3.2"
+description="Targa (TGA) picture datatype 47.1"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/dtype/TGAdt.lha*18c78092c8bd331803a1f35ee6c2742a7f5eeac345085beffb4ef3e8ece121b4"
+    )
+upstream="https://aminet.net/package/util/dtype/TGAdt"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    cd "TGAdt" || exit 1
+
+    copy "Devs/Datatypes/TGA" "Devs/DataTypes/"
+    copy "Devs/Datatypes/TGA.info" "Devs/DataTypes/"
+    copy "Classes/Datatypes/TGA.datatype" "Classes/DataTypes/"
+
+    copy "TGAdt.readme" "Locale/Readme/$name-$version/"
+    copy "TGAdt.readme.info" "Locale/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,45 @@
+name="c-sas"
+tags="c, compiler, dev, toolchain"
+version="6.58"
+cpu=68000
+require=""
+description="SAS C Compiler"
+packager="lobotomius@gmail.com"
+source=("sasc658.lha*fedf8349f186ecd4626be918eef5dfa3dd0e4d7a750af1ef3f9ea2247c5de0e8")
+upstream="https://archive.org/details/sas-c-compiler"
+
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    local file
+
+    IFS=$'\n'
+    for file in $(find sasc -type f); do
+        copy "$file" "$file"
+    done
+    unset IFS
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+
+    FS= read -r -d '' txt <<EOF
+   assign sc: sys:sasc
+   assign lib: sc:lib
+   assign include: sc:include
+   assign cxxinclude: sc:cxxinclude
+   path sc:c add
+EOF
+
+    user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$txt"
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,27 @@
+name="roadshow"
+tags="internet, stack, tcp/ip"
+version="1.15"
+cpu=68020
+require=""
+description="Roadshow TCP/IP stack for classic Amiga"
+packager="lobotomius@gmail.com"
+source=("Roadshow.lha*e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+upstream="https://aminet.net/package/biz/dbase/sqlite-3.34.0-amiga"
+
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+echo "koniec"; exit
+
+    # create target amiga os directory structure
+    makedir "C"
+    copy "sqlite-3.34.0-amiga/build-m68k-amigaos/bin/sqlite3" "C/sqlite3"
+
+}

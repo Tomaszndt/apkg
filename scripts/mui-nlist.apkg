@@ -1,0 +1,43 @@
+name="mui-nlist"
+tags="gui, mui, library"
+version="0.128"
+cpu=68020
+require="amigaos>3, mui>3.8"
+description="Replacements for List/Listtree/Listviews/Floattext/Bitmap/Balance MUI built-in classes"
+packager="lobotomius@gmail.com"
+source=("https://github.com/amiga-mui/nlist/releases/download/0.128/MCC_NList-0.128.lha*639e54660e1c8a83f3c030e2b383b575534a155c9087909b59300177e8adb0e7")
+upstream="https://github.com/amiga-mui/nlist"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    # NList.mcc 20.147 31.08.2021
+    # NListview.mcc 19.102 31.08.2021
+    # NFloattext.mcc 19.83 31.08.2021
+    # NListviews.mcp 19.98 31.08.2021
+    # NListtree.mcc 18.54 31.08.2021
+    # NListtree.mcp 18.42 31.08.2021
+    # NBitmap.mcc 15.32 31.08.2021
+    # NBalance.mcc 15.28 31.08.2021
+
+    cd "MCC_NList" || exit 1
+
+    for file in Libs/MUI/AmigaOS3/*; do copy "$file" "Libs/MUI/Libs/mui/${file##*/}"; done
+
+    # for file in Docs/*; do copy "$file" "Libs/MUI/Docs/English/${file##*/}"; done
+    for file in ChangeLog* ReadMe*; do copy "$file" "Locale/Readme/$name-$version/"; done
+    for file in COPYING*; do copy "$file" "Locale/License/$name-$version/"; done
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

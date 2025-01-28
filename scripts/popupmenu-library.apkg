@@ -1,0 +1,44 @@
+name="popupmenu-library"
+tags="library, menu, popup"
+version="10.8.6"
+cpu=68020
+require=""
+description="PopupMenu.library"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/pmuser.lha*9d0c73f927ee6d332b5e920d3603d2a6c8a0ae81ab9fbb252e3fc786f8ac6e6c"
+)
+upstream="https://aminet.net/package/util/libs/pmuser"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    # TODO https://sintonen.fi/sw/pmlib-10.8.6-fix.lha
+
+    cd "PopupMenuUser" || exit 1
+
+    copy "libs/popupmenu.library" "Libs/"
+    copy "prefs/PopupMenu" "Prefs/"
+    copy "prefs/PopupMenu.info" "Prefs/"
+    copy "PopupMenu.guide.info" "Locale/Help"
+
+    copy "pmuser.readme" "Locale/Readme/$name-$version/"
+    copy "PopupMenu.guide" "Locale/Help"
+    copy "PopupMenu.guide.info" "Locale/Help"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,36 @@
+name="ixemul"
+tags="library, unix, gnu"
+version="48.3"
+cpu=68040
+require="amigaos>3"
+description="early BSD unix kernel for amiga"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/dev/lib/ixemul-48.3-bin-m68k.lha*836cd52682345750a511240da211cbcea0cd87f05e3a6f4155807dabd49d9880")
+upstream="https://aminet.net/package/dev/lib/ixemul-48.3-bin-m68k"
+
+# functions
+#  makedir path (relative and confined to $pkgdir)
+#  copy source destination (source relative and confined to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+    cd ixemul-48.3-3-bin-m68k || exit 1
+
+    copy "sys/l/ixpipe-handler" "L/ixpipe-handler"
+    copy "sys/devs/MountList.ixpipe" "Devs/MountList.ixpipe" 
+
+    copy "sys/libs/ixemul-060f.library" "Libs/ixemul.library"
+    copy "sys/libs/ixnet-060.library" "Libs/ixnet.library"
+
+    for file in "BUGS" "Product-Info" "README.amiga" "ChangeLog" "INSTALL.old" "NEWS" "README" "README.ixstack" "TODO"; do
+        copy "$file" "Locale/Readme/$name-$version/$file"
+    done
+
+    for file in "COPYING" "COPYING.LIB"; do
+        copy "$file" "Locale/License/$name-$version/$file"
+    done
+
+}

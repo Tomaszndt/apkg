@@ -1,0 +1,17 @@
+name="amigaos"
+tags="os, obsolete"
+version="2.1"
+cpu=68000
+description="amiga os 2.1"
+packager="lobotomius@gmail.com"
+source=("amigaos-2.1.7z*f892e59adc839bdb2200adb7817e8607faec424f90d3ff1b9a3817c611da6d11")
+upstream=""
+
+# $srcdir $pkgdir
+# copy makedir
+
+function build {
+	cd "$srcdir/"
+	
+	cp -r * "$pkgdir"
+}

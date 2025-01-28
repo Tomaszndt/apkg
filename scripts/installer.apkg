@@ -1,0 +1,45 @@
+name="installer"
+tags="utility, system"
+version="43.3"
+cpu=68000
+require=""
+description="Amiga Technologies V43.3 Installer"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/misc/Installer-43_3.lha*25da2a3ec06fa8626d1fba171ec853611035d06203c13a43f4d53713d9927aac")
+upstream="https://aminet.net/package/util/misc/Installer-43_3"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy   Source destination (  Source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+	
+    copy "Installer43_3/Installer" "C/Installer"
+
+    copy "Installer43_3/Installer.guide" "Locale/Help/Installer.guide"
+    copy "Installer43_3/Installer.guide.info" "Locale/Help/Installer.guide.info"
+
+    copy "Installer43_3/Installer.license" "Locale/License/$name-$version/Installer.license"
+    copy "Installer43_3/Installer.license.info" "Locale/License/$name-$version/Installer.license.info"
+    copy "Installer43_3/Legal.README" "Locale/License/$name-$version/Installer.README"
+    copy "Installer43_3/Legal.README.info" "Locale/License/$name-$version/Installer.README.info"
+
+    copy "Installer43_3/SampleScripts/Surfer-Install" "Source/$name-$version/Surfer-Install"
+    copy "Installer43_3/SampleScripts/Surfer-Install.info" "Source/$name-$version/Surfer-Install.info"
+    copy "Installer43_3/SampleScripts/install-test" "Source/$name-$version/install-test"
+    copy "Installer43_3/SampleScripts/install-test.info" "Source/$name-$version/install-test.info"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

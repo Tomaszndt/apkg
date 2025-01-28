@@ -1,0 +1,41 @@
+name="identify-library"
+tags="library, information"
+version="44.1"
+cpu=68020
+require=""
+description="Identify is a shared Amiga library that helps identifying all kind of system parameters"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/shred/identify/releases/download/v44.1/IdentifyUsr.lha*0e9abdb89807c0a7579ea3104e5c8f15acd348e156f09353ee24bbcbaadc81ba"
+    )
+upstream="https://github.com/shred/identify"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "Identify" || exit 1
+
+    copy "libs/identify.library" "Libs/identify.library"
+    copy "libs/rexxidentify.library" "Libs/rexxidentify.library"
+    copy "docs/Identify-E.guide" "Locale/Help/Identify.guide"
+    copy "docs/Identify-E.guide.info" "Locale/Help/Identify.guide.info"
+
+    for file in c/*; do copy "$file" "C/${file##*/}"; done
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

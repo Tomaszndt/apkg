@@ -1,0 +1,23 @@
+name="lhasa"
+tags="cli, packer, archive"
+version="0.3.1"
+cpu=68000
+require=""
+description="free software lha implementation"
+packager="lobotomius@gmail.com"
+source=("http://aminet.net/util/arc/lhasa-0.3.1.lha*dbfce0ab7a4b72e021703965b15477a225edcdc533355e0e110f2acfd9699265")
+upstream="http://m68k.aminet.net/package/util/arc/lhasa-0.3.1"
+
+function build {
+	cd "lhasa-0.3.1" || exit 1
+
+	copy lhasa "C/lhasa"	
+
+	copy COPYING "/Locale/License/lhasa-0.3.1/COPYING"
+}
+
+function post_install {
+	:
+}
+
+# vim: ts=4:syntax=sh:

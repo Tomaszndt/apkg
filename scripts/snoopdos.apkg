@@ -1,0 +1,24 @@
+name="snoopdos"
+tags="utility, information, debug, dev"
+version="3.11"
+cpu=68000
+require=""
+description="SnoopDos, the well known system monitor"
+packager="lobotomius@gmail.com"
+source=("http://aminet.net/util/moni/SnoopDos.lha*0fb51361fe82b125971b190b78a81cb43c0a631c9d075a37b0110a0617612aba")
+upstream="http://m68k.aminet.net/package/util/moni/SnoopDos"
+
+function build {
+	copy snoopdos "Utilities/SnoopDos"	
+	copy SnoopDos.info "Utilities/SnoopDos.info"	
+
+
+	for f in Readme*; do
+		copy "$f" "Locale/Readme/$name-$version/$f"
+	done
+	copy SnoopDos.readme "Locale/Readme/$name-$version/SnoopDos.readme"
+	
+	copy SnoopDos.guide "Locale/Help/SnoopDos.guide"
+	copy SnoopDos.guide.info "Locale/Help/SnoopDos.guide.info"
+	
+}

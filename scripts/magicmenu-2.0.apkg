@@ -1,0 +1,40 @@
+name="magicmenu"
+tags="commodity, menu, popup, mouse"
+version="2.0"
+cpu=68020
+require="gtlayout-library"
+description="THE Intuition Menus Enhancer"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/wb/MagicMenu_II.lha*14529f18dd185462bd25bbcb8b76c4225365f087e6f36c30c02c58178ebf6eda"
+)
+upstream="https://aminet.net/package/util/wb/MagicMenu_2.35"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    copy "MagicMenu/020/MagicMenu" "WBStartup/"
+    copy "MagicMenu/020/MagicMenu.info" "WBStartup/"
+    copy "MagicMenu/020/MagicMenuPrefs" "Prefs/"
+    copy "MagicMenu/020/MagicMenuPrefs.info" "Prefs/"
+
+    copy "MagicMenu/readme.text" "Locale/Readme/$name-$version/"
+    copy "MagicMenu/MagicMenu.guide" "Locale/Help/"
+    copy "MagicMenu/MagicMenu.guide.info" "Locale/Help/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

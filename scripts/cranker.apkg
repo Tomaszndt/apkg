@@ -1,0 +1,27 @@
+name="cranker"
+tags="cruncher, dev, packer, cli"
+version="0.66"
+cpu=68000
+description="Amiga executable and data cruncher"
+require=""
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/pack/cranker.lha*69bfb1b9f54eb8f48fdd4001cef23594a03775290455ed96c3542b67a40ee9e2")
+upstream="https://aminet.net/package/util/pack/cranker"
+
+# functions
+#  makedir path (relative and confined to $pkgdir)
+#  copy source destination (source relative and confined to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we're in $srcdir
+
+	cd "$name-$version" || exit 1
+
+	copy "cranker" "C/cranker"	
+	copy README "Locale/Readme/$name-$version/README"
+	copy decruncher.asm "Source/decruncher.asm"
+}
+# vim: ts=4:syntax=sh:

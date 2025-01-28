@@ -1,0 +1,36 @@
+name="mui-betterstring"
+tags="gui, mui, library"
+version="11.36"
+cpu=68020
+require="amigaos>3, mui>3.8"
+description="Replacements for List/Listtree/Listviews/Floattext/Bitmap/Balance MUI built-in classes"
+packager="lobotomius@gmail.com"
+source=("https://github.com/amiga-mui/betterstring/releases/download/11.36/MCC_BetterString-11.36.lha*dcba694a5600c5cf0144b7d8f00089fde57aea1cd3a6f644ddeeceae8e006319")
+upstream="https://github.com/amiga-mui/betterstring"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+
+    cd "MCC_BetterString" || exit 1
+
+    for file in Libs/MUI/AmigaOS3/*; do copy "$file" "Libs/MUI/Libs/mui/${file##*/}"; done
+
+    # for file in Docs/*; do copy "$file" "Libs/MUI/Docs/English/${file##*/}"; done
+    for file in ChangeLog* ReadMe*; do copy "$file" "Locale/Readme/$name-$version/"; done
+    for file in COPYING*; do copy "$file" "Locale/License/$name-$version/"; done
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

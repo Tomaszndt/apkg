@@ -1,0 +1,30 @@
+name="wizard-library"
+tags="library"
+version="42"
+cpu=68000
+require="amigaos>3"
+description="WizardLibrary 42.100 (20.4.2000)"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/libs/WizardLibrary.lha*37241f0744c3808a502b5a142b9c62670d5f7b52bd5fbb04fbfcb1f20f363389")
+upstream="https://aminet.net/package/util/libs/WizardLibrary"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+    copy "wizard.library" "Libs/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

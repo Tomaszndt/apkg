@@ -1,0 +1,41 @@
+name="deark"
+tags="cli, unarchiver, depacker, converter"
+version="1.6.5"
+cpu=68000
+require=""
+description="Extracting data from various file formats"
+packager="lobotomius@gmail.com"
+source=(
+        "https://aminet.net/util/arc/deark.lha*2b2f053951fcdd5244a4c257aea3f63a541a9fae5b1eefb25a94d937f320e77e"
+    )
+upstream="https://aminet.net/package/util/arc/deark"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	local file
+
+    cd deark-1.6.5 || exit 1
+
+    copy "deark.68k" "C/deark"
+
+    for file in formats.txt readme.md technical.md; do 
+        copy "$file" "Locale/Readme/$name-$version/$file"
+    done
+    copy "COPYING" "Locale/License/$name-$version/COPYING"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

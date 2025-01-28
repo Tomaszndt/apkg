@@ -1,0 +1,63 @@
+name="amigaamp"
+tags="music, player, mod, mp3, radio"
+version="3.34"
+cpu=68030
+require="ahi>6, mpega-library, mmu-library, modplug-library, sndfile-library" # mmulib?
+description="Powerful realtime multi format audio player for Amiga computers"
+packager="lobotomius@gmail.com"
+source=(
+    "http://www.amigaamp.de/Binaries/AmigaAMP3-68k.lha*cad37d708603a05f813a94e2f5ca059b4e03e20da5ec675e13efe6543b997bf1"
+    "http://www.amigaamp.de/Skins/AmigaBall.lha*0d3c0b6030f7db1267514aed68ef93716ccf2cac9745c033c23d74b707441710"
+    )
+upstream="http://www.amigaamp.de/index.shtml"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    #copy "demo.mp3" "Utilities/AmigaAMP/demo.mp3"
+    copy "AmigaAMP3.info" "Utilities/AmigaAMP.info"
+
+    for file in amiga/*; do
+        copy "$file" "Utilities/AmigaAMP/Skins/${file}"
+    done
+
+    cd AmigaAMP3 || exit 1
+
+    IFS=$'\n'
+    for dir in "Plugins" "Skins"; do
+        for file in $(find "$dir" -type f); do
+            copy "$file" "Utilities/AmigaAMP/${file}";
+        done
+    done
+    unset IFS
+
+    copy AmigaAMP "Utilities/AmigaAMP/AmigaAMP"
+    copy AmigaAMP.info "Utilities/AmigaAMP/AmigaAMP.info"
+
+    copy AmigaAMP-Prefs "Utilities/AmigaAMP/AmigaAMP-Prefs"
+    copy AmigaAMP-Prefs.info "Utilities/AmigaAMP/AmigaAMP-Prefs.info"
+
+    copy "AmigaAMP.doc" "Locale/Readme/$name-$version/AmigaAMP.doc"
+    copy "AmigaAMP.dok" "Locale/Readme/$name-$version/AmigaAMP.dok"
+    copy "AmigaAMP.readme" "Locale/Readme/$name-$version/AmigaAMP.readme"
+    copy "FAQ.readme" "Locale/Readme/$name-$version/FAQ.readme"
+    copy "AREXX.readme" "Locale/Readme/$name-$version/AREXX.readme"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

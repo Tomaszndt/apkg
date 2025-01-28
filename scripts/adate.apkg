@@ -1,0 +1,40 @@
+# consider all fields obligatory
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="adate"
+tags="cli, utility, system, date, time"
+version="1.0"
+cpu=68000
+require=""
+description="Versatile date and time utility for Amiga"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/time/adate.lha*2c0d16d66befb801e114f85a6c88837c88571cb4cfdcb86b2ca7a8b244a89df1")
+upstream="https://aminet.net/package/util/time/adate"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    copy "adate" "C/adate"
+    copy "adate.readme" "Locale/Readme/$name-$version/adate.readme"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

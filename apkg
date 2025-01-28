@@ -1,0 +1,1301 @@
+#! /bin/bash
+
+readonly _apkg_version="0.0.1"
+
+readonly cred="\e[0;91m"
+readonly cblue="\e[0;94m"
+readonly cyellow="\e[0;33m"
+readonly cblue_bg="\e[0;104m"
+readonly cred_bg="\e[0;101m"
+readonly cgreen_bg="\e[0;102m"
+readonly cgreen="\e[0;92m"
+readonly cwhite="\e[0;97m"
+readonly cbold="\e[1m"
+readonly culine="\e[4m"
+readonly creset="\e[0m"
+
+readonly _sql_create_table="CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'tags' TEXT, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
+readonly _sql_list_table
+
+_verbose=
+_mode=""
+_pwd="$(pwd)"
+_filename=""
+return_str=""
+
+_paths=("$(pwd)" "$HOME/.apkg/")
+if [ -z "$APKG" ]; then APKG="$HOME/.apkg"; fi
+
+_repo=""
+_cpu=""
+os=""
+#system="" # amiga model
+#language="" # ISO code
+
+_ts_msg_number=0;
+# $1 string, $2 prefix
+function _echo() {
+	local msg="$1"
+	local mode="n"
+	local prefix="$2"
+
+	if [[ $msg =~ ^[!@#%](.*) ]]; then
+		mode=${msg:0:1}
+		msg=${BASH_REMATCH[1]}
+	fi
+
+	if [[ ${#prefix} -gt 0 ]]; then
+		prefix="$prefix "
+	fi
+
+	if [[ $_verbose -eq 1 ]]; then
+		# prefix="$(date +%s.%N) $(printf %03d $_ts_msg_number) $prefix"
+		prefix="$(printf %02X $_ts_msg_number) $prefix"
+	fi
+
+	case $mode in
+	
+		"@")
+			if [[ $_verbose -eq 1 ]]; then
+				echo -e "$prefix$cblue$msg$creset"
+			fi
+		;;
+		"n")
+			echo -e "$prefix$msg"
+		;;
+		"%")
+			echo -e "$prefix$cred$msg$creset"
+			exit 1
+		;;
+		"!")
+			echo -e "$prefix$cred$msg$creset"
+		;;
+		"#")
+			echo -e "$prefix$cyellow$msg$creset"
+		;;	
+	esac
+
+	# msg=${msg//\\x1b\[[0-9]+m/}
+	echo -e "$msg" >> "$_pwd/apkg.log"
+	_ts_msg_number=$(( _ts_msg_number + 1 ))
+}
+
+function usage() {
+cat << EOF
+$0 mode [arguments...] (switches...)
+    usage                        display usage information
+    build    filename            build a package
+    install  package filename    install a package
+	install  name(:version)      install a package
+    repo     list                list repo contents
+    repo     rescan              recreate repository database
+    repo     init [path]         create a repo
+    package  info filename       print package file metadata
+    -v	verbose output
+EOF
+}
+
+#
+# usage
+if [[ $# == 0 ]]; then
+	usage
+	exit
+fi
+
+#
+# load configuration
+for p in $_paths; do
+	source ~/.apkg/apkg.config &> /dev/null
+	source "$p/apkg.config" #&> /dev/null
+done
+
+#
+# process arguments
+case "$1" in
+	"build")
+		_mode="build"
+		_filename="$2"
+		shift 2
+	;;
+	"install")
+		_mode="install"
+		_filename="$2"
+		shift 2
+	;;
+	"repo")
+		_mode="repo"
+		shift
+		case "$1" in
+			"rescan")
+				_mode="repo-rescan"
+				shift
+			;;
+			"list")
+				_mode="repo-list"
+				shift
+			;;
+			"init")
+				_mode="repo-init"
+				shift
+			;;
+		esac
+	;;
+	"package")
+		shift
+		case "$1" in
+		"info")
+			_mode="package-info"
+			_filename="$2"
+			shift 2
+		;;
+		esac
+	;;
+	"usage")
+		usage
+		exit
+	;;
+	"version")
+		_mode="version"
+	;;
+	*)
+		_echo "!invalid mode specified: \"$1\""
+		exit 1
+	;;
+	esac
+	
+	while [[ $# -gt 0 ]]; do
+		switch=${1%%=*}
+		argument=${1##*=}
+
+		case $switch in
+			"-v")
+				_verbose=1
+			;;
+			"-repo")
+				repo="$argument"
+			;;
+			"-root")
+				root="$argument"
+			;;
+			*)
+				_echo "!invalid parameter $1"
+			;;
+		esac
+		shift 
+	done
+
+#
+# rename _paths not to remove trailing slash
+
+for p in ${_paths[*]}; do
+	[[ ! ${p:${#p}-1:1} == '/' ]] && p="${p}/"
+done
+
+# 1 file
+function base() {
+	local tmp
+	tmp="$1"
+	echo "${tmp##*/}"
+}
+
+# 1 file
+function path() {
+	local tmp
+	tmp="${1%/*}"
+
+	if [[ $tmp == "$1" ]]; then
+		echo ""; 
+	else
+		echo "$tmp/"
+	fi
+}
+
+# unpack an archive file
+# $1 filename
+# $2 destination path
+function unpack() {
+	ext="${1##*.}"	
+	_echo "@unpacking $1, $ext archive into $2"
+
+	[[ ! -d "$2" ]] && _echo "!target is not a valid path" && exit 1
+
+	case "$ext" in
+		"lha")
+			# if [ ! $(which lha) ]; then
+			# 	_echo "!lha executable not found"
+			# 	exit 1
+			# fi
+			# lha xw="$2" "$1" &> /dev/null
+			7z x "$1" -o"$2" &> /dev/null
+		;;
+		"run")	# assuming lha self extracting archive
+			lha xw="$2" "$1" &> /dev/null
+		;;
+		"zip")
+			unzip "$1" -d "$2" &> /dev/null
+		;;
+		"7z")
+			7z x "$1" -o"$2" &> /dev/null
+		;;
+		*)
+			_echo "@unsupported archive type: $ext";
+			cp "$1" "$2";
+
+		;;
+	esac	
+}
+
+#
+# return uaem formatted stat/permissions string
+# 1 filename
+# 2 permissions
+# 3 comment
+function sprotect() {
+	local f="--------"
+	local fname="$1"
+	local perms="$2"
+	local td
+	local tt
+	local comment="$3"
+
+	td="$(date +%Y-%m-%d)"
+	tt="$(date +%T).00"
+	# fname="$fname.uaem"
+
+	if [[ -z $2 ]]; then 
+		if [[ $perms == *h* ]]; then f="h${f:1:7}"; fi
+		if [[ $perms == *s* ]]; then f="${f:0:1}s${f:2:7}"; fi
+		if [[ $perms == *p* ]]; then f="${f:0:2}p${f:3:7}"; fi
+		if [[ $perms == *a* ]]; then f="${f:0:3}a${f:4:7}"; fi
+		if [[ $perms == *r* ]]; then f="${f:0:4}r${f:5:7}"; fi
+		if [[ $perms == *w* ]]; then f="${f:0:5}w${f:6:7}"; fi
+		if [[ $perms == *e* ]]; then f="${f:0:6}e${f:7:7}"; fi
+		if [[ $perms == *d* ]]; then f="${f:0:7}d"; fi
+	else
+		f="----rwed"
+	fi
+	echo "$f $td $tt $comment" #> "$fname"
+
+}
+
+# set file permissions (write to uaem file)
+# 1 filename
+# 2 perms
+# 3 comment
+function protect() {
+	local perms
+	perms=$(sprotect "$1" "$2" "$3")
+	echo "$perms" > "$1.uaem"
+}
+
+function stat() {
+	local stat="null"
+	echo "$1"
+	if [ -f "$1.uaem" ]; then
+		stat="$(<"$1".uaem)"
+	else
+		stat="$(sprotect "$1" rwed)"
+	fi
+	echo "$stat"
+}
+
+# 1 source
+# 2 destination
+function filecopy() {
+	cp "$1" "$2"
+	if [ -f "$1.uaem" ]; then
+		cp "$1.uaem" "$2.uaem"
+	fi
+}
+
+# 1 file
+function filedelete() {
+	rm "$1"
+	if [ -f "$1.uaem" ]; then
+		rm "$1.uaem"
+	fi
+}
+
+# 1 directory path
+# 2 permissions
+function dircreate() {
+	mkdir -p "$1" &> /dev/null
+	if [ -d "$1" ]; then
+		protect "$1" "$2"
+	fi
+}
+
+function dirdelete() {
+	local r
+	r=$( rmdir "$1" &> /dev/null )
+	if [ $r -eq 0 ]; then
+		rm "$1.uaem"
+	fi
+}
+
+# to use within build scripts
+# create a directory
+# 1 path relative to $pkgdir
+# 2 icon [wb31] TODO
+# > return_str contains amiga valid path
+function makedir() {
+	local perm
+	local d=""
+	local s="$pkgdir"
+	local tmp="$1"
+	
+	if [[ $tmp == $pkgdir* ]]; then
+		tmp="${1#$pkgdir/}"
+	fi
+
+	if [[ ${tmp:0:1} == "/" ]]; then
+		tmp="${tmp:1}"
+	fi
+
+	if [[ ${tmp:0-1} == "/" ]]; then
+		tmp="${tmp:0:${#tmp}-1}"
+	fi
+
+	if [ -d "$pkgdir$tmp" ]; then 
+		return_str="$pkgdir/$tmp/";
+		return;
+	fi
+
+	IFS='/'
+	for d in $tmp; do
+		e=$(find "$s" -maxdepth 1 -type d -iname "$d")
+		if [[ $e ]]; then 
+			s="$s${e##*/}/"; 
+		else
+			s="$s$d/"
+		fi
+		mkdir -p "$s" &> /dev/null
+		if [ ! -f "$s.uaem" ]; then
+			perm=$(sprotect "$d" "rwed" "$pkgname")
+			echo "$perm" > "${s:0:${#s}-1}.uaem"
+		fi
+	done
+	unset IFS
+
+	return_str="$s"
+}
+
+# to use within build scripts
+# copy single file
+# 1 source
+# 2 destination relative to $pkgdir
+# 3 permissions
+function copy() {
+	local perm
+	local sbase
+	local spath
+	local dpath
+	local dbase
+	local tmp="$2"
+	local subdir=""
+	local p=""
+
+	tmp=$(realpath "$1")  || _echo "%invalid file/path: $1"
+	tmp="${tmp/$srcdir/}"
+	sbase=$(base "$tmp")
+	spath=$(path "$tmp")
+
+	dbase=$(base "$2")
+	dpath=$(path "$2")
+
+	if [[ ! $dbase ]]; then dbase="$sbase"; fi
+
+	perm="rwed"
+	if [ -n "$3" ]; then
+		perm="$3"
+	fi
+	perm=$(sprotect "$dbase" "$perm" "${pkgname}")
+
+	makedir "${dpath}"
+
+	cp -f "${srcdir}${spath}${sbase}" "${return_str}${dbase}" &&
+	echo "$perm" > "${return_str}${dbase}.uaem" #|| exit 1
+
+}
+
+# patch aos startup like files
+#  adds tagged blocks around inserted text
+# 1 filename
+# 2 mode (all, end)
+# 3 needle (insert after line matching this)
+# 4 tag (tag block with this)
+# 5 text (text to be inserted)
+function user_patch() {
+	local file
+	local filename
+	local mode="$2"
+	local needle="$3"
+	local tag="$4"
+	local text="$5"
+	local patched="0"
+	local out=""
+	local p
+	local b
+
+
+	p=$(path "$1")
+	b=$(base "$1")
+	filename=$(find "$p" -iname "$b")
+	if [[ ! $filename ]]; then
+		filename="${p}${b}"
+		touch "$filename"
+	fi
+	filename=$(realpath "$1")
+
+	file=$(< "$filename")
+
+	if [[ $mode == *end* ]]; then
+		out=$(< "$filename")$'\n'";BEGIN ${tag}"$'\n'"$text"$'\n'";END ${tag}"$'\n'
+	else
+		IFS=$'\n'
+		for line in $file; do
+			if [[ $line =~ $needle ]]; then
+				if [ $patched -eq 0 ]; then
+					out+=$'\n'";BEGIN ${tag}"$'\n'
+					out+="$text"$'\n'
+					out+=";END ${tag}"$'\n'
+					if [[ $mode != *all* ]]; then
+						patched=1
+					fi
+				fi
+				out+="$line"$'\n'
+			else
+				out+="$line"$'\n'
+			fi
+		done
+	fi # mode==end
+	unset IFS
+
+	cp "$filename" "${root}apkg/backup/${backup}/${filename##*/}"
+	echo "filecopy \"${root}apkg/backup/${backup}/${filename##*/}\" \"$1\"" >> "${root}apkg/$backup.rollback"
+	echo "$out" > "$filename"
+}
+
+# detect amiga os version
+# 1 path to amiga os root directory
+function detectos() {
+	local os="unknown"
+	local sum
+	local aosroot
+
+	aosroot="$1"
+
+	if [ ! -f "${aosroot}/Libs/version.library" ]; then echo "$os"; return 1; fi
+
+	sum=$(sha256sum "${aosroot}Libs/version.library")
+	sum=${sum%% *}
+
+	case $sum in
+		"f8d9d1663fe5ef1f925a4ad2bad3863e69e28e2075d5c1c4c3fc1bd47de926cf")
+			os="1.1" # 31.334
+		;;
+		"0cace16871ccf7c230e9a9286f34212b3c177a4672680ef9e0e736e47eec5916")
+			os="1.2" # 33.56
+		;;
+		"6ea82dfc0c3854967947bc47b219013974b12d2407c43d5219123d87cdc1862a")
+			os="1.2" # 33.43 A1000
+		;;
+		"bd08525ab9b3534e47766e297827d9d7808709b64616f122f3a1d0ee6c174ccc")
+			os="1.2" # 33.56, ?
+		;;
+		"6b95e467c1895661f3e4e6c175b20c1946d111c90156978dee070654172d2d45")
+			os="1.3" #
+		;;
+		"33bf7beed0f3da96de214ec3e1c07ed7cf9672ff87fac416a0e7a5146ae331a4")
+			os="1.3" # ?
+		;;
+		"af29c17c4214aff6a0d86b83bb4052fb2ce230944066069c67be276654606c16")
+			os="1.3.2" # 34.28
+		;;
+		"844df9bb92c2c585f012f20d774c907a08c025296eebc3d828b77b86355dbbb7")
+			os="1.3.3" # 34.34
+		;;
+		"81f7175091a663e083ed75c7bd9f751b2f6a7a283aa61b76e16b9179666c3743")
+			os="1.4" # 36.1, 1.4a15, alpha
+		;;
+		"cd23966ea82f5eddc3c9bc32c7d43c3e5b4039c842738e523f033d5db011b228")
+			os="1.4" # beta ?
+		;;
+		"f2ed7a7d12e74d3fc073785385a2397760fc4d9c01aa8b361fc719f0bcbdcde3")
+			os="2.0" # 36.68
+		;;
+		"f4c026a7c5abfb9dedf0e2ab7a647c250046a08aec7f145bbaa5dd301f457e43")
+			os="2.0"
+		;;
+		"b01cc118734a13db69707014eec485ffabc1788ac64577abe4bc9051c72a3f0a")
+			os="2.0" # 36.102
+		;;
+		"5345d19e1588db358874a2df92b4180ffa517ecced006a45710201c6b16495c3")
+			os="2.05" # 37.71 A600HD
+		;;
+		"7aa6e88a38e95d7096934d8a3520b72b4a65075aadb60f2a50aadc346627dea3")
+			os="2.05" # 37.71
+		;;
+		"6f82bbb9685f284bab05b7fce2703a55f2c3ec0c73c05aa090d7724cfa65d932")
+			os="2.1" # 38.36
+		;;
+		"fb02919cc7af0d60fd0c71cc34804a8cdf76929d91e608ad8de6773bee05b4fb")
+			os="2.1" # 38.35
+		;;
+		"80f42572e2d4cf56ef951c84a60f39ad530c19f95f51cc8a0a8d85911762d478")
+			os="2.1" # 38.30
+		;;
+		"cb03ae35232cdb7a8f3f4d3c642908dee08c64aae1bc60748a548beb8d283bb6")
+			os="3.0"
+		;;
+		"8e067779d6681b1e6763aec6a67750674a1cbc28d08f5a05349b41b04361aa7a")
+			os="3.0" # 39.07, beta ?
+		;;
+		"b39739aab1efcda75be831b4fa2355eed2e726f427a2e55187a9dee3b44da9ee")
+			os="3.1" # 40.42
+		;;
+		"1e7679ce0356312c41e20618db0791b11e7d304bf5880cfb770d0a45b3240069")
+			os="3.1" # beta ?
+		;;
+		"3035aa6e34e952f8bd1e83f362dded2ed70a603ba9be9bb2cb0e68f617625467")
+			os="3.1.4"
+		;;
+		"23501aa2cceef70ad179e4347ebb290cc3e229e65b9c0cc16b450b47244bebd3")
+			os="3.2"
+		;;
+		"7b2f66e8bd1ea7c7e1493cb5f41a2f6ad75fdee650c3d53c167f22dbba41ea50")
+			os="3.2.1"
+		;;
+		"6cd8b104ef75f4bef3bd938515993b1ad6a8295c29f05c7478ddbae27e1fce96")
+			# 3.2.2 or 3.2.2.1
+			os="3.2.2"
+			sum=$(sha256sum "$1/Prefs/Env-Archive/Versions/Release")
+			sum=${sum%% *}
+			if [[ $sum = "c718e8b86eab55df5fd353d8090b1b2d25d83d1ed70ab89b1433a79930dd5ea1" ]]; then
+				os="3.2.2.1"
+			fi
+		;;
+		"86cd464a9b8beab7f365df3b6bf172bfe3a6db2e2e487eb60e3da015b56d603e")
+			# 3.5 or 3.5.1
+			os="3.5"
+			sum=$(sha256sum "$1/Libs/asl.library")
+			sum=${sum%% *}
+			if [[ $sum = "d0b9898086728f0e6516cf652c3929602a32db58bab95df6ef37eba0363d86ba" ]]; then
+				os="3.5.1"
+			fi
+		;;
+		"f4f8d774c6a23038b517567905b92dcc877aeeae0e8cacb6683d1b4e344a248d")
+			os="3.5.2"
+		;;
+		"d3d1cf6f1787949de55f65e6a9aeedd65ed9cdbbed5ed8639ff838a0485847ec")
+			os="3.9"
+		;;
+		"0a0c2f112b082fabc0686009384d80d6466bbb6e08935807ed4cf3f2dd41cbe7")
+			os="3.9.1" # bb 1
+		;;
+		"c7f280def402fffb83880d2a363ad8d986faa797deff83f1a2633473515fb947")
+			os="3.9.2" # bb 2
+		;;
+		"1640a650cb7480344b301fbbbe14ee7d7d1bfd385d23af3ef689ec841bcf6267")
+			os="3.9.4" # bb 3&4
+		;;
+	esac 
+
+	echo "$os"
+}
+
+#############################
+# sanity checks
+
+if [ -z "$repo" ]; then
+	repo="$APKG/repo/"
+	mkdir -p "$repo"
+	#_echo "no repositories provided" "E"
+	#exit 1
+fi
+
+l=${#root}; l=$(( l - 1 )); if [[ ! ${root:l:1} == "/" ]]; then root="$root/"; fi
+if [ ! -d $root ]; then
+	_echo "!invalid target root directory path"
+	exit 1
+fi
+
+if [ -z "$cpu" ]; then _cpu="68000"; cpu="$cpu"; fi
+
+#
+# print config
+_echo "@search paths: ${_paths[*]}"
+_echo "@repository: $repo"
+_echo "@target system root path = $root"
+_echo "@target cpu = $_cpu"
+
+
+#############################
+# main fuctionality
+
+# 1 package file
+function package_info() {
+	local pkgname
+	local basename
+	local fullname
+	
+	local name
+	local version
+	local description
+	local upstream
+	local cpu
+	local require
+	local packager
+	
+	basename=$(base "$1")
+	pkgname=${basename%%:*}
+	fullname=$(realpath "$1")
+
+	7z e -so "$fullname" "$pkgname.apkg" > "$APKG/tmp/$pkgname.apkg"
+
+	_echo "information for $1"
+
+	source "$APKG/tmp/$pkgname.apkg"
+
+	_echo "       name $name"
+	_echo "    version $version"
+	_echo "description $description"
+	_echo "        url $upstream"
+	_echo "        cpu $cpu"
+	_echo "   requires $require"
+	_echo "  packgager $packager"
+}
+
+# return package file metadata
+# 1 package file
+_package_meta_last=""
+_package_meta_cache=""
+function package_meta() {
+	local meta="null"
+	if [[ $_package_meta_last != $1 ]]; then
+		meta="$(7z e -so "$1" apkg-metadata 2> /dev/null)"
+		_package_meta_last="$1"
+		_package_meta_cache="$meta"
+		echo "$meta"
+	else
+		echo "$_package_meta_cache"
+	fi
+}
+
+## extract value by key
+# 1 meta
+# 2 field
+function meta_get() {
+	local r
+	local field
+	local haystack="$1"
+	local needle="$2"
+
+	IFS=$'\n'	
+
+	for field in $haystack; do
+		if [[ $field =~ $needle[[:space:]]+(.*) ]]; then
+			r="${BASH_REMATCH[1]}"
+		fi
+	done
+	echo "$r"
+	unset IFS
+}
+
+#
+# 1 repo path
+function repo_init() {
+
+	mkdir -p "$1" &> /dev/null
+	rm "$1"/repo.db &> /dev/null
+	sqlite3 "$1"/repo.db "$_sql_create_table"
+
+	if [ $? -eq 0 ]; then
+		_echo "@created repository in $1"
+	else
+		_echo "!failed to initialise repository $1"
+		return 1
+	fi
+}
+
+# add package to repository
+# 1 package file
+# 2 repository path
+function repo_add_package() {
+	local meta
+	local file
+	local name 
+	local version
+	local cpu
+	local built
+	local packager
+	local url
+	local query
+	local repo
+
+	repo="$2" || "$repo"
+	meta=$(package_meta "$1")
+	file="${i/$repo\//}"
+	meta=$(package_meta "$i")
+	name=$(meta_get "$meta" "name")
+	version=$(meta_get "$meta" "version")
+	cpu=$(meta_get "$meta" "cpu")
+	built=$(meta_get "$meta" "built")
+	packager=$(meta_get "$meta" "packager")
+	url=$(meta_get "$meta" "url")
+	tags=$(meta_get "$meta" "tags")
+
+	query="insert into packages ('file', 'name', 'version', 'cpu', 'tags', 'built', 'packager', 'url') values ('$file', '$name', '$version', '$cpu', '$tags', '$built', '$packager', '$url')"
+	sqlite3 "$2"/repo.db "$query"
+	_echo "@added $name, $version into $2"
+}
+
+# populate repository database
+# 1 repo path
+function repo_populate() {
+	local i
+
+	repo_init "$1"
+
+	for i in "$1"/*.7z; do
+		repo_add_package "$i" "$1"
+	done
+}
+
+
+# make sure database file is up to date
+# 1 repo path
+function repo_update() {
+	local f
+
+	f=$(ls -t "$1")
+
+	if [[ $f =~ ^repo.db ]]; then
+		_echo "@database file up to date"
+	else
+		rm "$1"/repo.db 2&> /dev/null
+		_echo "@removed database file in $1"
+		repo_populate "$1"
+	fi
+	
+}
+
+# is package present in the repo
+# 1 name
+# 2 version (optional)
+function repo_has() {
+	local name="$1"
+	local version="$2"
+	local tmp
+
+	if [ -z "$version" ]; then	
+		_echo "@querying $repo for $name"
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
+	else
+		_echo "@querying $repo for $name, version $version"
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version = '$version' order by version desc limit 1")
+	fi
+
+	[ -z "$tmp" ] && tmp="0"
+
+	return_str="$tmp"
+	echo "$tmp"
+
+}
+
+#
+# 1 repo path
+function repo_list() {
+
+	repo_update "$1"
+
+	_echo "package listing for $1"
+
+	sqlite3 "$1"/repo.db << SQL 
+.mode columns 
+select name, version, cpu, built, tags from packages order by name asc
+SQL
+
+	_echo "@end of listing"
+}
+
+#
+# make a "binary" package
+# $1 package script name
+_pkgfile=""
+function pkg_make() {
+	local _script_file
+	local _downloaded_file
+	local _basename_file
+	local _file_checksum
+	local dlpaths
+	typeset -A sums=()
+	local shasum
+	local items=0
+	
+	dlpaths=". $APKG/downloads/"
+	
+	# is the script file available 
+	_script_file="$_filename"
+	[[ -z $_script_file ]] && _echo "%build script not found \"$_filename\"";
+	_script_file=$(realpath "$_script_file")
+
+	source "$_script_file"
+	
+	_echo "#building $name, version $version, $packager"
+
+	# download files
+	for s in ${source[*]}; do
+		items=$items+1
+
+		IFS='*' read -r -a array <<< "$s";
+
+		case ${#array[*]} in
+			2)
+				_source_file="${array[0]}"
+				_file_checksum="${array[1]}"
+				_basename_file="${_source_file##*/}"
+				sums+=(["$_basename_file"]="$_file_checksum")
+			;;
+			3)
+				_source_file="${array[0]}"
+				_file_checksum="${array[1]}"
+				_basename_file="${array[2]}"
+				sums+=(["$_basename_file"]="$_file_checksum")
+			;;
+			*)
+				_echo "!malformed source line $s"
+				exit 1
+			;;
+		esac
+		unset IFS
+		
+		_downloaded_file="null"
+		if [[ -f "./$_basename_file" ]]; then
+			_downloaded_file="./$_basename_file"
+		fi
+		if [[ -f "$APKG/downloads/$_basename_file" ]]; then
+			_downloaded_file="./$_basename_file"
+		fi
+
+		if [[ "$_downloaded_file" == "null" ]]; then			
+			_echo "downloading $_source_file"
+			wget -q --show-progress -nc -P "$APKG/downloads" -O "$_basename_file" "$_source_file" #&> /dev/null
+		else
+			_echo "$_basename_file found in download cache"
+			cp "$_downloaded_file" "$APKG/downloads" &> /dev/null
+		fi
+			
+	done
+	
+	# verify checksums
+	for f in ${!sums[*]}; do
+		shasum=$(sha256sum "$APKG/downloads/$f")
+		shasum=${shasum%% *}
+		if [[ $shasum != "${sums[$f]}" ]]; then
+			_echo "!$f : invalid checksum"; 
+			exit 1
+		else
+			_echo "@$f chcecksum ok"
+		fi
+		
+	done
+
+	local pkgname="$name:$version:$cpu"
+	
+	rm -r "$APKG/cache/$pkgname/" &> /dev/null
+	mkdir -p "$APKG/cache/$pkgname"
+	rm -r "$APKG/tmp/" &> /dev/null
+	mkdir -p "$APKG/tmp"
+	
+	for _file in ${!sums[*]}; do
+		# echo $_file ${sums["$_file"]}
+		unpack "$APKG/downloads/$_file" "$APKG/tmp"
+	done
+
+	pkgdir="$APKG/cache/$pkgname/"
+	srcdir="$APKG/tmp/"
+	local _cwd="$(pwd)"
+
+	_echo "@running build script"
+	cd "$srcdir"
+	build || exit 1
+	unset IFS
+	
+	if [[ $? -gt 0 ]]; then
+		_echo "!build script failed"
+		exit 1
+	fi
+	
+	cd "$pkgdir"
+
+	# find . | grep / | sort > apkg.filelist
+	
+	_echo "generating install script"
+
+	IFS=$'\n'
+	files=$(find "$pkgdir" ! -iname "*.apkg" ! -iname apkg-metadata ! -iname "*.uaem" | sort)
+
+	echo "# $name $version" > apkg-install
+	for file in $files; do
+		if [ -d $file ]; then
+			f=${file/$pkgdir/}
+			if [ ${#f} -gt 0 ]; then
+				echo "dircreate $f" >> apkg-install
+			fi
+		fi
+	done
+	for file in $files; do
+		if [ -f $file ]; then
+			f=${file/$pkgdir/}
+			echo "filecopy $f $f" >> apkg-install
+		fi
+	done
+	unset IFS
+
+	# metadata file
+	_echo "generating metadata"
+	cd "$pkgdir" || exit 1
+	touch apkg-metadata
+	echo -e "name $name\nversion $version\ncpu $cpu\ntags $tags\nbuilt $(date +%s)\npackager $packager\nurl $upstream\nbuildscript ${_script_file##*/}" > apkg-metadata
+
+	cp "$_script_file" "."
+
+	# archive all the files
+	_echo "compressing the package"
+	7z a -mx=9 "$pkgname.7z" * &> /dev/null
+	
+	cd "$_cwd"
+
+	_pkgfile="$pkgname.7z"
+	mv "${pkgdir}${pkgname}.7z" "$repo/"
+	# mv "$pkgdir/$pkgname.7z" "$cwd/"
+}
+
+# initializes apkg databases in $root
+function install_init_root() {
+	if [ ! -d "$root/apkg/" ]; then
+		mkdir -p "$root/apkg"
+		protect "$root/apkg" "rwed" "apkg:$_apkg_version"
+		_echo "@created apkg directory in $root"
+	fi
+# 	if [ ! -f "$root/apkg/apkg.db" ]; then
+# 		sqlite3 "$root/apkg/apkg.db" "CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
+# 		protect "$root/apkg/apkg.db" "rwed" "apkg:$_apkg_version"
+# 		_echo "@created apkg database file in $root"
+# 	fi
+}
+
+# 1 package filename
+function package_is_installed() {
+	local meta
+	local pkgname
+	local count
+
+	meta=$(package_meta "$1")
+	pkgname=$(meta_get "$meta" "name")
+
+	count=$(sqlite3 "$root/apkg/installed.db" "select version from packages where name='$pkgname' order by version desc")
+
+	echo "$count"
+}
+
+# return version number for package if installed, otherwise return 0
+# 1 package name
+function is_installed() {
+	local pkgname
+	local version
+
+	pkgname="$1"
+
+	version=$(sqlite3 "$root/apkg/installed.db" "select version from packages where name='$pkgname' order by version desc")
+
+	if [ $version ]; then
+		echo "$version"
+	else
+		echo "0"
+	fi
+}
+
+# 1 package file name
+function install_register_package() {
+	local meta
+	local pkgfilename
+	local pkgname
+	local pkgversion
+	local pkgcpu
+
+
+	meta=$(package_meta "$1")
+	pkgfilename="$1"
+	pkgname=$(meta_get "$meta" "name")
+	pkgversion=$(meta_get "$meta" "version")
+	pkgcpu=$(meta_get "$meta" "cpu")
+
+	if [ ! -f "${root}apkg/installed.db" ]; then
+		sqlite3 "${root}apkg/installed.db" "create table 'packages' ('file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL)" 
+	fi
+
+	sqlite3 "${root}apkg/installed.db" "insert or ignore into 'packages' ('file', 'name', 'version', 'cpu') values ('$pkgfilename', '$pkgname', '$pkgversion', '$pkgcpu')"
+	_echo "@registered package $pkgname version $pkgversion"
+}
+
+#
+# 1 source
+# 2 destination
+# 3 backup path
+function install_file() {
+	local source="$1"
+	local destination="$2"
+	local backup="$3"
+	
+	local psource=$(path "$source")
+	local bsource=$(base "$source")
+	local pdestination=$(path "$destination")
+	local bdestination=$(base "$destination")
+
+	if [ -f "$destination" ]; then
+		_echo "@$destination backed up in $backup"
+		cp "$destination" "$backup"
+		rm "$destination"
+		cp "$source" "$destination"
+		#echo "$source" "$destination"
+	else
+		cp "$source" "$destination"
+	fi
+
+	if [ -f "$source.uaem" ]; then
+		cp "$source.uaem" "$destination.uaem"
+	fi
+
+}
+
+# 1 require list
+# return 0 if all met, 1 otherwise
+function package_check_deps() {
+	local req
+	local pkgname
+	local pkgversion
+	local relation
+	local iversion
+	local ret=0
+
+	req="$1"
+
+	req=${req//\ /}
+	if [[ $1 = "" ]]; then _echo "@no dependencies"; return 0; fi
+
+	_echo "@package dependency list = '${req//,/, }'"
+
+	IFS=,
+	for r in $req; do
+		relation="any"
+
+		if [[ $r =~ ([^<>=]+)([<>=]+)([^<>=]+) ]]; then
+			pkgname="${BASH_REMATCH[1]}"
+			pkgversion="${BASH_REMATCH[3]}"
+			relation="${BASH_REMATCH[2]}"
+		else
+			pkgname="$r"
+			pkgversion=0
+			relation="any"
+		fi
+
+		iversion=$(is_installed "$pkgname")
+
+		if [[ $iversion > "0" ]]; then
+			case $relation in
+				"any")
+					_echo "@$pkgname required, $iversion installed"
+				;;
+				">")
+					if [[ $iversion > $pkgversion ]]; then
+						_echo "@$pkgname > $pkgversion required, $iversion installed"
+					fi
+				;;
+			esac
+		else
+			_echo "!$pkgname version $pkgversion required, none installed"
+			return 1
+		fi
+	
+	done
+	unset IFS
+
+	return $ret
+}
+
+#
+# install the package
+# 1 package file
+function install_package() {
+	local filename
+	local files
+	local fbase
+	local osversion
+	local tmpdir=""
+	local tmpdir_length=0
+	local meta
+	local backup
+	local pkgname
+	local pkgversion
+
+	install_init_root
+	# package_is_installed "$1"
+
+	filename=$(realpath "$1")
+	if [ ! -f "$filename" ]; then
+		_echo "!file not found $filename";
+		exit 1
+	fi
+
+	osversion=$(detectos "$root")
+
+	meta=$(package_meta "$filename")
+	pkgname=$(meta_get "$meta" "name")
+	pkgversion=$(meta_get "$meta" "version")
+	backup="$pkgname-$pkgversion"
+
+	if [ -f "$root/apkg/$backup.rollback" ]; then
+		_echo "!$filename already installed"
+		exit 1
+	else
+		:
+	fi
+
+	_echo "#installing $_filename"
+
+	_echo "detected Amiga OS version $osversion"
+	
+	tmpdir="$APKG/tmp/"
+	rm -r "$tmpdir" #&> /dev/null
+	mkdir -p "$tmpdir"
+	tmpdir_length=${#tmpdir}
+
+	unpack "$1" "$APKG/tmp"
+
+	tmp2=$(meta_get "$meta" "buildscript")
+
+	source "$APKG/tmp/$tmp2"
+
+	package_check_deps "$require"
+
+	if [[ $? -gt 0 ]]; then _echo "!dependencies not met"; exit 1; fi
+
+	_echo "installing files"
+	mkdir -p "$root/apkg/backup/$backup"
+	true > "$root/apkg/$pkgname-$pkgversion.rollback"
+
+	IFS=$'\n'
+	files=$(find "$APKG/tmp" ! -iname "*.uaem" ! -iname "apkg-*" ! -iname "*.apkg")
+	for f in $files; do
+		fbase=$(base "$f")
+		if [[ "$f/" == "$tmpdir" ]]; then continue; fi
+		if [ -d "$f" ]; then
+			mkdir -p "$root/${f:$tmpdir_length}"
+			protect "$root/${f:$tmpdir_length}"
+			echo -e "dirdelete ${f:$tmpdir_length}" >> "${root}/apkg/$pkgname-$pkgversion.rollback"
+		fi
+		if [ -f "$f" ]; then
+			if [ -f "$root/${f:$tmpdir_length}" ]; then
+				#_echo "@conflicting file: $root/${f:$tmpdir_length}"
+				install_file "$f" "${root}${f:$tmpdir_length}" "${root}apkg/backup/$backup"
+
+				echo "filedelete ${f:$tmpdir_length}" >> "${root}apkg/$pkgname-$pkgversion.rollback"
+				echo "filecopy ${root}apkg/backup/$backup/$fbase ${root}${f:$tmpdir_length}" >> "${root}apkg/$pkgname-$pkgversion.rollback"
+			else
+				install_file "$f" "${root}${f:$tmpdir_length}" "${root}apkg/backup/$backup"
+
+				echo "filedelete ${f:$tmpdir_length}" >> "${root}apkg/$pkgname-$pkgversion.rollback"
+			fi
+		fi
+
+	done
+	unset IFS
+
+	if [[ $(type -t post_install) == "function" ]]; then
+		_echo "running install script"
+		post_install || exit 1
+	else
+		_echo "@no post_install script"
+	fi
+
+	sort -r "$root/apkg/$pkgname-$pkgversion.rollback" > "$root/apkg/$pkgname-$pkgversion.rollback.tmp"
+	rm "$root/apkg/$pkgname-$pkgversion.rollback"
+	mv "$root/apkg/$pkgname-$pkgversion.rollback.tmp" "$root/apkg/$pkgname-$pkgversion.rollback"
+
+	install_register_package "$1"
+
+	_echo "installation complete"
+}
+
+# 1 package name(:version)
+function ainstall() {
+	local pkgname
+	local pkgversion
+
+	if [[ $1 == *:* ]]; then
+		pkgname="${1%:*}"
+		pkgversion="${1#*:}"
+	else
+		pkgname="$1"
+		pkgversion="0"
+	fi
+
+	repo_has "$pkgname" "$pkgversion"
+}
+
+function repo_install() {
+	local name
+	local version
+
+
+}
+
+
+########
+# top level logic
+
+# repo_has "mui"
+# exit
+
+case $_mode in
+	"build")
+		pkg_make "$_filename"
+	;;
+	"install")
+		tmp=0
+		if [[ $_filename == *.7z ]]; then
+			install_package "$_filename"
+			tmp=1
+		fi
+		if [[ $_filename == *.apkg ]]; then
+			pkg_make "$_filename"
+			install_package "${repo}${_pkgfile}"
+			tmp=1
+		fi
+		if [ $tmp -gt 0 ]; then
+			: #_echo "success"
+		else
+			ainstall "$_filename"
+		fi
+	;;
+	"repo-init")
+		repo_init "$repo"
+		repo_populate "$repo"
+	;;
+	"repo-list")
+		repo_list "$repo"
+	;;
+	"repo-rescan")
+		repo_populate "$repo"
+	;;
+	"package-info")
+		package_info "$_filename"
+	;;
+	"version")
+		echo $_apkg_version
+	;;
+esac
+
+

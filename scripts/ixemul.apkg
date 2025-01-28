@@ -1,0 +1,34 @@
+name="ixemul"
+tags="library, unix, gnu"
+version="63.1"
+cpu=68060
+require=""
+description="early BSD unix kernel for amiga"
+packager="lobotomius@gmail.com"
+source=("https://sourceforge.net/projects/amiga/files/ixemul.library/63.1/ixemul-63.1-m68k.lha/download*3ac1743a8ca7a317fb373b6cca1744fedbbe873adefa83faf138ef6c5c3657f6*ixemul-63.1-m68k.lha")
+upstream="https://aminet.net/package/util/arc/lha"
+
+# functions
+#  makedir path (relative and confined to $pkgdir)
+#  copy source destination (source relative and confined to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+	
+    cd ixemul_63.1_m68k || exit 1
+
+    # create target amiga os directory structure
+
+    copy "Sys/l/ixpipe-handler" "L/ixpipe-handler"
+    copy "Sys/libs/ixemul.library" "Libs/ixemul.library"
+    copy "Sys/libs/ixnet.library" "Libs/ixnet.library"
+
+    copy "Sys/prefs/ixbl_MUI" "Prefs/ixbl"
+    copy "Sys/prefs/ixbl_MUI.info" "Prefs/ixbl.info"
+
+    copy "Sys/l/IMPORTANT.txt" "Locale/Readme/$name-$version/IMPORTANT.txt"
+
+}

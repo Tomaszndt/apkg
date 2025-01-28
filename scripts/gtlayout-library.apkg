@@ -1,0 +1,36 @@
+name="gtlayout-library"
+tags="library, gui"
+version="47.2"
+cpu=68020
+require=""
+description="GadToools layout toolkit"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/dev/gui/gtlayout.lha*7f86f2332b4834cf18b23defcbdee22938a259d5143c4c449f6942cf057abe12"
+)
+upstream="https://aminet.net/package/dev/gui/gtlayout"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    copy "Libs/gtlayout.library.020" "Libs/gtlayout.library"
+
+    copy "README" "Locale/Readme/$name-$version/"
+    copy "Doc/gtlayout.doc" "Locale/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

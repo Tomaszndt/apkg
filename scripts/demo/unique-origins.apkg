@@ -1,0 +1,30 @@
+name="origins"
+version="1"
+cpu=68060
+require=""
+description="origins by UNIQUE"
+packager="lobotomius@gmail.com"
+source=("https://files.scene.org/get/parties/2019/revision19/amiga-demo/unique-origins-compo.lha*f2d38e8d7348079d5b117463c757af043dafda88b600affaa8eeb294171f34df")
+upstream="https://demozoo.org/productions/202826/"
+
+# functions
+#
+#  makedir path
+#    relative to $pkgdir
+#
+#  copy $source $destination
+#    source relative to $srcdir, destination to $pkgdir
+#    creates directories as needed
+
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    for file in *; do
+        copy "${file}" "Scene/Demo/UNIQUE/Origins/${file}"
+    done
+
+}

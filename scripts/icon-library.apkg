@@ -1,0 +1,41 @@
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="iconlib"
+tags="library, icon"
+version="46.4.592"
+cpu=68020
+require=""
+description="free icon.library in optimized ASM code"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/libs/IconLib_46.4.lha*6b21685e35dd8984dc6f1b7144ea131b0c74d4db2d24fd5dba08b1b43c3b41eb")
+upstream="https://aminet.net/package/util/libs/IconLib_46.4"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+
+    cd "IconLib_46.4" || exit 1
+
+    copy "Libs/icon.library" "Libs/icon.library"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

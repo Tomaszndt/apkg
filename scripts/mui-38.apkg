@@ -1,0 +1,71 @@
+name="mui"
+tags="gui, mui, library"
+version="3.8"
+cpu=68020
+require=""
+description="MagicUserInterface 3.8"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/libs/mui38usr.lha*f3acb2fe98f74c025daf10ae7df92d08abe787332124963771e2c21a869cca5b")
+upstream="https://aminet.net/package/util/libs/mui38usr"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+	
+    cd MUI || exit 1
+
+    IFS=$'\n'
+
+    for dir in "Demos" "Images" "Libs" "Docs" "Icons" "Patterns" "Rexx" "Presets"; do 
+        echo -en "copying $dir    \r"
+        for file in $(find "$dir"); do copy "$file" "Libs/MUI/${file}"; done
+    done
+    # for file in $(find Locale); do copy "$file" "Libs/MUI/${file}"; done
+    unset IFS
+
+    copy ReadMe "Locale/Readme/$name-$version/ReadMe"
+
+    for file in *.info; do copy "$file" "Libs/MUI/${file}"; done
+
+    copy "PSI" "Libs/MUI/PSI"
+    copy " " "Libs/MUI/ "
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+
+    local inject=""
+
+   FS= read -r -d '' inject <<EOF
+if exists "Libs/MUI"
+   assign MUI: "Libs/MUI"
+   if exists MUI:Libs
+      assign add LIBS: MUI:Libs
+   endif
+   if exists MUI:Locale
+      assign add LOCALE: MUI:Locale
+   endif
+   version >nil: exec.library 39
+   if not warn
+      if exists MUI:Docs
+         if exists HELP:dummy ; do not remove
+         endif                ; this entry!
+         assign add HELP: MUI:Docs
+      endif
+   endif
+endif
+EOF
+
+tpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+
+}
+
+# vim: ts=4:syntax=sh:

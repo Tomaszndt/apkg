@@ -1,0 +1,37 @@
+name="sndfile-library"
+tags="library, sound"
+version="1.22"
+cpu=68020
+require=""
+description="Library for reading/writing various sample formats"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/sndfile.lha*3bb403911523cf2c0a76b87c6d83d3a72c903f239c086cffba0673a804a30e23"
+    )
+upstream="https://aminet.net/package/util/libs/sndfile"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "sndfile" || exit 1
+
+    copy "Libs/sndfile.library.fpu" "Libs/sndfile.library"
+    copy "sndfile.readme" "Locale/Readme/$name-$version/sndfile.readme"
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

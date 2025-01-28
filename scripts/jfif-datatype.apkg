@@ -1,0 +1,31 @@
+name="jfif-datatype"
+tags="datatype, image, jfif"
+version="45.5"
+cpu=68020
+require="amigaos>3"
+description="fastest JPEG picture datatype"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/dtype/JFIFdt44.lha*56c315c04918de153635d000b66a1f60d51f5ba422b9537338daaba7f5a36e76")
+upstream="https://aminet.net/package/util/dtype/JFIFdt44"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    copy "make" "C/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

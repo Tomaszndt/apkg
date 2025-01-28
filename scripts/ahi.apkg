@@ -1,0 +1,55 @@
+name="ahi"
+tags="ahi, sound"
+version="6.0"
+cpu=68030
+require="openpci-library"
+description="Retargetable audio v6.0"
+packager="lobotomius@gmail.com"
+source=(
+    "https://sourceforge.net/projects/arp2/files/ahiusr/6.0/m68k-amigaos-ahiusr-6.0.lha/download*3a82e92f455577dbadf8cbd41a3cf976240c6492f8486934f68d2467f7d8a993*m68k-amigaos-ahiusr-6.0.lha")
+upstream="https://web.archive.org/web/20080108115808/http://arp2.berlios.de/ahi/#intro"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "m68k-amigaos-ahi" || exit 1
+
+    for file in COPYING*; do
+        copy "$file" "Locale/License/$name-$version/$file"
+    done
+    copy "ahiusr.readme" "Locale/Readme/$name-$version/ahiusr.readme"
+    copy "ChangeLog" "Locale/Readme/$name-$version/ChangeLog"
+
+    cd "User" || exit 1
+
+    copy "Docs/ahiusr.guide" "Locale/Help/ahi.guide"
+    copy "Docs/ahiusr.pdf" "Locale/Help/ahi.pdf"
+
+    IFS=$'\n'
+    for dir in C Devs L Prefs; do
+        for file in $(find "$dir" -type f); do
+            copy "$file" "$file"
+        done
+    done
+    unset IFS
+
+    rm "$pkgdir/Devs/AHI/emu10kx.audio" && rm "$pkgdir/Devs/AHI/emu10kx.audio.uaem"
+    # as to omit emu10kx.audio and avoid the openpci open error message
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
