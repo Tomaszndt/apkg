@@ -1007,7 +1007,7 @@ function is_installed() {
 
 	pkgname="$1"
 
-	version=$(sqlite3 "$root/apkg/installed.db" "select version from packages where name='$pkgname' order by version desc")
+	version=$(sqlite3 "$root/apkg/installed.db" "select version from packages where name='$pkgname' order by version desc limit 1")
 
 	if [ $version ]; then
 		echo "$version"
