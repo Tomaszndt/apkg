@@ -24,7 +24,7 @@ _filename=""
 return_str=""
 
 _paths=("$(pwd)" "$HOME/.apkg/")
-if [ -z "$APKG" ]; then APKG="$HOME/.apkg"; fi
+[[ -z "$APKG" ]] && APKG="$HOME/.apkg"
 
 _repo=""
 _cpu=""
@@ -104,10 +104,9 @@ fi
 
 #
 # load configuration
-for p in $_paths; do
-	source ~/.apkg/apkg.config &> /dev/null
-	source "$p/apkg.config" #&> /dev/null
-done
+unset repo
+source "~/.apkg/apkg.config" &> /dev/null
+source "./apkg.config" &> /dev/null
 
 #
 # process arguments
