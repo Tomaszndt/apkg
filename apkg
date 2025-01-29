@@ -802,6 +802,34 @@ function repo_has() {
 
 }
 
+# return package file name within $repo for given package name and version
+# 1 name
+# 2 version
+function repo_get_pkgfile() {
+	local name
+	local version
+	local repo_version
+
+	name="$1"
+	version="$2"
+
+	repo_version=$(repo_has "$name" "$version")
+
+	if [[ "$repo_version" > "0" ]]; then
+		if [[ "$version" ]]; then
+			return_str=$(sqlite3 "${repo}repo.db" "select file from packages where name = '$name' and version = '$version' order by version desc limit 1")
+		else
+			return_str=$(sqlite3 "${repo}repo.db" "select file from packages where name = '$name' order by version desc limit 1")
+		fi
+	else
+		return_str= # no $name registered in repo
+	fi
+	echo "$return_str"
+}
+
+repo_get_pkgfile "mui" 4
+exit
+
 #
 # 1 repo path
 function repo_list() {
@@ -1246,9 +1274,6 @@ function repo_install() {
 
 ########
 # top level logic
-
-# repo_has "mui"
-# exit
 
 case $_mode in
 	"build")
