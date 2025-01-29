@@ -21,9 +21,9 @@ function build {
 
     cd "Koala_DataType_V39_4" || exit 1
 
-    copy "Classes/DataTypes/koala.datatype" "Classes/Datatypes/"
-    copy "Devs/DataTypes/Koala" "Devs/Datatypes/"
-    copy "Devs/DataTypes/Koala.info" "Devs/Datatypes/"
+    copy "Classes/DataTypes/koala.datatype" "Classes/DataTypes/"
+    copy "Devs/DataTypes/Koala" "Devs/DataTypes/"
+    copy "Devs/DataTypes/Koala.info" "Devs/DataTypes/"
 
     copy "aminet_readme.txt" "Locale/Readme/$name-$version/"
     copy "Koala_DataType.guide" "Locale/Help/$name-$version/"
