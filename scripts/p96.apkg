@@ -126,8 +126,8 @@ AwAABOkDAABQSwUGAAAAAAEAAQBcAAAAWAIAAAAA"
     echo "$prefs" | base64 -d > prefs.zip && unzip -qo prefs.zip
     echo "$settings" | base64 -d > settings.zip && unzip -qo settings.zip
 
-    copy "Commodities/Disabled/P96ScreenCx" "WBStartup/"
-    copy "Commodities/Disabled/P96ScreenCx.info" "WBStartup/"
+    copy "Commodities/P96ScreenCx" "WBStartup/Disabled/"
+    copy "Commodities/P96ScreenCx.info" "WBStartup/Disabled/"
 
     copy "Libs/Picasso96API.library" "Libs/"
     copy "Libs/Picasso96/emulation.library" "Libs/Picasso96/"
