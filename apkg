@@ -844,7 +844,7 @@ function pkg_make() {
 	_echo "#building $name, version $version, $packager"
 
 	# download files
-	for s in ${source[*]}; do
+	for s in "${source[@]}"; do
 		items=$items+1
 
 		IFS='*' read -r -a array <<< "$s";
@@ -888,7 +888,7 @@ function pkg_make() {
 	done
 	
 	# verify checksums
-	for f in ${!sums[*]}; do
+	for f in "${!sums[@]}"; do
 		shasum=$(sha256sum "$APKG/downloads/$f")
 		shasum=${shasum%% *}
 		if [[ $shasum != "${sums[$f]}" ]]; then
@@ -908,7 +908,6 @@ function pkg_make() {
 	mkdir -p "$APKG/tmp"
 	
 	for _file in ${!sums[*]}; do
-		# echo $_file ${sums["$_file"]}
 		unpack "$APKG/downloads/$_file" "$APKG/tmp"
 	done
 
@@ -918,18 +917,11 @@ function pkg_make() {
 
 	_echo "@running build script"
 	cd "$srcdir"
-	build || exit 1
+	build || _echo "%build script failed"
 	unset IFS
 	
-	if [[ $? -gt 0 ]]; then
-		_echo "!build script failed"
-		exit 1
-	fi
-	
-	cd "$pkgdir"
+	cd "$pkgdir" || _echo "%invalid $pkgdir";
 
-	# find . | grep / | sort > apkg.filelist
-	
 	_echo "generating install script"
 
 	IFS=$'\n'
@@ -937,7 +929,7 @@ function pkg_make() {
 
 	echo "# $name $version" > apkg-install
 	for file in $files; do
-		if [ -d $file ]; then
+		if [ -d "$file" ]; then
 			f=${file/$pkgdir/}
 			if [ ${#f} -gt 0 ]; then
 				echo "dircreate $f" >> apkg-install
@@ -945,7 +937,7 @@ function pkg_make() {
 		fi
 	done
 	for file in $files; do
-		if [ -f $file ]; then
+		if [ -f "$file" ]; then
 			f=${file/$pkgdir/}
 			echo "filecopy $f $f" >> apkg-install
 		fi
@@ -962,13 +954,13 @@ function pkg_make() {
 
 	# archive all the files
 	_echo "compressing the package"
-	7z a -mx=9 "$pkgname.7z" * &> /dev/null
+	7z a -mx=9 "$pkgname.7z" ./* &> /dev/null
 	
-	cd "$_cwd"
+	cd "$_cwd" || exit 1
 
 	_pkgfile="$pkgname.7z"
 	mv "${pkgdir}${pkgname}.7z" "$repo/"
-	# mv "$pkgdir/$pkgname.7z" "$cwd/"
+
 }
 
 # initializes apkg databases in $root
