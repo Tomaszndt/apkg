@@ -11,7 +11,12 @@ upstream="https://fsck.technology/software/Commodore/Amiga/Amiga%20Applications/
 # root, cpu
 # pkgsrc, pkgdir, pkgname
 function build {
+
+	# https://sintonen.fi/sw/pmlib-10.8.6-fix.lha
+	# Here is the WhichAmiga version by Wrangler: http://ftp.ziaspace.com/pub/aminet/util/moni/WhichAmiga_Extended.lha
+	# Piru's version with source: http://ftp.ziaspace.com/pub/aminet/util/moni/WhichAmiga.lha
+
 	copy "WhichAmiga" "C/"
 }
 
-# vim: ts=4:syntax=sh:https://sintonen.fi/sw/pmlib-10.8.6-fix.lha
+# vim: ts=4:syntax=sh:
