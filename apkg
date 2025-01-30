@@ -1132,6 +1132,26 @@ function package_check_deps() {
 						_echo "@$pkgname > $pkgversion required, $iversion installed"
 					fi
 				;;
+				"=")
+					if [[ $iversion == $pkgversion ]]; then
+						_echo "@$pkgname > $pkgversion required, $iversion installed"
+					fi
+				;;
+				">=")
+					if [[ $iversion >= $pkgversion ]]; then
+						_echo "@$pkgname >= $pkgversion required, $iversion installed"
+					fi
+				;;
+				"<")
+					if [[ $iversion < $pkgversion ]]; then
+						_echo "@$pkgname > $pkgversion required, $iversion installed"
+					fi
+				;;
+				"<=")
+					if [[ $iversion <= $pkgversion ]]; then
+						_echo "@$pkgname <= $pkgversion required, $iversion installed"
+					fi
+				;;
 			esac
 		else
 			_echo "!$pkgname version $pkgversion required, none installed"
