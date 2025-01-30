@@ -22,10 +22,9 @@ function build {
     cd MUI || exit 1
 
     IFS=$'\n'
-
     for dir in "Demos" "Images" "Libs" "Docs" "Icons" "Patterns" "Rexx" "Presets"; do 
         echo -en "copying $dir    \r"
-        for file in $(find "$dir"); do copy "$file" "Libs/MUI/${file}"; done
+        for file in $(find "$dir" -type f); do copy "$file" "Libs/MUI/${file}"; done
     done
     # for file in $(find Locale); do copy "$file" "Libs/MUI/${file}"; done
     unset IFS
