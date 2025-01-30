@@ -23,8 +23,8 @@ function build {
 
     cd TuneFinderMUI || exit 1
 
-    copy "TuneFinderMUI" "Utilities/TuneFinder"
-    copy "TuneFinderMUI.info" "Utilities/TuneFinder.info"
+    copy "TuneFinderMUI" "Tools/TuneFinder"
+    copy "TuneFinderMUI.info" "Tools/TuneFinder.info"
 
     copy "Docs/TuneFinderMUI.guide" "Locale/Help/TuneFinderMUI.guide"
     copy "Docs/TuneFinderMUI.guide.info" "Locale/Help/TuneFinderMUI.guide.info"
