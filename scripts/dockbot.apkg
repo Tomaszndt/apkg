@@ -35,7 +35,6 @@ function build {
     copy "extras/WBRun" "Utilities/DockBot/WBRun"
 
     copy "extras/parm.library" "Utilities/DockBot/parm.library"
-    # copy "extras/Triton/triton.library" "Libs/triton.library"
 
     copy "LICENCE" "Locale/Help/$name-$version/LICENCE"
     copy "README.md" "Locale/Readme/$name-$version/README.md"
