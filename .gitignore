@@ -11,4 +11,5 @@ apkg.log
 iff*
 *.c
 *.zip
+*.lha
 Images/*

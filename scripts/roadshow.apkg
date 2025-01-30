@@ -5,8 +5,8 @@ cpu=68020
 require=""
 description="Roadshow TCP/IP stack for classic Amiga"
 packager="lobotomius@gmail.com"
-source=("Roadshow.lha*e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
-upstream="https://aminet.net/package/biz/dbase/sqlite-3.34.0-amiga"
+source=("Roadshow.lha*d435fee50d16ae6cfd54713e9dce510686d80971cb5aac2fe79d40898734f3b6")
+upstream="http://roadshow.apc-tcp.de/index-en.php"
 
 # functions
 #  makedir path (relative to $pkgdir)
@@ -17,11 +17,55 @@ upstream="https://aminet.net/package/biz/dbase/sqlite-3.34.0-amiga"
 
 function build {
 	# we are in "$srcdir"
+    local file
 
-echo "koniec"; exit
+    # 7z x "Roadshow-1.15.lha" &> /dev/null
+    unpack "Roadshow-1.15.lha" "."
 
-    # create target amiga os directory structure
-    makedir "C"
-    copy "sqlite-3.34.0-amiga/build-m68k-amigaos/bin/sqlite3" "C/sqlite3"
+    cd "Roadshow-1.15" || exit 1
+
+    makedir "Devs/NetInterfaces"
+
+    copy "Workbench/Libs/020/bsdsocket.library" "Libs/"
+    copy "Workbench/Libs/usergroup.library" "Libs/"
+
+    for file in Workbench/C/*; do 
+        copy "$file" "C/${file##*/}"; 
+    done
+
+    for file in Workbench/Devs/Internet/*; do
+        copy "$file" "${file#*/}"
+    done
+
+    for file in Workbench/Storage/NetInterfaces/*; do
+        copy "$file" "${file#*/}"
+    done
+    
+    copy "Documentation/Roadshow.guide" "Locale/Help/"
+
+    for file in News ReadMe BillOfMaterials version; do copy "$file" "Locale/Readme/$name-$version/"; done
+    IFS=$'\n'
+    for file in $(find Documentation/Reference/ -type f -iname *.doc); do
+        copy "$file" "Locale/Readme/$name-$version/${file/Documentation\/Reference\//}"
+    done
+    rm "Workbench/S/User-Startup"
+    for file in $(find Workbench/S/ -type f); do
+        copy "$file" "${file#*/}"
+    done
+    unset IFS
+}
+
+function post_install {
+    local inject=""
+
+   FS= read -r -d '' inject <<EOF 
+If EXISTS S:Network-Startup
+   Execute S:Network-Startup
+EndIf
+EOF
+
+   user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
 
 }
+
+# vim: ts=4:syntax=sh:
