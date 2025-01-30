@@ -827,8 +827,6 @@ function repo_get_pkgfile() {
 	echo "$return_str"
 }
 
-repo_get_pkgfile "mui" 4
-exit
 
 #
 # 1 repo path
