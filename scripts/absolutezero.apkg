@@ -1,11 +1,11 @@
 name="absolutezero"
 tags="game, puzzle, platformer, redpill"
-version="1.1.0"
+version="1.1.1"
 cpu=68000
 require="amigaos>3"
 description="AGA puzzle platformer game"
 packager="lobotomius@gmail.com"
-source=("https://aminet.net/game/jump/AbsoluteZero.lha*6b4dda1c99840566e26ed5ec308beac6694d060668112ebe16e330f130cda654")
+source=("https://m68k.aminet.net/game/jump/AbsoluteZero.lha*2f05e045461388147cf6c774d4f647c8060f5ee9782c8e8fceefe21bf9ca7e0d")
 upstream="https://aminet.net/package/game/jump/AbsoluteZero"
 
 # this function is executed on build
@@ -17,18 +17,22 @@ upstream="https://aminet.net/package/game/jump/AbsoluteZero"
 #  $pkgdir
 
 function build {
-
     local file
 
-    cd "AbsoluteZero1.1" || exit 1
+    copy "AbsoluteZero1.1.1.info" "Games/AbsoluteZero.info"
+
+    cd "AbsoluteZero1.1.1" || exit 1
 
     IFS=$'\n'
-    for file in $(find . -type f); do
-        copy "${file:2}" "Games/${file:2}"
-        # echo "${file:2}"
+    for file in $(find data -type f); do
+        copy "${file}" "Games/AbsoluteZero/${file}"
     done
     unset IFS
 
+    copy "AbsoluteZero68k" "Games/AbsoluteZero/"
+    copy "AbsoluteZero68k.info" "Games/AbsoluteZero/"
+
+    copy "ReadMe" "Locale/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied
