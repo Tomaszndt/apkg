@@ -17,11 +17,84 @@ upstream="https://thomas-rapp.hier-im-netz.de/amiga/wbdock.html"
 
 function build {
 	# we are in "$srcdir"
+    local file
+    local dir
 
+    local wbdockconfiginfoxz="/Td6WFoAAATm1rRGBMC5F+keIQEcAAAAAAAAAP32PUbgD2gLsV0AcYP8ABNJRRJuOwqNcIHB+bH8
+XE2N38mC2iPX061rHnX1bw2VuXNOPpjEgTBnQ9FjnodfBo62T6nCXCco+ZhY4p7pxScMtmmCqdPM
+Ri5uGeCzT+JCowHJReC7Y2uEBIVCg0wYk1vhcfiXI9a0LdDlkUzbpZaWSFKAVZK1ctk8y8FpPFKv
+VzNHjA6ChXfkHHaWua2/ZPU2PdfXp1ESIuABWVCczUnCNMpPkORHkS4m43mmh/Q8b57Cg6JY+2Ej
+NEU76z63uKrfM0USg360nrTGuR/zHUrMPknSrgon37t/5iL6UcVMRGxYRCXsMEtqieRIf+rxyST5
+GpDpI0Y+BwV+0PCcPwiffqf978O3xSNA0KRAJIecGl8HQ6VrGD0PtQ6i/yYV9ywif3FRL6Far6h2
+N4G9kTzOMlEM/1hzXZqJQhbq6y/qJ0DJR7CF7QctAyskBYe0eq84rFr1irCpmq+bgD8kYc91P5l/
+Ts3zFosQ43oH5AQj/SHWBXaHat+Eq4SaL5dHV7lQkqXB76S+26ZI4H0UdwxG04FXJK3XZVoidYng
+6EXfRvh5++U9cMELltCbBBSp8R5TG2+rPZsgcb0W/A/lCCBj0UrPCNQiIDQH9e2ojZy25BqDAubP
+qf9KF+ZEwKoTvHR5qZKMt6wpReJPt06LifgbYU1t3KpZI93BMVbIVPWacrAR339zPqzJouPKQjDn
+vQrRxxpsuGvOOjSSVBkaBYYOjDG5WEl06oCb4W/Pc/AV+iqwu4y4tqsoTfr5j9uU45wrkCO/BfZf
+AWqeH4WKF5/qQXadMxRI5IZxacNSFDsXEsV7+bOCNd57KZB3GkG6ygHheCvdCN8PrnLTrCKXPa41
+hYSszAtWpKlEJBVSKQUmc7zpfswT8WnKFpavOt3ddj0cH6+CkgY0KtKXZv9C3inzB9o1z50ThOc7
+3qPPLhqrkwjSxboJT6udzdRZua1kkPTKXR0/WAIlsfzsGowE+qGYkAj0vqkQK9dIhC9eUkYJ8naT
+MoWCGNCALa9pJnn2PReQxvNDkQLIDGOEVd/Ck3jWnrogz5GBZy1TOksiW9f/dZ18vQxbKzAySblG
+ZitcMGOZGdKXY5xHLtVLnKFNPBH2FsGHR7Su2faP3M95pHGeAwY0pRrvp+XwOAfNeGW5UWBuBqWA
+Uaa8nkGOvmDV9DpGY8e3YhLta+c1WCgjnLbiQdT89Y4Dr2LDNE18gD3COpzPwiEvbPbwPbnUfMe/
+HXL10hPIIsh3HaDHC9L2zplQb9KBJJNhUEpuM8Srq4gaDbFajLrs38vjYMpUpCBgdR6keYNvvS1u
+MDLhLq143DehKwl/g7G4wNCzC7wmdp7CoLEjn2OxmJ2iuZgHKXo6Y/UfzCSfVKdUgpBJDws1D6/5
+heWbBedvgn8EOD2h8Dm/bjoasTM5URGt3aeSLGNvUMsPdc7p3jFvnCB0fiidjN3gMTj5UM5e9Fwr
+m54bQXKBH4485306JGq8/2WMPsbqSyESDKeVhTP5GF2XKfA9O9PA8myptrnl44ARB0ma3Lhxj/06
+tufqeR7+ML5QZY7kIQNobkUQC2v3X+CJhJyQq4c10Oj89AsCRrfForXPx13BYCpRtUkZ/8dtAdaz
+x87V+4BEmd6rEAIPgGQhxbQZBS0JPaL60SLxHp/Jf6iGDSK1gtZbyQuAlo7JCXqwQjzb7BmiRQcj
+9vGz6QhUTRaKtFdBX4w/k41WhXIgRVpaIA9v8IEmEoDiY0BCTf5mjxyRMMMpIoIAMuDMHQzmcfn/
+qInRhaKwg+hx811qzB3yLSmGfifd86VE1Jb6DgUoqhgTIc92pkJx+RHPTkXJh6swJXmguZQGcV4E
+wHv63nr7seGZxspYjxA5+yDxiNxXaYZGuKg5nTX6zotA/25R9k09I61w6ySmYUsggajep+ltz2zK
+CpyDKFNJA/2SdigEylOMjE5VooX79ZqX6guBVPf3IgZh0jcDkgNQg7Esi6oYHwDGehN45AUqBal+
+kcHuOMYAYMVZoujsLJv6sooCnKeCE4UYCynAW+GApgrI24thBQD3UKAjKk2b/D3n76akxxJ5F3ri
+TPdXvsyr5J7Ssyp0FFgiCA4ZZ83s0M0m8U05v2GidXWDAtx8PrE42BYYmtc5KjKcDpCiOECuMLmK
+wz1crQD8d5W0g0DPTq5Hz1ieARtrWz3ronaHqVvqezTYnMTeET7DH7EaUoDFZmJbNtkyjr4/sowW
+jCX+vTNfyAo5e4eI4y/P1HhjY/4SvDfviVhihH4PdHtyV/GZdEaIIUX+hsZrXAjIU1lSx3Lb+QKn
+Rk63/56kEbCiGpg9YYuFNKAWA29pqujVfvYdqdTau4tBoegIp6pVR9tVm1Qva4FIPeMpFAb/y+3C
+Q+hEFO0DhM6Y/d9vEqpWvTpBf7YNedKtWhWo8NodTH9Pe1fEZGS1HMEh+3SMQITmRzahsW+vnI/U
+GVSj1x1pMLFma+6n0Ue8/+Ba5qoykr6ZcyxX8pSkS6ENVXjHqDn4SFIal26KNpPBBS8x9ez/NNvt
+GeNvpq+2mBXYSFX/GdoGQ7insyEhThhowAFyJdlS8xCZjJBZ5Nk+3kTVJ+591EQSxjkmY8qDBjvf
+aVyeumZvXfUVxaYF/rOd0PO08m/ZBZ8SHfVdRFOJwGmowxTPA6s1fCDAsnQQTjuH7OfFN0bTQeMn
+hiSdA3v7jgqwn6TjY6oAdKiG1ybwwAlbCjC2sByjmN4AsNmzPNsH8l030Kdji3b9BVqyHFPc0AT7
+XrOUjNMq5lYYvMY5qkiMO65/mNqlWNBtnZP/mLm2tqKKR501vVqAkd9pMr7oo6/U2Drtg2qsO4Si
+q0sK0arjeWjwuKllYenaAv73BlmpcVNMyOwnv/sJ3K/rx73ByAsvB6BUPlSX0DZhn+l43KVNBQKz
+iOwMsHdlFGw8al/oC/uFUOiDUtpxgnr3RIcVyAcT3SdhL3ruEmipqyeGndFLfhhKw2Vq69h0rWzs
+uxpBayl/XiExMVgjRAlSX0wtEc5CArXw0peAcMXQWAn/Okg7BVngq3SOZf0UxNDBtY3S7bA9YMQf
+9la1MvFzh/3DAXr1u36KUHXPy0CGPwYI4mH4ACjhml8UPkdZAUTk2OPCizSZmMKHOyqFtY9JXjSB
+Cjudg7ADzurt9aBrMjYNdo6FnK/ubAleJ6gs0Kx/6hBkZlv6AFt+oCNrdiBLjzr5sm0Fq3GPaAYo
+pvHAov0Gvfwt9mRIJMlwyw+jnsWsPXeIDNUDdBpFFxDBJRb7fyMPzTwV3a9Tci2wtpPCn428FYiu
+UdAU1+0tLUI4FmBCWKD7KDYHXyGC4i9O+HRHaIz3gYiMv0XSLylTibEMtmzEJ9CXou+IhPLheUt8
+4F65+FdPvWjzam+xLakL7mGnZQgbK6cILawBWhivoAh3nIVPmXkz4C1LZwcOsBUWCHEU33o4Ehth
+l1fuA+H7gzBjT3k+muDg9ztCFusNBNFCWA7YtGYGg829fWc73gFlHCTMxRDB8FgG4lavMiCUbqoV
+9ltykUGNa45NvENvTeJLf/i21uyFUEjjYXuA4uojJUgMdT4xKg9YjIPK3moJN26U1OXUo1D87R0z
+4Xr86fqUg+GXCGvrfspiOVO6c6m7eQazCvQZ0/AJ7IHUqKaA8+kYCyby7vMr126cXYg+HYIaOtW8
+n6ozoYTQyuwno6bwHip2Smj5P87gpDd2CyccH7mQsFXc0jh4gVVMHEirj+OhkafD/uuy219cW0nB
+r4kKY7GvbPmPfoU8XeAMO6OGlXS+mzmpsSBOT4FfQ5tGbWhl2/janENE4AIhdcKl2NrGAcj71wTc
+YlTgpCg1tbmzfbCjSIMXjd6j2ZWpLcWavbS64lRcnU1qjIKUXoLpAPU7JDjPa6hfE8QmuM5JlZOz
+kOp0KN22a+GRF8Oiw96kTFF6leu63XVCNKC8N1fS11ohputSpTufrfA+/sw20ZhFIXgesNZbrqqu
+BFToPrUG4G2pt6sAAAAA/VurXv3o0gkAAdUX6R4AABuSqe6xxGf7AgAAAAAEWVo="
+
+    copy WBDock2.info "Utilities/"
     cd WBDock2 || exit 1
 
-    for file in FUNNYDOCK* LCARS* SPELLARIUM* WBDock WBDock.info wbex; do copy "$file" "Utilities/WBDock2/$file"; done
+    for file in FUNNYDOCK* LCARS* SPELLARIUM* WBDock WBDock.info wbex WBDock.config WBDock.info; do 
+        copy "$file" "Utilities/WBDock2/$file"; 
+    done
+    IFS=$'\n'
+        for dir in Patterns Skins apps dockbrush; do
+            for file in $(find "$dir" -type f); do
+                copy "$file" "Utilities/WBDock2/$file"
+            done
+        done
+    unset IFS
+    copy "WBDock.guide" "Locale/Help/"
+    copy "WBDock.guide" "Locale/Help/"
+    copy "WBDock.guide.info" "Locale/Help/"
 
+    copy "WBDock.config" "WBStartup/"
+    echo "$wbdockconfiginfoxz" | base64 -d | xz -d > WBDock.config.info
+    copy "WBDock.config.info" "WBStartup/"
 }
 
 # vim: ts=4:syntax=sh:
