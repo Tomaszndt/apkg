@@ -20,14 +20,7 @@ upstream="https://aminet.net/package/misc/emu/VICE-AmigaOS3-3.1"
 function build {
 
     cd "VICE-AmigaOS3-3.1" || exit 1
-exit
-    copy "Classes/DataTypes/koala.datatype" "Classes/Datatypes/"
-    copy "Devs/DataTypes/Koala" "Devs/Datatypes/"
-    copy "Devs/DataTypes/Koala.info" "Devs/Datatypes/"
 
-    copy "aminet_readme.txt" "Locale/Readme/$name-$version/"
-    copy "Koala_DataType.guide" "Locale/Help/$name-$version/"
-    copy "Koala_DataType.guide.info" "Locale/Help/$name-$version/"
 
 }
 
