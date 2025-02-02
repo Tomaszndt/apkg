@@ -1,11 +1,13 @@
-name="sashimi"
+name="pngalpha-library"
 tags="dev, build, gnu, cli"
 version="1.7"
 cpu=68000
 require=""
-description="intercepts raw serial debugging output on your own machine"
+description="Load alpha channel from PNG pictures etc."
 packager="lobotomius@gmail.com"
-source=("https://m68k.aminet.net/dev/debug/Sashimi.lha*1685ab0f64f0ab3a167d9bb6863b7942eb1be3363592077afcaed0862bbf7853")
+source=(
+    "https://m68k.aminet.net/dev/debug/Sashimi.lha*1685ab0f64f0ab3a167d9bb6863b7942eb1be3363592077afcaed0862bbf7853"
+    )
 upstream="https://m68k.aminet.net/package/dev/debug/Sashimi"
 
 # functions
