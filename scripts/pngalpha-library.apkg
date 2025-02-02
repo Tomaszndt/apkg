@@ -1,14 +1,14 @@
 name="pngalpha-library"
-tags="dev, build, gnu, cli"
-version="1.7"
+tags="png, image, library"
+version="2.0"
 cpu=68000
 require=""
 description="Load alpha channel from PNG pictures etc."
 packager="lobotomius@gmail.com"
 source=(
-    "https://m68k.aminet.net/dev/debug/Sashimi.lha*1685ab0f64f0ab3a167d9bb6863b7942eb1be3363592077afcaed0862bbf7853"
+    "https://m68k.aminet.net/util/libs/pngalpha_lib.lha*c9b28db8e795394330dd33ce8d15327b94c11c2d44d5ccb3bdc45183b37c4299"
     )
-upstream="https://m68k.aminet.net/package/dev/debug/Sashimi"
+upstream="https://m68k.aminet.net/package/util/libs/pngalpha_lib"
 
 # functions
 #  makedir     path (relative to $pkgdir)
@@ -21,8 +21,10 @@ upstream="https://m68k.aminet.net/package/dev/debug/Sashimi"
 # this function is executed on build
 function build {
 
-    copy "sashimi" "C/"
-    copy "sashimi.doc" "Locale/Readme/$name-$version/"
+    cd "pngalpha_library20"
+
+    copy "README" "Locale/Readme/$name-$version/"
+    copy "Libs/pngalpha.library" "Libs/"
 
 }
 
