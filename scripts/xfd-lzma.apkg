@@ -1,0 +1,38 @@
+name="xfd-lzma"
+tags="xfd, archive, lzma"
+version="1.2a"
+cpu=68020
+require="xfdmaster"
+description="LZMA slave for xfdmaster.library"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/pack/xfd_lzma.lha*6ab754f9653ce037353ca81f3d59bd837bb1622a8123815641938c66ae9194d3"
+    )
+upstream="https://aminet.net/package/util/pack/xfd_lzma"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "xfd_lzma"
+
+    copy "OS3/lzma" "Libs/xfd/"
+
+    copy "xfd_lzma.readme" "Locale/Help/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
