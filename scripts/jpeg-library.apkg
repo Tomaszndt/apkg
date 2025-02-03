@@ -1,7 +1,7 @@
 name="jpeg-library"
 version="6.2a"
 cpu=68040
-require="amigaos>3, mui > 3.8"
+require="amigaos>3, mui>3.8"
 description="shared library to load/save jpegs"
 packager="lobotomius@gmail.com"
 source=(
