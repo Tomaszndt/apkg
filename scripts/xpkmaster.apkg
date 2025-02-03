@@ -1,0 +1,122 @@
+name="xpkmaster"
+tags="archive, library"
+version="5.2a"
+cpu=68020
+require=""
+description="Interfacing standard between application and packer libraries"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/pack/xpk_User.lha*ec48c2820e45e64e1c1970592f06dc32c64546a6c7d545b39c79b469012879f3"
+    )
+upstream="https://aminet.net/package/util/pack/xpk_User"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+    local info="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"
+
+    copy "xpk_User.readme" "Locale/Help/$name-$version/"
+
+    cd "xpk_User"
+
+    copy "EnvArc/xpkmaster.prefs" "Prefs/Env-Archive/"
+
+    for file in C/*; do copy "$file" "C/${file##*/}"; done
+
+    echo "$info" | base64 -d | xz -d > Prefs/XpkMaster.info
+    for file in Prefs/*; do copy "$file" "Prefs/${file##*/}"; done
+
+    IFS=$'\n'
+    for file in $(find Libs/ -type f); do copy "$file" "$file"; done
+    for file in $(find Libs_68020+/ -type f); do copy "$file" "Libs/${file##*/}"; done
+    unset IFS
+
+    copy "XpkMaster.guide" "Locale/Help/"
+    copy "XpkMaster.guide.info" "Locale/Help/"
+
+    copy "X-Systems.TXT" "Locale/Help/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
