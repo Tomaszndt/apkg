@@ -1,0 +1,51 @@
+name="xfdmaster"
+tags="archive, depack, libray"
+version="1.38"
+cpu=68020
+require="amigaos>3"
+description="Decrunch packed files (exe/data)"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/pack/xfdmaster.lha*4147a2b29a7d007ab5b5a5f855c2a8095c6a9d9cadcb4f238d86cd8ca1424d62"
+    )
+upstream="https://aminet.net/package/util/pack/xfdmaster"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "xfd_User"
+
+    for file in C/*; do
+        copy "$file" "C/${file##*/}"
+    done
+
+    IFS=$'\n'
+    for file in $(find Libs/ -type f); do
+        copy "$file" "$file"
+    done
+    unset IFS
+
+    for file in Docs/*; do
+        copy "$file" "Locale/Help/Readme/$name-$version/${file##*/}"
+    done
+    copy "xfdmaster.readme" "Locale/Help/Readme/$name-$version/"
+    copy "X-Systems.TXT" "Locale/Help/Readme/$name-$version/"
+    copy "README" "Locale/Help/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
