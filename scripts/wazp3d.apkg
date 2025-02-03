@@ -25,6 +25,7 @@ function build {
     cd "Wazp3D"
 
     copy "Wazp3D-Prefs" "Prefs/"
+    copy "Wazp3D-Prefs.info" "Prefs/"
 
     copy "Wazp3D.library-full" "Libs/Warp3D.library"
 

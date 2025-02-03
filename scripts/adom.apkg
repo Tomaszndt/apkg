@@ -27,7 +27,7 @@ function build {
     copy "adom" "Games/"
 
     for file in docs/*; do copy "$file" "Locale/Readme/$name-$version/${file##*/}"; done
-    for file in licenses/*; do copy "$file" "Locale/Licenses/$name-$version/${file##/}"; done
+    for file in licenses/*; do copy "$file" "Locale/License/$name-$version/${file##/}"; done
 }
 
 # this function is executed on installation after all files have been copied
