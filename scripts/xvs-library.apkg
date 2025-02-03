@@ -1,14 +1,14 @@
-name="avalanche"
-tags="archive, gui, xad, xfd"
-version="2.4"
+name="xvs-library"
+tags="virus, antivirus, libray"
+version="33.47"
 cpu=68020
 require="amigaos>3, xadmaster"
-description="ReAction unarchive GUI for xfd/xadmaster"
+description="The eXternal Virus Scanner Library"
 packager="lobotomius@gmail.com"
 source=(
-    "https://aminet.net/util/arc/avalanche.lha*95b25c3c2fbf126532803c177113d979acaa3aace0a3689ddb24a19706404e67"
+    "https://www.vht-dk.dk/amiga/xvs/xvslibrary.lha*fef80c9a5dd2f4bac63333e35eb1b2498f781ac38b2ed4ed5c6388c0c42c2b38"
     )
-upstream="https://aminet.net/package/util/arc/avalanche"
+upstream="https://www.vht-dk.dk/amiga/amiga.htm"
 
 # functions
 #  makedir     path (relative to $pkgdir)
@@ -22,15 +22,14 @@ upstream="https://aminet.net/package/util/arc/avalanche"
 function build {
     local file
 
-    cd "Avalanche"
+    copy "xvs.readme" "Locale/Help/Readme/$name-$version/"
 
-    copy "Avalanche" "Utilities/"
-    copy "Avalanche.info" "Utilities/"
+    cd "xvs"
 
-    # copy "libs/xvs.l.main" "Libs/"
+    copy "libs/xvs.library" "Libs/"
 
-    copy "avalanche.readme" "Locale/Help/Readme/$name-$version/"
-    copy "LICENSE" "Locale/Help/License/$name-$version/"
+    copy "HISTORY" "Locale/Help/Readme/$name-$version/"
+    copy "README" "Locale/Help/Readme/$name-$version/"
 
 }
 
