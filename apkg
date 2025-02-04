@@ -206,10 +206,6 @@ function unpack() {
 
 	case "$ext" in
 		"lha")
-			# if [ ! $(which lha) ]; then
-			# 	_echo "!lha executable not found"
-			# 	exit 1
-			# fi
 			# lha xw="$2" "$1" &> /dev/null
 			7z x "$1" -o"$2" &> /dev/null
 		;;
@@ -1268,7 +1264,9 @@ function repo_install() {
 
 case $_mode in
 	"build")
-		pkg_make "$_filename"
+		for _filename in "${_input_names[@]}"; do
+			pkg_make "$_filename"
+		done
 	;;
 	"install")
 		tmp=0
