@@ -19,7 +19,15 @@ upstream="https://aminet.net/package/util/dtype/JFIFdt44"
 # this function is executed on build
 function build {
 
-    copy "make" "C/"
+    cd "jfifdt44.18" || exit 1
+
+    copy "JFIFdy.guide" "Locale/Help/"
+    copy "JFIFdy.readme" "Locale/Readme/$name-$version/"
+
+    copy "Devs/Datatypes/JFIF" "Devs/DataTypes/"
+    copy "Devs/Datatypes/JFIF.info" "Devs/DataTypes/"
+
+    copy "Classes/Datatypes/jfif.datatype" "Classes/DataTypes/"
 
 }
 
