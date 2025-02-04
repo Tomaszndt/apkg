@@ -17,8 +17,6 @@ readonly creset="\e[0m"
 readonly _sql_create_table="CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'tags' TEXT, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
 readonly _sql_list_table
 
-_verbose=
-_mode=""
 _pwd="$(pwd)"
 _filename=""
 return_str=""
@@ -86,15 +84,19 @@ function usage() {
 	local str_missing="missing binaries:"
 
 cat << EOF
-$0 mode [arguments...] (switches...)
-usage                        display usage information
-build    filename            build a package
-install  package filename    install a package
-install  name(:version)      install a package
-repo     list                list repo contents
-repo     rescan              recreate repository database
-repo     init [path]         create a repo
-package  info filename       print package metadata
+${0##*/} mode [arguments...] (switches...)
+mode         arguments           description
+------------ ------------------- ----------------------------
+usage                            display usage information
+build        filename            build a package
+install      package filename    install a package
+install      name(:version)      install a package
+repo-list    [path]              list repo contents
+repo-rescan  [path]              recreate repository database
+repo-init    [path]              create a repo
+package-info filename            print package metadata
+
+short mode i=install, b=build, pi=package-info
 
 -v         verbose output
 -root=path set root path
@@ -102,21 +104,16 @@ package  info filename       print package metadata
 
 EOF
 
-	for binary in 7z lha zip unzip unlzx xdftool ifftool infotool; do
+	for binary in 7z lha zip unzip unlzx rar xdftool ifftool infotool; do
 		[[ $(which "$binary" 2>/dev/null ) ]] && str_avail="$str_avail $binary" || str_missing="$str_missing $binary"
 	done
 
 	echo "$str_avail"
 	echo "$str_missing"
 
+	exit 1
 }
 
-#
-# usage
-if [[ $# == 0 ]]; then
-	usage
-	exit
-fi
 
 #
 # load configuration
@@ -124,84 +121,57 @@ unset repo
 source "~/.apkg/apkg.config" &> /dev/null
 source "./apkg.config" &> /dev/null
 
-#
-# process arguments
-case "$1" in
-	"build")
-		_mode="build"
-		_filename="$2"
-		shift 2
-	;;
-	"install")
-		_mode="install"
-		_filename="$2"
-		shift 2
-	;;
-	"repo")
-		_mode="repo"
-		shift
-		case "$1" in
-			"rescan")
-				_mode="repo-rescan"
-				shift
-			;;
-			"list")
-				_mode="repo-list"
-				shift
-			;;
-			"init")
-				_mode="repo-init"
-				shift
-			;;
-		esac
-	;;
-	"package")
-		shift
-		case "$1" in
-		"info")
-			_mode="package-info"
-			_filename="$2"
-			shift 2
+declare _verbose=""
+declare _mode=""
+declare _scan_mode="mode"
+declare -a _input_names
+
+while [[ $# -gt 0 ]]; do
+	case "$_scan_mode" in
+		"mode")
+			case "$1" in
+				"build") _mode="build"; _scan_mode="files" ;;
+				"b") _mode="build"; _scan_mode="files" ;;
+				"install") _mode="install"; _scan_mode="files" ;;
+				"i") _mode="install"; _scan_mode="files" ;;
+				"repo-rescan") _mode="repo-rescan"; _scan_mode="files" ;;
+				"repo-list") _mode="repo-list"; _scan_mode="files" ;;
+				"repo-init") _mode="repo-list"; _scan_mode="files" ;;
+				"package-info") _mode="package-info"; _scan_mode="files" ;;
+				"pi") _mode="package-info"; _scan_mode="files" ;;
+				"usage") usage; exit ;;
+				"version") _mode="version"; _scan_mode="files" ;;
+				*) _echo "%invalid mode specified: \"$1\"" ;;
+			esac
+			shift
 		;;
-		esac
-	;;
-	"usage")
-		usage
-		exit
-	;;
-	"version")
-		_mode="version"
-	;;
-	*)
-		_echo "!invalid mode specified: \"$1\""
-		exit 1
-	;;
+		"files")
+			if [[ "$1" != -* ]]; then
+				_input_names+=("$1") 
+				shift
+			else
+				_scan_mode="switches"
+			fi
+		;;
+		"switches")
+			switch=${1%%=*}
+			argument=${1##*=}
+			case "$switch" in
+				"-v") _verbose=1 ;;
+				"-repo") repo="$argument" ;;
+				"-root") root="$argument" ;;
+				*) _echo "%invalid switch $1" ;;
+			esac
+			shift
+		;;
 	esac
-	
-	while [[ $# -gt 0 ]]; do
-		switch=${1%%=*}
-		argument=${1##*=}
+done
 
-		case $switch in
-			"-v")
-				_verbose=1
-			;;
-			"-repo")
-				repo="$argument"
-			;;
-			"-root")
-				root="$argument"
-			;;
-			*)
-				_echo "!invalid parameter $1"
-			;;
-		esac
-		shift 
-	done
+[[ $_scan_mode == "mode" ]] && usage
+[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 
 #
-# rename _paths not to remove trailing slash
-
+# rename _paths to include trailing slash
 for p in ${_paths[*]}; do
 	[[ ! ${p:${#p}-1:1} == '/' ]] && p="${p}/"
 done
