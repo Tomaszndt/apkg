@@ -758,7 +758,7 @@ function repo_update() {
 	
 }
 
-# is package present in the repo
+# is specific package version present in the repo
 # 1 name
 # 2 version (optional)
 function repo_has() {
@@ -767,10 +767,8 @@ function repo_has() {
 	local tmp
 
 	if [ -z "$version" ]; then	
-		_echo "@querying $repo for $name"
 		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
 	else
-		_echo "@querying $repo for $name, version $version"
 		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version = '$version' order by version desc limit 1")
 	fi
 
@@ -1236,28 +1234,26 @@ function install_package() {
 }
 
 # 1 package name(:version)
-function ainstall() {
+function install_repo() {
 	local pkgname
 	local pkgversion
+	local pkgfile
+	local pkgver
 
 	if [[ $1 == *:* ]]; then
 		pkgname="${1%:*}"
 		pkgversion="${1#*:}"
 	else
 		pkgname="$1"
-		pkgversion="0"
+		pkgversion=""
 	fi
 
-	repo_has "$pkgname" "$pkgversion"
+	pkgfile="$(repo_get_pkgfile "$pkgname" "$pkgversion")"
+
+	[[ "$pkgfile" ]] || _echo "%package ${1} not found in ${repo}"
+	
+	install_package "${repo}${pkgfile}"
 }
-
-function repo_install() {
-	local name
-	local version
-
-
-}
-
 
 ########
 # top level logic
@@ -1270,20 +1266,22 @@ case $_mode in
 	;;
 	"install")
 		tmp=0
-		if [[ $_filename == *.7z ]]; then
-			install_package "$_filename"
-			tmp=1
-		fi
-		if [[ $_filename == *.apkg ]]; then
-			pkg_make "$_filename"
-			install_package "${repo}${_pkgfile}"
-			tmp=1
-		fi
-		if [ $tmp -gt 0 ]; then
-			: #_echo "success"
-		else
-			ainstall "$_filename"
-		fi
+		for _filename in "${_input_names[@]}"; do
+			if [[ $_filename == *.7z ]]; then
+				install_package "$_filename"
+				tmp=1
+			fi
+			if [[ $_filename == *.apkg ]]; then
+				pkg_make "$_filename"
+				install_package "${repo}${_pkgfile}"
+				tmp=1
+			fi
+			if [ $tmp -gt 0 ]; then
+				: # done
+			else
+				install_repo "$_filename"
+			fi
+		done
 	;;
 	"repo-init")
 		repo_init "$repo"
