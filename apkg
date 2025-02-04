@@ -761,6 +761,7 @@ function repo_update() {
 # is specific package version present in the repo
 # 1 name
 # 2 version (optional)
+# return "0" for none 
 function repo_has() {
 	local name="$1"
 	local version="$2"
@@ -779,20 +780,39 @@ function repo_has() {
 
 }
 
+# is package version at least of present in the repo
+# 1 name
+# 2 version (optional)
+# return "0" for none
+function repo_has_least() {
+	local name="$1"
+	local version="$2"
+	local tmp
+
+	if [ -z "$version" ]; then	
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
+	else
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version >= '$version' order by version desc limit 1")
+	fi
+
+	[ -z "$tmp" ] && tmp="0"
+
+	return_str="$tmp"
+	echo "$tmp"
+
+}
+
 # return package file name within $repo for given package name and version
 # 1 name
 # 2 version
 function repo_get_pkgfile() {
 	local name
 	local version
-	local repo_version
 
 	name="$1"
 	version="$2"
 
-	repo_version=$(repo_has "$name" "$version")
-
-	if [[ "$repo_version" > "0" ]]; then
+	if [[ "$version" > "0" ]]; then
 		if [[ "$version" ]]; then
 			return_str=$(sqlite3 "${repo}repo.db" "select file from packages where name = '$name' and version = '$version' order by version desc limit 1")
 		else
@@ -1248,7 +1268,9 @@ function install_repo() {
 		pkgversion=""
 	fi
 
-	pkgfile="$(repo_get_pkgfile "$pkgname" "$pkgversion")"
+	pkgver=$(repo_has_least "$pkgname" "$pkgversion")
+
+	pkgfile="$(repo_get_pkgfile "$pkgname" "$pkgver")"
 
 	[[ "$pkgfile" ]] || _echo "%package ${1} not found in ${repo}"
 	
