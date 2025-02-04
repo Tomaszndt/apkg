@@ -244,7 +244,6 @@ function unpack() {
 	esac	
 }
 
-#
 # return uaem formatted stat/permissions string
 # 1 filename
 # 2 permissions
@@ -259,22 +258,20 @@ function sprotect() {
 
 	td="$(date +%Y-%m-%d)"
 	tt="$(date +%T).00"
-	# fname="$fname.uaem"
 
-	if [[ -z $2 ]]; then 
-		if [[ $perms == *h* ]]; then f="h${f:1:7}"; fi
-		if [[ $perms == *s* ]]; then f="${f:0:1}s${f:2:7}"; fi
-		if [[ $perms == *p* ]]; then f="${f:0:2}p${f:3:7}"; fi
-		if [[ $perms == *a* ]]; then f="${f:0:3}a${f:4:7}"; fi
-		if [[ $perms == *r* ]]; then f="${f:0:4}r${f:5:7}"; fi
-		if [[ $perms == *w* ]]; then f="${f:0:5}w${f:6:7}"; fi
-		if [[ $perms == *e* ]]; then f="${f:0:6}e${f:7:7}"; fi
-		if [[ $perms == *d* ]]; then f="${f:0:7}d"; fi
+	if [[ -n "$2" ]]; then 
+		[[ $perms == *h* ]] && f="h${f:1:7}"
+		[[ $perms == *s* ]] && f="${f:0:1}s${f:2:7}"
+		[[ $perms == *p* ]] && f="${f:0:2}p${f:3:7}"
+		[[ $perms == *a* ]] && f="${f:0:3}a${f:4:7}"
+		[[ $perms == *r* ]] && f="${f:0:4}r${f:5:7}"
+		[[ $perms == *w* ]] && f="${f:0:5}w${f:6:7}"
+		[[ $perms == *e* ]] && f="${f:0:6}e${f:7:7}"
+		[[ $perms == *d* ]] && f="${f:0:7}d"
 	else
 		f="----rwed"
 	fi
-	echo "$f $td $tt $comment" #> "$fname"
-
+	echo "$f $td $tt $comment"
 }
 
 # set file permissions (write to uaem file)
