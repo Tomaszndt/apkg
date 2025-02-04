@@ -81,18 +81,34 @@ function _echo() {
 }
 
 function usage() {
+	local binary
+	local str_avail="available binaries:"
+	local str_missing="missing binaries:"
+
 cat << EOF
 $0 mode [arguments...] (switches...)
-    usage                        display usage information
-    build    filename            build a package
-    install  package filename    install a package
-	install  name(:version)      install a package
-    repo     list                list repo contents
-    repo     rescan              recreate repository database
-    repo     init [path]         create a repo
-    package  info filename       print package file metadata
-    -v	verbose output
+usage                        display usage information
+build    filename            build a package
+install  package filename    install a package
+install  name(:version)      install a package
+repo     list                list repo contents
+repo     rescan              recreate repository database
+repo     init [path]         create a repo
+package  info filename       print package metadata
+
+-v         verbose output
+-root=path set root path
+-repo=path set repo path
+
 EOF
+
+	for binary in 7z lha zip unzip unlzx xdftool ifftool infotool; do
+		[[ $(which "$binary" 2>/dev/null ) ]] && str_avail="$str_avail $binary" || str_missing="$str_missing $binary"
+	done
+
+	echo "$str_avail"
+	echo "$str_missing"
+
 }
 
 #
