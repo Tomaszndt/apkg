@@ -1043,7 +1043,7 @@ function is_installed() {
 
 	pkgname="$1"
 
-	version=$(sqlite3 "$root/apkg/installed.db" "select version from packages where name='$pkgname' order by version desc limit 1")
+	version=$(sqlite3 "${root}apkg/installed.db" "select version from packages where name='$pkgname' order by version desc limit 1")
 
 	if [ $version ]; then
 		echo "$version"
@@ -1274,22 +1274,29 @@ function install_package() {
 	_echo "installation complete"
 }
 
-# 1 package name(:version)
+# 1 package name([:<>]version)
 function install_repo() {
 	local pkgname
 	local pkgversion
 	local pkgfile
 	local pkgver
+	local pkgrel=":"
 
-	if [[ $1 == *:* ]]; then
-		pkgname="${1%:*}"
-		pkgversion="${1#*:}"
+	if [[ $1 =~ ([^:\<\>]+)([:\<\>])([^:\<\>]+) ]]; then
+		pkgname="${BASH_REMATCH[1]}"
+		pkgversion="${BASH_REMATCH[3]}"
+		pkgrel="${BASH_REMATCH[2]}"
 	else
 		pkgname="$1"
 		pkgversion=""
+		pkgrel=":"
 	fi
 
-	pkgver=$(repo_has_least "$pkgname" "$pkgversion")
+	case "$pkgrel" in
+		":") pkgver=$(repo_has "$pkgname" "$pkgversion") ;;
+		">") pkgver=$(repo_has_least "$pkgname" "$pkgversion") ;;
+		"<") pkgver=$(repo_has_most "$pkgname" "$pkgversion") ;;
+	esac
 
 	pkgfile="$(repo_get_pkgfile "$pkgname" "$pkgver")"
 
@@ -1297,6 +1304,8 @@ function install_repo() {
 	
 	install_package "${repo}${pkgfile}"
 }
+
+
 
 ########
 # top level logic
