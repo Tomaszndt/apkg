@@ -134,9 +134,9 @@ while [[ $# -gt 0 ]]; do
 				"b") _mode="build"; _scan_mode="files" ;;
 				"install") _mode="install"; _scan_mode="files" ;;
 				"i") _mode="install"; _scan_mode="files" ;;
-				"repo-rescan") _mode="repo-rescan"; _scan_mode="files" ;;
-				"repo-list") _mode="repo-list"; _scan_mode="files" ;;
-				"repo-init") _mode="repo-list"; _scan_mode="files" ;;
+				"repo-rescan") _mode="repo-rescan"; _scan_mode="switches" ;;
+				"repo-list") _mode="repo-list"; _scan_mode="switches" ;;
+				"repo-init") _mode="repo-list"; _scan_mode="switches" ;;
 				"package-info") _mode="package-info"; _scan_mode="files" ;;
 				"pi") _mode="package-info"; _scan_mode="files" ;;
 				"usage") usage; exit ;;
@@ -168,7 +168,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ $_scan_mode == "mode" ]] && usage
-[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 
 #
 # rename _paths to include trailing slash
@@ -802,6 +801,28 @@ function repo_has_least() {
 
 }
 
+# is package version at most of $ present in the repo
+# 1 name
+# 2 version (optional)
+# return "0" for none
+function repo_has_most() {
+	local name="$1"
+	local version="$2"
+	local tmp
+
+	if [ -z "$version" ]; then	
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
+	else
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version <= '$version' order by version desc limit 1")
+	fi
+
+	[ -z "$tmp" ] && tmp="0"
+
+	return_str="$tmp"
+	echo "$tmp"
+
+}
+
 # return package file name within $repo for given package name and version
 # 1 name
 # 2 version
@@ -1165,9 +1186,9 @@ function install_package() {
 	local pkgversion
 
 	install_init_root
-	# package_is_installed "$1"
 
 	filename=$(realpath "$1")
+
 	if [ ! -f "$filename" ]; then
 		_echo "!file not found $filename";
 		exit 1
@@ -1282,12 +1303,14 @@ function install_repo() {
 
 case $_mode in
 	"build")
+		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 		for _filename in "${_input_names[@]}"; do
 			pkg_make "$_filename"
 		done
 	;;
 	"install")
 		tmp=0
+		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 		for _filename in "${_input_names[@]}"; do
 			if [[ $_filename == *.7z ]]; then
 				install_package "$_filename"
