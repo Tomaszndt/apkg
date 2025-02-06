@@ -823,7 +823,49 @@ function repo_has_most() {
 
 }
 
-# return package file name within $repo for given package name and version
+# is package version at most of $ present in the repo
+# 1 name
+# 2 version (optional)
+# return "0" for none
+function repo_has_below() {
+	local name="$1"
+	local version="$2"
+	local tmp
+
+	if [ -z "$version" ]; then	
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
+	else
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version < '$version' order by version desc limit 1")
+	fi
+
+	[ -z "$tmp" ] && tmp="0"
+
+	return_str="$tmp"
+	echo "$tmp"
+
+}
+
+# 1 name
+# 2 version (optional)
+# return "0" for none
+function repo_has_over() {
+	local name="$1"
+	local version="$2"
+	local tmp
+
+	if [ -z "$version" ]; then	
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
+	else
+		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version > '$version' order by version desc limit 1")
+	fi
+
+	[ -z "$tmp" ] && tmp="0"
+
+	return_str="$tmp"
+	echo "$tmp"
+
+}
+
 # 1 name
 # 2 version
 function repo_get_pkgfile() {
@@ -1274,7 +1316,7 @@ function install_package() {
 	_echo "installation complete"
 }
 
-# 1 package name([:<>]version)
+# 1 package name([:=<>]version)
 function install_repo() {
 	local pkgname
 	local pkgversion
@@ -1282,7 +1324,7 @@ function install_repo() {
 	local pkgver
 	local pkgrel=":"
 
-	if [[ $1 =~ ([^:\<\>]+)([:\<\>])([^:\<\>]+) ]]; then
+	if [[ $1 =~ ([^:\<\>]+)([=:\<\>])([^:\<\>]+) ]]; then
 		pkgname="${BASH_REMATCH[1]}"
 		pkgversion="${BASH_REMATCH[3]}"
 		pkgrel="${BASH_REMATCH[2]}"
@@ -1294,8 +1336,11 @@ function install_repo() {
 
 	case "$pkgrel" in
 		":") pkgver=$(repo_has "$pkgname" "$pkgversion") ;;
-		">") pkgver=$(repo_has_least "$pkgname" "$pkgversion") ;;
-		"<") pkgver=$(repo_has_most "$pkgname" "$pkgversion") ;;
+		"=") pkgver=$(repo_has "$pkgname" "$pkgversion") ;;
+		">") pkgver=$(repo_has_over "$pkgname" "$pkgversion") ;;
+		"<") pkgver=$(repo_has_below "$pkgname" "$pkgversion") ;;
+		">=") pkgver=$(repo_has_least "$pkgname" "$pkgversion") ;;
+		"<=") pkgver=$(repo_has_most "$pkgname" "$pkgversion") ;;
 	esac
 
 	pkgfile="$(repo_get_pkgfile "$pkgname" "$pkgver")"
