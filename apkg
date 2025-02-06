@@ -14,7 +14,7 @@ readonly cbold="\e[1m"
 readonly culine="\e[4m"
 readonly creset="\e[0m"
 
-readonly _sql_create_table="CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'tags' TEXT, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
+readonly _sql_create_table="CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'tags' TEXT, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL );"
 readonly _sql_list_table
 
 _pwd="$(pwd)"
@@ -708,12 +708,14 @@ function repo_add_package() {
 	local packager
 	local url
 	local query
-	local repo
+	local repopath
+	local tmp
 
-	repo="$2" || "$repo"
-	meta=$(package_meta "$1")
-	file="${i/$repo\//}"
-	meta=$(package_meta "$i")
+	[[ "$2" ]] && repopath="$2" || repopath="${repo}"
+	file="${1}"
+
+	meta=$(package_meta "$file")
+
 	name=$(meta_get "$meta" "name")
 	version=$(meta_get "$meta" "version")
 	cpu=$(meta_get "$meta" "cpu")
@@ -722,8 +724,9 @@ function repo_add_package() {
 	url=$(meta_get "$meta" "url")
 	tags=$(meta_get "$meta" "tags")
 
-	query="insert into packages ('file', 'name', 'version', 'cpu', 'tags', 'built', 'packager', 'url') values ('$file', '$name', '$version', '$cpu', '$tags', '$built', '$packager', '$url')"
-	sqlite3 "$2"/repo.db "$query"
+	query="insert into packages ('file', 'name', 'version', 'cpu', 'tags', 'built', 'packager', 'url') values ('$file', '$name', '$version', '$cpu', '$tags', '$built', '$packager', '$url' ) "
+	tmp=$(sqlite3 "${repopath}repo.db" "select name from packages where name='$name' and version ='$version'")
+	[[ $tmp ]] || sqlite3 "${repopath}repo.db" "$query"
 	_echo "@added $name, $version into $2"
 }
 
@@ -1046,7 +1049,7 @@ function pkg_make() {
 
 	_pkgfile="$pkgname.7z"
 	mv "${pkgdir}${pkgname}.7z" "$repo/"
-
+	repo_add_package "${repo}${pkgname}.7z"
 }
 
 # initializes apkg databases in $root
