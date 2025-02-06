@@ -1,0 +1,39 @@
+name="uuid-library"
+tags="library, uuid"
+version="2.0"
+cpu=68020
+require=""
+description="RFC 4122 compatible uuid library"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/AmigaPorts/UUID/releases/download/v2.0/uuid.lha*93fd3b5026f2af773d151e54b30227a4952890ccc8fdd0ce1ccd9d6af08a6e5f"
+    )
+upstream="https://github.com/AmigaPorts/UUID"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "uuid" || exit 1
+
+    copy "Libs/uuid.library" "Libs/"
+
+    copy "uuid.readme" "Locale/Readme/$name-$version/${file}"
+    
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
