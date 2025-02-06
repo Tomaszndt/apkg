@@ -1,0 +1,41 @@
+name="expat-library"
+tags="library, xml, parse"
+version="4.3"
+cpu=68020
+require=""
+description="library for parsing XML"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/expat.lha*5a9d7663ebc21c9ee524eb55bb58c43eea454e7e83eefd73c7ca4761f93774a1"
+    )
+upstream="https://aminet.net/package/util/libs/expat"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "expat" || exit 1
+
+    copy "Libs/expat.library" "Libs/"
+
+    for file in doc/*; do copy "$file" "Locale/Readme/$name-$version/${file#/}"; done
+
+    copy "Expat.readme" "Locale/Readme/$name-$version/"
+    copy "COPYING" "Locale/License/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
