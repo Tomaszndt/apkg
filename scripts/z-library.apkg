@@ -1,0 +1,40 @@
+name="z-library"
+tags="library, zlib, archive"
+version="2.1"
+cpu=68020
+require=""
+description="implementation of the zlib library"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/salass00/z_lib/releases/download/V2.1/z_lib.m68k-amigaos.lha*3a2c42113f413b6dc10291c5e49577c267762e9f17239fc40e0ae7131a2f790a"
+    )
+upstream="https://github.com/salass00/z_lib"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "z_lib" || exit 1
+
+    copy "Libs/z.library.020" "Libs/z.library"
+
+    for file in README releasenotes; do copy "$file" "Locale/Readme/$name-$version/${file}"; done
+    for file in LICENSE*; do copy "$file" "Locale/License/$name-$version/${file}"; done
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
