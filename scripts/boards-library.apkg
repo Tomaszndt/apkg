@@ -1,0 +1,42 @@
+name="boards-library"
+tags="library, information, hardware"
+version="3.82"
+cpu=68020
+require=""
+description="Provides detailed info about expansions"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/BoardsLib.lha*2f3143a046b69f5bd447d10d6011a2faf48196f928942fd58696668086073349"
+    )
+upstream="https://aminet.net/package/util/libs/BoardsLib"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "BoardsLib" || exit 1
+
+    copy "libs/boards.library" "Libs/"
+    copy "Utilities/Showboards.info" "Utilities/"
+    copy "Utilities/showboards" "C/"
+
+    copy "BoardsLib.readme" "Locale/Readme/$name-$version/${file}"
+    copy "BoardsLib.guide" "Locale/Help/"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
