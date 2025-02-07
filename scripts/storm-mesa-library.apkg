@@ -1,0 +1,57 @@
+name="storm-mesa-library"
+tags="library, 3d, opengl, mesa"
+version="3.1"
+cpu=68020
+require="amigaos>3"
+description="MESA/OpenGL implementation for AmigaOS"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/StormMesa_Libs68K.lha*f803574387c138db1091109e7b4367206c6e60faaf20890c8173c34feb9a9ab8"
+    )
+upstream=""
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "StormMesa/AMIGA/" || exit 1
+
+    for file in slibs/*; do
+        copy "$file" "Libs/${file#*/}"
+    done
+
+    copy "misc/NewWPA8/NewWPA8" "C/"
+
+    makedir "Prefs/Env-Archive/GLUT/"
+    makedir "Prefs/Env-Archive/MESA/"
+
+    echo -n "0" > "${pkgdir}Prefs/Env-Archive/GLUT/FORCE_DB"
+    echo -n "0" > "${pkgdir}Prefs/Env-Archive/MESA/FORCE_DB"
+    echo -n "3" > "${pkgdir}Prefs/Env-Archive/MESA/LOCKMODE"
+    echo -n "0" > "${pkgdir}Prefs/Env-Archive/MESA/NOCLAMP"
+    echo -n "0" > "${pkgdir}Prefs/Env-Archive/MESA/STATS"
+    echo -n "1" > "${pkgdir}Prefs/Env-Archive/MESA/TRIPLE"
+
+    copy "misc/NewWPA8/NewWPA8.readme" "Locale/Readme/$name-$version/"
+    copy "HISTORY" "Locale/Readme/$name-$version/"
+    copy "First_Aid.txt" "Locale/Readme/$name-$version/"
+    copy "version" "Locale/Readme/$name-$version/"
+
+    copy "StormMesa_e.guide" "Locale/Help/StormMesa.guide"
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    user_patch "${root}S/Startup-Sequence" "" ".*SetPatch.*" "$name-$version" "c:NewWPA8"
+    user_patch "${root}S/User-Startup" "end" "*" "$name-$version" "assign mesa: sys:Libs"
+}
+
+# vim: ts=4:syntax=sh:
