@@ -1,0 +1,39 @@
+name="riva"
+tags="mpeg, multimedia, video, player"
+version="0.54"
+cpu=68020
+require="amigaos>3"
+description="RiVA MPEG player"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/gfx/show/RiVA-0.54.lha*0436f0c77ca1657dc85eb09d316f8fb65b57cfd9ac94f172eb1489991ae80cda"
+    )
+upstream="https://aminet.net/package/gfx/show/RiVA-0.54"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "RiVA-0.54" || exit 1
+
+    copy "RiVA-0.54-m68k" "Tools/RiVA"
+    copy "RiVA-0.54-m68k.info" "Tools/RiVA.info"
+
+    copy "README" "Locale/Readme/$name-$version/"
+    copy "RiVA.guide" "Locale/Help/"
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
