@@ -1,0 +1,53 @@
+name="ffmpeg"
+tags="mpeg, multimedia, video, player, convert"
+version="git7df9937"
+cpu=68020
+require="ahi, p96, ixemul>63"
+description="FFmpeg + FFplay video player"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/gfx/conv/ffmpeg-git7df9937-m68k.lha*3da2f7ef88e916cfcb54535729b9349abc11d22991323cf422948b045b102cd4"
+    )
+upstream="https://aminet.net/package/gfx/conv/ffmpeg-git7df9937-m68k"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "ffmpeg-git7df9937-m68k" || exit 1
+
+    copy "bin/ffmpeg060fpu" "Utilities/ffmpeg"
+    copy "bin/ffplay060fpu" "Utilities/ffplay"
+    copy "bin/ffprobe060fpu" "Utilities/ffprobe"
+
+    IFS=$'\n'
+    for file in $(find env/ -type f); do
+        copy "$file" "Prefs/Env-Archive/${file#*/}"
+    done
+    unset IFS
+
+    for file in docs/COPYING*; do copy "$file" "Locale/License/$name-$version/${file##*/}"; done
+    copy "docs/LICENSE" "Locale/License/$name-$version/${file##*/}"; 
+    for file in docs/CREDITS docs/Changelog docs/MAINTAINERS docs/README docs/RELEASE; do 
+        copy "$file" "Locale/Readme/$name-$version/${file##*/}"; 
+    done
+
+    copy "rexx/ffplay_loadfile.rexx" "S/"
+
+    copy "ReadMe" "Locale/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
