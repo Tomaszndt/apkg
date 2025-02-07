@@ -1,0 +1,35 @@
+name="govars"
+tags="utility, system"
+version="2.1"
+cpu=68020
+require="amigaos>3"
+description="environment variables editor"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/wb/GoVars.lha*116e9752838765fc163f9a26158cc9c48895f5416356e063883e25ea041f0ad9"
+    )
+upstream=""
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    copy "GoVars/GoVars" "Utilities/"
+    copy "GoVars/GoVars.info" "Utilities/"
+    copy "GoVars/GoVars.readme" "Locale/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
