@@ -427,20 +427,20 @@ function user_patch() {
 	file=$(< "$filename")
 
 	if [[ $mode == *end* ]]; then
-		out=$(< "$filename")$'\n'";BEGIN ${tag}"$'\n'"$text"$'\n'";END ${tag}"$'\n'
+		out=$(< "$filename")$'\n'$'\n'";BEGIN ${tag}"$'\n'"$text"$'\n'";END ${tag}"$'\n'
 	else
 		IFS=$'\n'
 		for line in $file; do
 			if [[ $line =~ $needle ]]; then
+				out+="$line"$'\n'
 				if [ $patched -eq 0 ]; then
-					out+=$'\n'";BEGIN ${tag}"$'\n'
+					out+=$'\n'$'\n'";BEGIN ${tag}"$'\n'
 					out+="$text"$'\n'
 					out+=";END ${tag}"$'\n'
 					if [[ $mode != *all* ]]; then
 						patched=1
 					fi
 				fi
-				out+="$line"$'\n'
 			else
 				out+="$line"$'\n'
 			fi
