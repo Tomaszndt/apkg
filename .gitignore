@@ -11,6 +11,7 @@ tmp
 *.zip
 *.lha
 *.lzx
+*.key
 iff*
 Images/*
 apkg.log
