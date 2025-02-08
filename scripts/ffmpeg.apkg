@@ -1,7 +1,7 @@
 name="ffmpeg"
 tags="mpeg, multimedia, video, player, convert"
 version="git7df9937"
-cpu=68020
+cpu=68060
 require="ahi, p96, ixemul>63"
 description="FFmpeg + FFplay video player"
 packager="lobotomius@gmail.com"

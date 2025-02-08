@@ -1,0 +1,76 @@
+name="amitcp"
+tags="mpeg, multimedia, video, player, convert"
+version="3.0b2"
+cpu=68020
+require=""
+description="GNU TCP/IP stack"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/comm/net/AmiTCP-bin-30b2.lha*add9452c4fb76c03ea85b44ad2c11c5ee90102714edcf97390dc5074cf710e6c"
+    )
+upstream="https://aminet.net/package/comm/net/AmiTCP-bin-30b2"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local assign="Libs/AmiTCP/"
+
+    cd "AmiTCP-3.0b2" || exit 1
+
+    copy "libs/usergroup.library" "Libs/"
+
+    copy "AmiTCP" "$assign"
+
+    for file in bin/*; do copy "$file" "${assign}${file}"; done
+    rm "${pkgdir}${assign}bin/Installer"
+
+    for file in db/*; do copy "$file" "${assign}${file}"; done
+
+    for file in l/*; do copy "$file" "${assign}${file}"; done
+
+    for file in devs/*; do copy "$file" "${assign}${file}"; done
+
+    for file in serv/*; do copy "$file" "${assign}${file}"; done
+
+    IFS=$'\n'
+    for  file in $(find export/Fonts/ -type f); do
+        copy "$file" ${file#*/}
+    done
+    unset IFS
+
+    echo "amiga.domain" > HOSTNAME && copy "HOSTNAME" "Prefs/Env-Archive/"
+
+    for file in AmiTCP-bin-30b2.readme ChangeLog README.FIRST NOTE_TO_BETA_TESTERS; do
+        copy "$file" "Locale/Readme/$name-$version/"
+    done
+    for file in doc/*; do copy "$file" "Locale/Readme/${file#*/}"; done
+    for file in COPYING COPYRIGHTS; do
+        copy "$file" "Locale/License/$name-$version/"
+    done
+
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    local inject
+    FS= read -r -d '' inject <<EOF
+   assign AmiTCP: Libs/AmiTCP
+   path AmiTCP:bin add
+   AmiTCP:bin/login -f user >"con:*/*/*/200/AmiTCP-IP Login/AUTO/CLOSE/WAIT"
+   ;AmiTCP:bin/umask 022
+   ;run AmiTCP:bin/startnet
+EOF
+
+    user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+
+}
+
+# vim: ts=4:syntax=sh:
