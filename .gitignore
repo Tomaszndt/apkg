@@ -12,6 +12,7 @@ tmp
 *.lha
 *.lzx
 *.key
+*.hdf
 iff*
 Images/*
 apkg.log
