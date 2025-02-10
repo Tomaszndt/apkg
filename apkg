@@ -413,7 +413,7 @@ function user_patch() {
 	local out=""
 	local p
 	local b
-
+	local tmp
 
 	p=$(path "$1")
 	b=$(base "$1")
@@ -432,14 +432,19 @@ function user_patch() {
 		IFS=$'\n'
 		for line in $file; do
 			if [[ $line =~ $needle ]]; then
-				out+="$line"$'\n'
-				if [ $patched -eq 0 ]; then
-					out+=$'\n'$'\n'";BEGIN ${tag}"$'\n'
-					out+="$text"$'\n'
-					out+=";END ${tag}"$'\n'
-					if [[ $mode != *all* ]]; then
-						patched=1
-					fi
+				tmp=$'\n'";BEGIN ${tag}"$'\n'"$text"$'\n'";END ${tag}"$'\n'
+				if [[ $mode == *before* ]]; then
+					[[ $patched -eq 0 ]] && {
+						out+="$tmp"
+						[[ $mode != *all* ]] && patched=1
+					}
+					out+="$line"$'\n'
+				else
+					out+="$line"$'\n'
+					[[ $patched -eq 0 ]] && {
+						out+="$tmp"
+						[[ $mode != *all* ]] && patched=1
+					}
 				fi
 			else
 				out+="$line"$'\n'
