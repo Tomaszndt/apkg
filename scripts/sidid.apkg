@@ -1,0 +1,43 @@
+name="sidid"
+tags="cli, c64, sid"
+version="1.09"
+cpu=68000
+require=""
+description="HVSC playroutine identity scanner"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/mus/misc/sidid.lha*9f2a1100b792e0695f8e71d510182152a81b3b0e2db4bfe373f59fb02001aca8"
+    )
+upstream="https://aminet.net/package/mus/misc/sidid"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+    cd "sidid-master" || exit 1
+
+    copy "sidid.68k" "C/sidid"
+
+    copy "readme.txt" "Locale/Readme/$name-$version/"
+    copy "sidid.nfo" "Locale/Readme/$name-$version/"
+
+    copy "sidid.cfg" "User/Config/"
+    copy "tedid.cfg" "User/Config/"
+
+    echo "sys:User/Config" > SIDIDCFG
+    copy SIDIDCFG "Prefs/Env-Archive/"
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
