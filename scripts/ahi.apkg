@@ -42,6 +42,9 @@ function build {
     done
     unset IFS
 
+    rm "$pkgdir/Prefs/AHI.MWB.info" && rm "$pkgdir/Prefs/AHI.MWB.info.uaem"
+    # dont need the mwb icon
+
     rm "$pkgdir/Devs/AHI/emu10kx.audio" && rm "$pkgdir/Devs/AHI/emu10kx.audio.uaem"
     # as to omit emu10kx.audio and avoid the openpci open error message
 }
