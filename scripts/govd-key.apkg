@@ -1,0 +1,33 @@
+name="govd-key"
+tags="key, keyfile, desktop, utility, switch, screen"
+version="2.0"
+cpu=68020
+require="govd"
+description="GoVD keyfile"
+packager="lobotomius@gmail.com"
+source=(
+    "govd.key*e723c38c0e16387b463ee694a8f25d9e562134831c0cd72989f3a1e47117735a"
+    )
+upstream="https://bitplan.pl/govd/index.html"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+    copy "govd.key" "S/"
+
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
