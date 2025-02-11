@@ -1,0 +1,39 @@
+# consider all fields obligatory
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="magic milktunnel by whiskas"
+tags="mod, music"
+version="1.0"
+cpu=68000
+require=""
+description="$name"
+packager="lobotomius@gmail.com"
+source=("http://modland.com/pub/modules/Protracker/Whiskas/magic%20milktunnel.mod*77b36e72c71a01ea9383acd2705017d8314d43683d118559d74b54f520b59cfe*")
+upstream="http://janeway.exotica.org.uk/release.php?id=65620"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    copy "magic%20milktunnel.mod" "Music/mod/whiskas/magic milktunnel.mod"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
