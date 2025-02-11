@@ -7,7 +7,7 @@ description="Hex dump utility and vice versa"
 packager="lobotomius@gmail.com"
 source=(
     "https://aminet.net/util/misc/xxd.lha*b8f0cf454486ed70606869415120f309f2de2707fc6fff39d2fe041dfc7d2650"
-    "https://aminet.net/util/misc/xxd.readme*1463044cbf95198e93b7bc404a5df88973e29da59816ebf8b7df034e6bd1a20a"
+    "https://aminet.net/util/misc/xxd.readme*f60b9a2ef9bdad2303050cd254f0c2239c6e95ba788855abf647f1d613114400"
     )
 upstream="https://aminet.net/package/util/misc/xxd"
 
