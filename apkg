@@ -732,7 +732,7 @@ function repo_add_package() {
 	query="insert into packages ('file', 'name', 'version', 'cpu', 'tags', 'built', 'packager', 'url') values ('${file##*/}', '$name', '$version', '$cpu', '$tags', '$built', '$packager', '$url' ) "
 	tmp=$(sqlite3 "${repopath}repo.db" "select name from packages where name='$name' and version ='$version'")
 	[[ $tmp ]] || sqlite3 "${repopath}repo.db" "$query"
-	_echo "@added $name, $version into $2"
+	_echo "@added $name, $version into $repopath"
 }
 
 # populate repository database
@@ -996,14 +996,13 @@ function pkg_make() {
 
 	local pkgname="$name:$version:$cpu"
 	
-	rm -r "$APKG/cache/$pkgname/" &> /dev/null
-	mkdir -p "$APKG/cache/$pkgname"
-	rm -r "$APKG/tmp/" &> /dev/null
-	mkdir -p "$APKG/tmp"
-	
-	for _file in ${!sums[*]}; do
+	rm -r "$APKG/tmp/" &> /dev/null && mkdir -p "$APKG/tmp"
+
+	for _file in "${!sums[*]}"; do
 		unpack "$APKG/downloads/$_file" "$APKG/tmp"
 	done
+
+	rm -r "$APKG/cache/$pkgname/" &> /dev/null && mkdir -p "$APKG/cache/$pkgname"
 
 	pkgdir="$APKG/cache/$pkgname/"
 	srcdir="$APKG/tmp/"
