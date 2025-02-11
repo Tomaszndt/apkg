@@ -986,7 +986,7 @@ function pkg_make() {
 		shasum=$(sha256sum "$APKG/downloads/$f")
 		shasum=${shasum%% *}
 		if [[ $shasum != "${sums[$f]}" ]]; then
-			_echo "!$f : invalid checksum"; 
+			_echo "!$f : invalid checksum: $shasum"; 
 			exit 1
 		else
 			_echo "@$f chcecksum ok"
@@ -998,7 +998,7 @@ function pkg_make() {
 	
 	rm -r "$APKG/tmp/" &> /dev/null && mkdir -p "$APKG/tmp"
 
-	for _file in "${!sums[*]}"; do
+	for _file in "${!sums[@]}"; do
 		unpack "$APKG/downloads/$_file" "$APKG/tmp"
 	done
 
