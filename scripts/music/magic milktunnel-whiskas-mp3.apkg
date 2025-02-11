@@ -4,14 +4,14 @@
 #   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
 # source
 #   asterisk separated array of source url, sha256 sum and optional download file name
-name="magic milktunnel by whiskas"
+name="mp3-magic milktunnel by whiskas"
 tags="mp3, music"
 version="1.0"
 cpu=68000
 require=""
-description="$name, mp3"
+description="magic milktunnel by whiskas, mp3"
 packager="lobotomius@gmail.com"
-source=("http://modstream.exotica.org.uk/modstream/?md5=d425700753e1bf21763b5e22072c6b96&fm=mp3*3e3251a1ed0a007189a61c467d8f7c970b027b5a55274ce367e5b6ed8b109a36*$name.mp3")
+source=("http://modstream.exotica.org.uk/modstream/?md5=d425700753e1bf21763b5e22072c6b96&fm=mp3*3e3251a1ed0a007189a61c467d8f7c970b027b5a55274ce367e5b6ed8b109a36*magic milktunnel by whiskas.mp3")
 upstream="http://janeway.exotica.org.uk/release.php?id=65620"
 
 # avoid using underscore as the first character in your variable names
@@ -27,7 +27,7 @@ upstream="http://janeway.exotica.org.uk/release.php?id=65620"
 function build {
 	# we are in "$srcdir"
 
-    copy "$name.mp3" "Music/MP3/"
+    copy "magic milktunnel by whiskas.mp3" "Music/MP3/"
 
 }
 
