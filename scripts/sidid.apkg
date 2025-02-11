@@ -30,7 +30,7 @@ function build {
     copy "sidid.cfg" "User/Config/"
     copy "tedid.cfg" "User/Config/"
 
-    echo "sys:User/Config" > SIDIDCFG
+    echo "sys:User/Config/sidid.cfg" > SIDIDCFG
     copy SIDIDCFG "Prefs/Env-Archive/"
 }
 
