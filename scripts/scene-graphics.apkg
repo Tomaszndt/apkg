@@ -1,0 +1,33 @@
+name="scene-graphics"
+tags="scene, image, graphics"
+version="1"
+cpu=68000
+require=""
+description="various scene images"
+packager="lobotomius@gmail.com"
+source=("scene-graphics.zip*32524aea0340bda0877b705e64e3968d6d629978ad9a0eea94dfe6bd6dc551ee")
+upstream="http://janeway.exotica.org.uk/search.php"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    for file in *; do
+        copy "$file" "User/Scene/Graphics/${file}"
+    done
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
