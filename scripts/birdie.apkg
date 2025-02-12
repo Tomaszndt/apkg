@@ -1,0 +1,42 @@
+name="birdie"
+tags="workbench, window, patch, theme, tweak, configure"
+version="2000"
+cpu=68020
+require="amigaos>3"
+description="Configure the windowborder from the workbench"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/wb/birdie2000.lha*02397b30ddb4505f145b31c1c9f8af52b223c16c8f7536b17aad4fe30dab8312"
+    )
+upstream="https://aminet.net/package/util/wb/birdie2000"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy "Birdie" "C/"
+
+    echo ' ActiveColor=869EFF ""' > Birdie.prefs
+    copy "Birdie.prefs" "Prefs/Env-Archive/"
+
+    for file in Patterns/*; do copy "$file" "Prefs/Presets/Birdie/${file#*/}"; done
+
+    for file in *.[dfhr]*; do copy "$file" "Locale/Readme/$name-$version/"; done
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+    # user_patch "${root}S/Startup-Sequence" "" ".*IPrefs.*" "$name-$version" "run >NIL: C:Birdie ? <ENV:Birdie.prefs"
+    user_patch "${root}S/User-Startup" "end" "" "$name-$version" 'run >NIL: C:Birdie ? <ENV:Birdie.prefs'
+}
+
+# vim: ts=4:syntax=sh:
