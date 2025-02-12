@@ -996,13 +996,15 @@ function pkg_make() {
 
 	local pkgname="$name:$version:$cpu"
 	
-	rm -r "$APKG/tmp/" &> /dev/null && mkdir -p "$APKG/tmp"
+	rm -r "$APKG/tmp/" &> /dev/null 
+	mkdir -p "$APKG/tmp"
 
 	for _file in "${!sums[@]}"; do
 		unpack "$APKG/downloads/$_file" "$APKG/tmp"
 	done
 
-	rm -r "$APKG/cache/$pkgname/" &> /dev/null && mkdir -p "$APKG/cache/$pkgname"
+	rm -r "$APKG/cache/$pkgname/" &> /dev/null 
+	mkdir -p "$APKG/cache/$pkgname"
 
 	pkgdir="$APKG/cache/$pkgname/"
 	srcdir="$APKG/tmp/"
