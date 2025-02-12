@@ -1,0 +1,56 @@
+name="visualprefs"
+tags="workbench, patch, theme, tweak, configure"
+version="1.5n"
+cpu=68040
+require="amigaos>3"
+description="Configure the look of the Amiga GUI"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/wb/VisualPrefs.lha*bb120276d6560974553eb568459c6fa17ab04a25118626e1c14219254150e61a"
+    "https://aminet.net/util/wb/VP-QuickFix.lha*3994b3d8f25bc2ff703a4dea9d585f6955c14281d7c15921d39954ca64c10c82"
+    )
+upstream="https://aminet.net/package/util/wb/VisualPrefs"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy "VisualPrefs/VisualPrefs" "C/"
+    copy "VisualPrefs/InstallFiles/select.gadget" "Classes/Gadgets/"
+
+    # copy "VisualPrefs/Tools/PatchWB/PatchWB" "WBStartup/"
+    # copy "VisualPrefs/Tools/PatchWB/StartPatchWB" "WBStartup/"
+
+    copy "VP-QuickFix/GUI_040" "Prefs/GUI"
+    copy "VisualPrefs/GlowIcons/GUI.info" "Prefs/"
+
+    copy "VisualPrefs/DocsEnglish/VP-Developer.doc" "Locale/Readme/$name-$version/"
+    copy "VisualPrefs/Read me!" "Locale/Readme/$name-$version/"
+
+    copy "VisualPrefs/DocsEnglish/VisualPrefs.guide" "Locale/Help/"
+
+    copy "VisualPrefs/Prefs/Presets/GUISample.pre" "Prefs/Presets/"
+
+    cd "VisualPrefs/Prefs/Bitmaps"
+    IFS=$'\n'
+    for file in $(find . -type f); do
+        copy "$file" "Prefs/Presets/${file#*/}"
+    done
+    unset IFS
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    user_patch "${root}S/Startup-Sequence" "before" ".*IPrefs.*" "$name-$version" "run >nil: C:VisualPrefs"
+}
+
+# vim: ts=4:syntax=sh:
