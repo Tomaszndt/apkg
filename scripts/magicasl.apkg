@@ -1,0 +1,50 @@
+name="magicasl"
+tags="patch, mui, requester"
+version="40.7.m1"
+cpu=68020
+require="amigaos>3, mui>3.7"
+description="MUIfied ASL replacement"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/MagicASL.lha*919ee3fd2b54fbdbc1dcf91268791189f6fe465b4309c468315989a9f298e9fc"
+    "https://aminet.net/util/libs/magicasl-40.7.m1.lha*d8f673aaefbae8568b495284ef90d33fa954a228ae20a2f3e3a692a14db9bfa4"
+    )
+upstream="https://aminet.net/package/util/libs/magicasl-40.7.m1"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "MagicASL" || exit 1
+
+    # catdvi -e 2 -l 27 "Docs/English/MagicASL.dvi" > MagicASL.dvi.txt && copy "MagicASL.dvi.txt" "Locale/Readme/$name-$version/"
+
+    copy "C/PatchAsl" "C/"
+    copy "../magicasl-40.7m1/MagicASL.library" "Libs/"
+
+    IFS=$'\n'
+    for file in $(find ./Libs/MUI/ -type f); do 
+        copy "$file" "Libs/MUI/Libs/mui/${file##*/}"; 
+    done
+    unset IFS
+
+    copy "MagicASL.readme" "Locale/Readme/$name-$version/"
+    copy "../magicasl-40.7m1/changes.readme" "Locale/Readme/$name-$version/"
+
+    copy "Help/English/MagicASL.guide" "Locale/Help/"
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    user_patch "${root}S/Startup-Sequence" "before" ".*SetPatch.*" "$name-$version" "run <>nil: c:PatchAsl"
+}
+
+# vim: ts=4:syntax=sh:
