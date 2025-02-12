@@ -5,7 +5,7 @@ cpu=68020
 require=""
 description="amiga os 3.2"
 packager="lobotomius@gmail.com"
-source=("amigaos3221.zip*f8434275c7c28faa40f4dac5005c494562f624bd4f9594b8b30a9cdf832ade38")
+source=("amigaos3221.zip*7d3cf15ab0cc1c27307a2801f096dc642f7d7a6ffc2652e9d8417fc0c07a8f8c")
 upstream="https://www.hyperion-entertainment.com/index.php/news/1-latest-news/290-amigaos-42-for-all-classic-amigas-released-and-available"
 
 # $srcdir $pkgdir
