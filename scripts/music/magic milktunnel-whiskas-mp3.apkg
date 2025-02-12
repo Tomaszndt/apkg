@@ -27,7 +27,7 @@ upstream="http://janeway.exotica.org.uk/release.php?id=65620"
 function build {
 	# we are in "$srcdir"
 
-    copy "magic milktunnel by whiskas.mp3" "Music/MP3/"
+    copy "magic milktunnel by whiskas.mp3" "User/Music/MP3/"
 
 }
 

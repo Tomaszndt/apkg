@@ -1,12 +1,12 @@
-name="origins"
+name="horizons"
 tags="demoscene, demo"
 version="1"
 cpu=68060
 require=""
-description="origins by UNIQUE"
+description="Pt 2 - Horizons by UNIQUE"
 packager="lobotomius@gmail.com"
-source=("https://files.scene.org/get/parties/2019/revision19/amiga-demo/unique-origins-compo.lha*f2d38e8d7348079d5b117463c757af043dafda88b600affaa8eeb294171f34df")
-upstream="https://demozoo.org/productions/202826/"
+source=("https://files.scene.org/get/parties/2018/revision18/amiga-demo/unique-pt2horizons-final.lha*721c2d2c05cfa4f6f13b4a898efb88f14627d36b04e55ce1541bcad8f54093bb")
+upstream="https://demozoo.org/productions/185605/"
 
 # functions
 #
@@ -25,7 +25,7 @@ function build {
 	# we are in "$srcdir"
 
     for file in *; do
-        copy "${file}" "User/Scene/Demo/UNIQUE/Origins/${file}"
+        copy "${file}" "User/Scene/Demo/UNIQUE/Horizons/${file}"
     done
 
 }

@@ -1,12 +1,12 @@
-name="origins"
+name="xiiii"
 tags="demoscene, demo"
 version="1"
 cpu=68060
 require=""
-description="origins by UNIQUE"
+description="xiiii - by Oxyron"
 packager="lobotomius@gmail.com"
-source=("https://files.scene.org/get/parties/2019/revision19/amiga-demo/unique-origins-compo.lha*f2d38e8d7348079d5b117463c757af043dafda88b600affaa8eeb294171f34df")
-upstream="https://demozoo.org/productions/202826/"
+source=("https://files.scene.org/get/parties/2019/nordlicht19/gravedigger/fourteen_oxyron.7z*80aab9753f472d1c722a437393b7eccb9df56633f23632ea29d3452523e13628")
+upstream="https://demozoo.org/productions/214347/"
 
 # functions
 #
@@ -24,8 +24,12 @@ upstream="https://demozoo.org/productions/202826/"
 function build {
 	# we are in "$srcdir"
 
+    unpack "Oxyron_Fourteen.lha" "."
+
+    cd "Oxyron_Fourteen" || exit 1
+
     for file in *; do
-        copy "${file}" "User/Scene/Demo/UNIQUE/Origins/${file}"
+        copy "${file}" "User/Scene/Demo/Oxyron/XIIII/${file}"
     done
 
 }

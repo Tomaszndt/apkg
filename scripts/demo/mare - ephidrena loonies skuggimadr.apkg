@@ -34,9 +34,10 @@ function build {
         echo -ne "installing $total files: $(( $tick * 100 / $total ))%\r"
         tick=$(( tick += 1 ))
         f="${file:2}"
-        copy "${f}" "Scene/Demo/Ephidrena Loonies Skuggimadr/Mare/${f#*/}"
+        copy "${f}" "User/Scene/Demo/Ephidrena Loonies Skuggimadr/Mare/${f#*/}"
     done
     unset IFS
     echo ""
 
 }
+# vim: ts=4:syntax=sh:
