@@ -1,0 +1,43 @@
+name="fullpalette"
+tags="workbench, theme, preference, tweak"
+version="1"
+cpu=68020
+require=""
+description="Define, save & lock ALL Workbench colors"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/wb/FullPalette22.lha*4543eda6aca9e1a10ec986bc987c6e56c105ec26184254137d484b00ad358f32"
+    )
+upstream="https://aminet.net/package/util/wb/FullPalette22"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "FullPalette" || exit 1
+
+    copy "FPPrefs" "C/"
+
+    copy "FullPalette" "Prefs/"
+    copy "FullPalette.info" "Prefs/"
+
+    copy "DocsEnglish/FullPalette.guide" "Locale/Help/"
+    copy "DocsEnglish/FullPalette.guide.info" "Locale/Help/"
+
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    :
+    user_patch "${root}S/Startup-Sequence" "after" ".*IPrefs.*" "$name-$version" " FPPrefs"
+}
+
+# vim: ts=4:syntax=sh:
