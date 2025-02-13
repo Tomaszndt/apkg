@@ -1,0 +1,41 @@
+name="bprefs"
+tags="workbench, window, theme, configure"
+version="1.31"
+cpu=68020
+require="mui, birdie"
+description="MUI Preference program for Birdie"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/misc/bprefs.lha*d74a48489729242a0b0fc4e6f33c361207196304be51367fea83ac8c51f2a238"
+    )
+upstream="https://aminet.net/package/util/misc/bprefs"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy "bprefs" "Prefs/"
+    copy "Birdie Prefs" "Prefs/"
+    copy "Birdie Prefs.info" "Prefs/"
+
+    copy "Birdie Prefs.guide" "Locale/Help/"
+    copy "Birdie Prefs.guide.info" "Locale/Help/"
+
+    copy "bprefs.readme" "Locale/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
