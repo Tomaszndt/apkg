@@ -1,11 +1,11 @@
 name="amissl"
 tags="internet, ssl, cryptography, communication"
-version="5.18"
+version="5.19"
 cpu=68020
-require=""
+require="amigaos>3"
 description="Port of OpenSSL"
 packager="lobotomius@gmail.com"
-source=("https://github.com/jens-maus/amissl/releases/download/5.18/AmiSSL-5.18-OS3.lha*0110fbbfa2251d0fc10a5af2e5f0ce67d92431f18e74146db22b790736c54f01")
+source=("https://github.com/jens-maus/amissl/releases/download/5.19/AmiSSL-5.19-OS3.lha*e5e9e550f9a959318faa62a0b3c4c09049c0ad0ddceff94f455b7ee9d996d6c2")
 upstream="https://github.com/jens-maus/amissl"
 
 # functions
@@ -21,7 +21,7 @@ function build {
 
     cd "AmiSSL" || exit 1
 
-    copy "Libs/AmigaOS3/AmiSSL/68020-40/amissl_v340.library" "Libs/amissl.library"
+    copy "Libs/AmigaOS3/AmiSSL/68020-40/amissl_v341.library" "Libs/amissl.library"
     copy "Libs/AmigaOS3/amisslmaster.library" "Libs/"
     copy "C/AmigaOS3/OpenSSL" "C/"
 

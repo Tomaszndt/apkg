@@ -1021,7 +1021,7 @@ function pkg_make() {
 	_echo "generating install script"
 
 	IFS=$'\n'
-	files=$(find "$pkgdir" ! -iname "*.apkg" ! -iname apkg-metadata ! -iname "*.uaem" | sort)
+	files=$(find "$pkgdir" ! -iname "*.apkg" ! -iname apkg-metadata | sort)
 
 	echo "# $name $version" > apkg-install
 	echo "## apkg $_apkg_version" >> apkg-install
