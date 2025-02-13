@@ -974,6 +974,7 @@ function pkg_make() {
 		if [[ "$_downloaded_file" == "null" ]]; then			
 			_echo "downloading $_source_file"
 			wget -q --show-progress -nc -P "$APKG/downloads" -O "$_basename_file" "$_source_file" #&> /dev/null
+			cp "$_basename_file" "$APKG/downloads" &> /dev/null
 		else
 			_echo "$_basename_file found in download cache"
 			cp "$_downloaded_file" "$APKG/downloads" &> /dev/null
