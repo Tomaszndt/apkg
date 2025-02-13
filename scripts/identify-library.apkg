@@ -1,14 +1,14 @@
 name="identify-library"
 tags="library, information"
-version="44.1"
+version="44.2"
 cpu=68020
 require=""
 description="Identify is a shared Amiga library that helps identifying all kind of system parameters"
 packager="lobotomius@gmail.com"
 source=(
-    "https://github.com/shred/identify/releases/download/v44.1/IdentifyUsr.lha*0e9abdb89807c0a7579ea3104e5c8f15acd348e156f09353ee24bbcbaadc81ba"
+    "https://aminet.net/util/libs/IdentifyUsr.lha*d0357b7b2f69b767d401c7a9261a98c95bc1faa221ec51f545263d28c1c21adf*identifyusr-$version.lha"
     )
-upstream="https://github.com/shred/identify"
+upstream="https://aminet.net/package/util/libs/IdentifyUsr"
 
 # this function is executed on build
 # functions
