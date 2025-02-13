@@ -1,0 +1,46 @@
+name="birdie-themes"
+tags="eyecandy, theme, preset"
+version="1"
+cpu=68000
+require="birdie"
+description="Aminet Birdie2000 patterns"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/pix/textu/birdiedj.lha*e28718fce31961c0507348ce63fe045e9076b6c2fb0c8cb8da952b648f0a0329"
+    "https://aminet.net/pix/textu/birdiedj.readme*190ed110e0af1731bd3d8d56e65809319ac2242887b8b711f9eb68c1e954dbea"
+    "https://aminet.net/pix/misc/BPatterns.lha*4385a28d9bb0bee43aeaf0c560fd8de0c9a3e0176024faa570639e35c8afca2a"
+    "https://aminet.net/pix/misc/BPatterns.readme*1a77f3f7ca291ec8149e5e961e98d0b2d9520effe8f29c485b7eb7a8ce8a42d4"
+    "https://aminet.net/util/wb/RMBirdie.lha*a64346e3952fa5ac7136876991a4af5a8813f56de978916537ee912113b0ef57"
+    "https://aminet.net/util/wb/RMBirdie.readme*d8cd04eabc62e01e4ecb6a463be394ca7de9192934b5a5305dd2d4de1ea84e9e"
+    "https://aminet.net/pix/textu/BirdirPatterns.lha*42810d93d5f6b8b9be5ba1d372f8c27674010dc2e1629252aa730e0d68634659"
+    "https://aminet.net/pix/textu/BirdirPatterns.readme*7e2b1cfa29991e891aa0dc51b02327382046404a4fae64e3402e3c037e2a88ec"
+    )
+upstream="https://aminet.net"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    for file in BPatterns/*.gif; do copy "$file" "Prefs/Presets/$file"; done
+    for file in birdiedj/*.jpg; do copy "$file" "Prefs/Presets/$file"; done
+    for file in *.jpg; do copy "$file" "Prefs/Presets/BirdirPatterns/$file"; done
+    for file in RMBirdie/birdiepatt/*; do copy "$file" "Prefs/Presets/RMBirdie/${file##*/}.iff"; done
+
+    for file in *.readme; do copy "$file" "Locale/Readme/$name-$version/$file"; done
+
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
