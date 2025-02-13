@@ -80,6 +80,7 @@ function _echo() {
 
 function usage() {
 	local binary
+	local tmp
 	local str_avail="available binaries:"
 	local str_missing="missing binaries:"
 
@@ -104,14 +105,16 @@ short mode i=install, b=build, pi=package-info
 
 EOF
 
-	for binary in 7z lha zip unzip unlzx rar xdftool ifftool infotool; do
+	for binary in 7z lha zip unzip unlzx rar xdftool ifftool infotool ipfs; do
 		[[ $(which "$binary" 2>/dev/null ) ]] && str_avail="$str_avail $binary" || str_missing="$str_missing $binary"
 	done
 
 	echo "$str_avail"
 	echo "$str_missing"
 
-	exit 1
+	echo -e "\ncache:\t$( du -hs ${APKG}/cache )"
+
+	exit 0
 }
 
 
@@ -321,6 +324,8 @@ function makedir() {
 	local s="$pkgdir"
 	local tmp="$1"
 	
+	if [ -d "$pkgdir$tmp" ]; then return_str="$pkgdir/$tmp/"; return; fi
+
 	if [[ $tmp == $pkgdir* ]]; then
 		tmp="${1#$pkgdir/}"
 	fi
@@ -331,11 +336,6 @@ function makedir() {
 
 	if [[ ${tmp:0-1} == "/" ]]; then
 		tmp="${tmp:0:${#tmp}-1}"
-	fi
-
-	if [ -d "$pkgdir$tmp" ]; then 
-		return_str="$pkgdir/$tmp/";
-		return;
 	fi
 
 	IFS='/'
