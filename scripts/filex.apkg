@@ -1,0 +1,27 @@
+name="filex"
+tags="editor, hex, development"
+version="2.7a"
+cpu=68040
+require="amigaos>3, reqtools-library"
+description="Ultimate HEX editor fixed for 68k"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/disk/moni/FileX-68K.lha*3b78a191c875ad560f71fee798d29d97048c4bf609af40270332cc529a66610a")
+upstream="https://aminet.net/package/disk/moni/FileX-68K"
+
+# root, cpu
+# pkgsrc, pkgdir, pkgname
+function build {
+    local file
+
+    cd "FileX-2.7a-68k" || exit 1
+
+	copy "FileX.68040" "Dev/FileX"
+    copy "icons/FileX.GI.info" "Dev/FileX.info"
+
+    for file in arexx/*; do copy "$file" "S/${file##*/}" "srwd"; done
+
+    for file in docs/english/*.doc*; do copy "$file" "Locale/Readme/$name-$version/${file##*/}"; done
+    for file in docs/english/*.guide*; do copy "$file" "Locale/Readme/$name-$version/${file##*/}"; done
+}
+
+# vim: ts=4:syntax=sh:
