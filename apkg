@@ -23,6 +23,10 @@ return_str=""
 
 _paths=("$(pwd)" "$HOME/.apkg/")
 [[ -z "$APKG" ]] && APKG="$HOME/.apkg"
+[[ ! -d "$APKG/repo" ]] && mkdir "$APKG/repo"
+[[ ! -d "$APKG/tmp" ]] && mkdir "$APKG/tmp"
+[[ ! -d "$APKG/downloads" ]] && mkdir "$APKG/downloads"
+[[ ! -d "$APKG/cache" ]] && mkdir "$APKG/cache"
 
 _repo=""
 _cpu=""
