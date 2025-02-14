@@ -28,7 +28,7 @@ _paths=("$(pwd)" "$HOME/.apkg/")
 [[ ! -d "$APKG/downloads" ]] && mkdir "$APKG/downloads"
 [[ ! -d "$APKG/cache" ]] && mkdir "$APKG/cache"
 
-_repo=""
+_repo="$APKG/repo"
 _cpu=""
 os=""
 #system="" # amiga model
