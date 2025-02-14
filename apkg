@@ -593,20 +593,13 @@ function detectos() {
 #############################
 # sanity checks
 
-if [ -z "$repo" ]; then
-	repo="$APKG/repo/"
-	mkdir -p "$repo"
-	#_echo "no repositories provided" "E"
-	#exit 1
-fi
-
-l=${#root}; l=$(( l - 1 )); if [[ ! ${root:l:1} == "/" ]]; then root="$root/"; fi
-if [ ! -d $root ]; then
-	_echo "!invalid target root directory path"
+[[ ! ${root:l:0-1} == "/" ]] && root="$root/"
+if [ ! -d "$root" ]; then
+	_echo "!invalid target root directory path: '$root'"
 	exit 1
 fi
 
-if [[ -n "$cpu" ]]; then _cpu="68000"; cpu="$cpu"; fi
+if [[ -n "$cpu" ]]; then _cpu="68000"; cpu="$_cpu"; fi
 
 #
 # print config
