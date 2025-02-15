@@ -21,19 +21,9 @@ _pwd="$(pwd)"
 _filename=""
 return_str=""
 
-_paths=("$(pwd)" "$HOME/.apkg/")
-[[ -z "$APKG" ]] && APKG="$HOME/.apkg"
-[[ ! -d "$APKG/repo" ]] && mkdir "$APKG/repo"
-[[ ! -d "$APKG/tmp" ]] && mkdir "$APKG/tmp"
-[[ ! -d "$APKG/downloads" ]] && mkdir "$APKG/downloads"
-[[ ! -d "$APKG/cache" ]] && mkdir "$APKG/cache"
-
-repo="$APKG/repo"
-_repo="$repo"
-_cpu=""
-os=""
-#system="" # amiga model
-#language="" # ISO code
+# os=""
+# system="" # amiga model
+# language="" # ISO code
 
 _ts_msg_number=0;
 # $1 string, $2 prefix
@@ -83,6 +73,7 @@ function _echo() {
 	_ts_msg_number=$(( _ts_msg_number + 1 ))
 }
 
+
 function usage() {
 	local binary
 	local tmp
@@ -121,13 +112,6 @@ EOF
 
 	exit 0
 }
-
-
-#
-# load configuration
-unset repo
-source "~/.apkg/apkg.config" &> /dev/null
-source "./apkg.config" &> /dev/null
 
 declare _verbose=""
 declare _mode=""
@@ -176,12 +160,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ $_scan_mode == "mode" ]] && usage
-
-#
-# rename _paths to include trailing slash
-for p in ${_paths[*]}; do
-	[[ ! ${p:${#p}-1:1} == '/' ]] && p="${p}/"
-done
 
 # 1 file
 function base() {
@@ -313,7 +291,7 @@ function dircreate() {
 function dirdelete() {
 	local r
 	r=$( rmdir "$1" &> /dev/null )
-	if [ $r -eq 0 ]; then
+	if [ "$r" -eq 0 ]; then
 		rm "$1.uaem"
 	fi
 }
@@ -331,15 +309,15 @@ function makedir() {
 	
 	if [ -d "$pkgdir$tmp" ]; then return_str="$pkgdir/$tmp/"; return; fi
 
-	if [[ $tmp == $pkgdir* ]]; then
+	if [[ "$tmp" == $pkgdir* ]]; then
 		tmp="${1#$pkgdir/}"
 	fi
 
-	if [[ ${tmp:0:1} == "/" ]]; then
+	if [[ "${tmp:0:1}" == "/" ]]; then
 		tmp="${tmp:1}"
 	fi
 
-	if [[ ${tmp:0-1} == "/" ]]; then
+	if [[ "${tmp:0-1}" == "/" ]]; then
 		tmp="${tmp:0:${#tmp}-1}"
 	fi
 
@@ -458,8 +436,8 @@ function user_patch() {
 	fi # mode==end
 	unset IFS
 
-	cp "$filename" "${root}apkg/backup/${backup}/${filename##*/}"
-	echo "filecopy \"${root}apkg/backup/${backup}/${filename##*/}\" \"$1\"" >> "${root}apkg/$backup.rollback"
+	cp "$filename" "${v['root']}apkg/backup/${backup}/${filename##*/}"
+	echo "filecopy \"${v['root']}apkg/backup/${backup}/${filename##*/}\" \"$1\"" >> "${v['root']}apkg/$backup.rollback"
 	echo "$out" > "$filename"
 }
 
@@ -591,23 +569,6 @@ function detectos() {
 	echo "$os"
 }
 
-#############################
-# sanity checks
-
-[[ ! ${root:l:0-1} == "/" ]] && root="$root/"
-if [ ! -d "$root" ]; then
-	_echo "!invalid target root directory path: '$root'"
-	exit 1
-fi
-
-if [[ -n "$cpu" ]]; then _cpu="68000"; cpu="$_cpu"; fi
-
-#
-# print config
-_echo "@search paths: ${_paths[*]}"
-_echo "@repository: $repo"
-_echo "@target system root path = $root"
-_echo "@target cpu = $_cpu"
 
 
 #############################
@@ -631,11 +592,11 @@ function package_info() {
 	pkgname=${basename%%:*}
 	fullname=$(realpath "$1")
 
-	7z e -so "$fullname" "$pkgname.apkg" > "$APKG/tmp/$pkgname.apkg"
+	7z e -so "$fullname" "$pkgname.apkg" > "${v['APKG']}tmp/$pkgname.apkg"
 
 	_echo "information for $1"
 
-	source "$APKG/tmp/$pkgname.apkg"
+	source "${v['APKG']}tmp/$pkgname.apkg"
 
 	_echo "       name $name"
 	_echo "    version $version"
@@ -924,7 +885,7 @@ function pkg_make() {
 	local shasum
 	local items=0
 	
-	dlpaths=". $APKG/downloads/"
+	dlpaths=". ${v['APKG']}downloads/"
 	
 	# is the script file available 
 	_script_file="$_filename"
@@ -965,24 +926,24 @@ function pkg_make() {
 		if [[ -f "./$_basename_file" ]]; then
 			_downloaded_file="./$_basename_file"
 		fi
-		if [[ -f "$APKG/downloads/$_basename_file" ]]; then
+		if [[ -f "${v['APKG']}downloads/$_basename_file" ]]; then
 			_downloaded_file="./$_basename_file"
 		fi
 
 		if [[ "$_downloaded_file" == "null" ]]; then			
 			_echo "downloading $_source_file"
-			wget -q --show-progress -nc -P "$APKG/downloads" -O "$_basename_file" "$_source_file" #&> /dev/null
-			cp "$_basename_file" "$APKG/downloads" &> /dev/null
+			wget -q --show-progress -nc -P "${v['APKG']}downloads" -O "$_basename_file" "$_source_file" #&> /dev/null
+			cp "$_basename_file" "${v['APKG']}downloads" &> /dev/null
 		else
 			_echo "$_basename_file found in download cache"
-			cp "$_downloaded_file" "$APKG/downloads" &> /dev/null
+			cp "$_downloaded_file" "${v['APKG']}downloads" &> /dev/null
 		fi
 			
 	done
 	
 	# verify checksums
 	for f in "${!sums[@]}"; do
-		shasum=$(sha256sum "$APKG/downloads/$f")
+		shasum=$(sha256sum "${v['APKG']}downloads/$f")
 		shasum=${shasum%% *}
 		if [[ $shasum != "${sums[$f]}" ]]; then
 			_echo "!$f : invalid checksum: $shasum"; 
@@ -995,18 +956,18 @@ function pkg_make() {
 
 	local pkgname="$name:$version:$cpu"
 	
-	rm -r "$APKG/tmp/" &> /dev/null 
-	mkdir -p "$APKG/tmp"
+	rm -r "${v['APKG']}tmp/" &> /dev/null 
+	mkdir -p "${v['APKG']}tmp"
 
 	for _file in "${!sums[@]}"; do
-		unpack "$APKG/downloads/$_file" "$APKG/tmp"
+		unpack "${v['APKG']}downloads/$_file" "${v['APKG']}tmp"
 	done
 
-	rm -r "$APKG/cache/$pkgname/" &> /dev/null 
-	mkdir -p "$APKG/cache/$pkgname"
+	rm -r "${v['APKG']}cache/$pkgname/" &> /dev/null 
+	mkdir -p "${v['APKG']}cache/$pkgname"
 
-	pkgdir="$APKG/cache/$pkgname/"
-	srcdir="$APKG/tmp/"
+	pkgdir="${v['APKG']}cache/$pkgname/"
+	srcdir="${v['APKG']}tmp/"
 	local _cwd="$(pwd)"
 
 	_echo "@running build script"
@@ -1263,16 +1224,16 @@ function install_package() {
 
 	_echo "detected Amiga OS version $osversion"
 	
-	tmpdir="$APKG/tmp/"
+	tmpdir="${v['APKG']}tmp/"
 	rm -r "$tmpdir" #&> /dev/null
 	mkdir -p "$tmpdir"
 	tmpdir_length=${#tmpdir}
 
-	unpack "$1" "$APKG/tmp"
+	unpack "$1" "${v['APKG']}tmp"
 
 	tmp2=$(meta_get "$meta" "buildscript")
 
-	source "$APKG/tmp/$tmp2"
+	source "${v['APKG']}tmp/$tmp2"
 
 	package_check_deps "$require"
 
@@ -1283,7 +1244,7 @@ function install_package() {
 	true > "$root/apkg/$pkgname-$pkgversion.rollback"
 
 	IFS=$'\n'
-	files=$(find "$APKG/tmp" ! -iname "*.uaem" ! -iname "apkg-*" ! -iname "*.apkg")
+	files=$(find "${v['APKG']}tmp" ! -iname "*.uaem" ! -iname "apkg-*" ! -iname "*.apkg")
 	for f in $files; do
 		fbase=$(base "$f")
 		if [[ "$f/" == "$tmpdir" ]]; then continue; fi
@@ -1316,9 +1277,9 @@ function install_package() {
 		_echo "@no post_install script"
 	fi
 
-	sort -r "$root/apkg/$pkgname-$pkgversion.rollback" > "$root/apkg/$pkgname-$pkgversion.rollback.tmp"
-	rm "$root/apkg/$pkgname-$pkgversion.rollback"
-	mv "$root/apkg/$pkgname-$pkgversion.rollback.tmp" "$root/apkg/$pkgname-$pkgversion.rollback"
+	sort -r "${v['root']}/apkg/$pkgname-$pkgversion.rollback" > "${v['root']}/apkg/$pkgname-$pkgversion.rollback.tmp"
+	rm "${v['root']}/apkg/$pkgname-$pkgversion.rollback"
+	mv "${v['root']}/apkg/$pkgname-$pkgversion.rollback.tmp" "${v['root']}/apkg/$pkgname-$pkgversion.rollback"
 
 	install_register_package "$1"
 
@@ -1359,7 +1320,36 @@ function install_repo() {
 	install_package "${repo}${pkgfile}"
 }
 
+#############################
 
+[[ -z "$APKG" ]] && APKG="$HOME/.apkg"
+[[ "$APKG" != */ ]] && APKG="$APKG/"
+[[ ! -d "$APKG" ]] && _echo "%invalid working directory path: '$APKG'"
+[[ ! -d "${APKG}repo" ]] && mkdir "${APKG}repo"
+[[ ! -d "${APKG}tmp" ]] && mkdir "${APKG}tmp"
+[[ ! -d "${APKG}downloads" ]] && mkdir "${APKG}downloads"
+[[ ! -d "${APKG}cache" ]] && mkdir "${APKG}cache"
+
+source "~/.apkg/apkg.config" &> /dev/null
+source "./apkg.config" &> /dev/null
+
+[[ ! -d "$root" ]] && _echo "%invalid target root path: '$root'"
+[[ ! -d "$repo" ]] && _echo "%invalid repo path: '$repo'"
+
+[[ "$root" != */ ]] && root="$root/"
+[[ "$repo" != */ ]] && repo="$repo/"
+
+if [[ -z "$cpu" ]]; then cpu="68020"; fi
+
+declare -A v # 
+v["root"]="$root"
+v["repo"]="$repo"
+v["cpu"]="$cpu"
+v["APKG"]="$APKG"
+
+#
+# print config
+for key in "${!v[@]}"; do _echo "@$key = ${v[$key]}"; done
 
 ########
 # top level logic
