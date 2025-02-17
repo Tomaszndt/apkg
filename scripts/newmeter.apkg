@@ -1,0 +1,40 @@
+name="newmeter"
+tags="monitor, conky"
+version="1.361"
+cpu=68020
+require=""
+description="Shows free RAM and storage as bar graphs"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/wb/newmeter.lha*8728931bcc0b2e8f7e894184502d955c87cf60b5265a13f6c7c247ad58fee28e"
+    )
+upstream="https://aminet.net/package/util/wb/newmeter"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "NewMeter" || exit 1
+
+    copy "NewMeter" "WBStartup/"
+    copy "NewMeter.info" "WBStartup/"
+
+    copy "Tooltypes" "Locale/Help/Readme/$name-$version/"
+    copy "Tooltypes.info" "Locale/Help/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
