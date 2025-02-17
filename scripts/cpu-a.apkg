@@ -1,12 +1,12 @@
 name="cpu-a"
 tags="information, monitor, report"
-version="0.3.0"
+version="0.3.1"
 cpu=68020
 require="mui"
 description="System Information Tool"
 packager="lobotomius@gmail.com"
 source=(
-    "https://github.com/tdolphin-org/CPU-A/releases/download/v0.3.0/CPU-A.lha*b073df7c5d17ffc2dc2a7b96a133c8e99de2701643d985f352e3bac448fab376"
+    "https://github.com/tdolphin-org/CPU-A/releases/download/v0.3.1/CPU-A.lha*bd3cef88a3782840b82ca698f9267dc9f65b129adccf990429ce1fd45116102b*CPU-A-$version.lha"
     )
 upstream="https://github.com/tdolphin-org/CPU-A"
 
