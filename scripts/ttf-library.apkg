@@ -1,0 +1,46 @@
+name="ttf-library"
+tags="font, ttf, library"
+version="0.8.5"
+cpu=68040
+require="amigaos>3"
+description="truetype font engine"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/ttflib68040.lha*126130e9f60e5c084643b66608cf61c1636de75d41894929ca752ac9b21e8ec8"
+    )
+upstream="https://aminet.net/package/util/libs/ttflib68040"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  user_patch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    unpack "ttflib68040_0.85.lha" "."
+
+    cd "ttflib68040" || exit 1
+
+    copy "ttf.library" "Libs/"
+    copy "ttfmanager" "Tools/"
+    copy "ttfmanager.info" "Tools/"
+
+    for file in Bitline ftview ttfcp ttfinstall ttflist; do copy "$file" "C/"; done
+
+    copy "ttflib.guide" "Locale/Help/"
+    copy "ttflib.guide.info" "Locale/Help/"
+    copy "ttflib68040.readme" "Locale/Help/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
