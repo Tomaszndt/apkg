@@ -22,7 +22,7 @@ function build {
 
     IFS=$'\n'
     for file in $(find sasc -type f); do
-        copy "$file" "$file"
+        copy "$file" "Dev/$file"
     done
     unset IFS
 
@@ -32,7 +32,7 @@ function build {
 function post_install {
 
     FS= read -r -d '' txt <<EOF
-   assign sc: sys:sasc
+   assign sc: sys:Dev/sasc
    assign lib: sc:lib
    assign include: sc:include
    assign cxxinclude: sc:cxxinclude
