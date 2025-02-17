@@ -2,8 +2,8 @@ name="sqlman"
 tags="database, sql, gui"
 version="0.6"
 cpu=68020
-require="mui"
-description="System Information Tool"
+require="mui>3.8, p96, codesets-library, mui-texteditor>15.4"
+description="gui for sql databases"
 packager="lobotomius@gmail.com"
 source=(
     "https://aminet.net/biz/dbase/SQLMan.lha*6965ea2b50d8d053cc1407d508c8119c942ee637875279a70c7aa83b80d847fe*sqlman-$version.lha"
