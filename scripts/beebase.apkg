@@ -1,0 +1,56 @@
+name="beebase"
+tags="database, sql, gui"
+version="1.1"
+cpu=68020
+require="p96, mui, mui-nlist, mui-texteditor, mui-betterstring, codesets-library"
+description="relational, programmable database system with graphical user interface"
+packager="lobotomius@gmail.com"
+source=(
+    "https://sourceforge.net/projects/beebase/files/beebase/BeeBase-1.1/BeeBase-1.1.lha/download*1f39052c51f403d156b51542b17fb85c0966a3616a3bef06468113874ce8c82f*$name-$version.lha"
+    )
+upstream="https://sourceforge.net/projects/beebase/"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dst="User/Database/BeeBase/"
+
+    cd "BeeBase" || exit 1
+
+    copy "BeeBase-m68k-amigaos" "${dst}BeeBase"
+    copy "gicon/BeeBase/BeeBase.info" "${dst}"
+
+    makedir "${dst}Include"
+    makedir "${dst}Projects"
+
+    for file in Demos/*; do copy "$file" "${dst}Demos/"; done
+    for file in Docs/English/*; do copy "$file" "${dst}Docs/"; done
+    for file in rexx/*; do copy "$file" "${dst}rexx/"; done
+
+    for file in COPYING*; do copy "$file" "Locale/License/$name-$version/"; done
+    copy "ReadMe" "Locale/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+    local inject=""
+
+FS= read -r -d '' inject <<EOF
+if exists "User/Database/BeeBase/"
+   assign BeeBase: "User/Database/BeeBase/"
+endif
+EOF
+
+   user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+}
+
+# vim: ts=4:syntax=sh:
