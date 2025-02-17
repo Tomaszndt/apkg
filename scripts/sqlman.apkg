@@ -1,0 +1,44 @@
+name="sqlman"
+tags="database, sql, gui"
+version="0.6"
+cpu=68020
+require="mui"
+description="System Information Tool"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/biz/dbase/SQLMan.lha*6965ea2b50d8d053cc1407d508c8119c942ee637875279a70c7aa83b80d847fe*sqlman-$version.lha"
+    )
+upstream="https://aminet.net/package/biz/dbase/SQLMan"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "SQLMan" || exit 1
+
+    copy "Amiga_OS3/SQLMan_68881" "User/SQLMan/SQLMan"
+    copy "Amiga_OS3/SQLMan_68881.info" "User/SQLMan/SQLMan.info"
+    copy "Amiga_OS3/hurl.hwp" "User/SQLMan/"
+
+    for file in Examples/*; do copy "$file" "User/SQLMan/$file"; done
+    for file in importers/*; do copy "$file" "User/SQLMan/$file"; done
+
+    copy "SQLMan.guide" "Locale/Help/"
+    copy "SQLMan.guide.info" "Locale/Help/"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
