@@ -28,7 +28,7 @@ function build {
 
     copy "AHI-Paula.readme" "Locale/Readme/$name-$version/AHI-Paula.readme"
     for file in COPYING*; do
-        copy "$file" "Help/License/$name-$version/$file"
+        copy "$file" "Locale/Help/License/$name-$version/$file"
     done
 
 }

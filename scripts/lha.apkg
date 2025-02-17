@@ -13,8 +13,8 @@ function build {
 	
 	copy "lha_68040" "C/lha"
 	
-	copy LhA.guide "Help/LhA.guide"
-	copy lha_68k.readme "Help/readme/lha.readme"
+	copy LhA.guide "Locale/Help/LhA.guide"
+	copy lha_68k.readme "Locale/Help/readme/lha.readme"
 }
 
 # vim: ts=4:syntax=sh:
