@@ -586,6 +586,8 @@ function file_type {
 		"AmigaOS loadseg()ble executable/binary") 
 			r="executable"
 			[[ $1 == *.library ]] && r="library"
+			[[ $1 == *.device ]] && r="device"
+			[[ $1 == *.datatype ]] && r="datatype"
 		;;
 		"AmigaOS object/library data") r="o" ;;
 		"AmigaOS outline font") r="font.outline" ;;
