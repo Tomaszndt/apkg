@@ -1,0 +1,42 @@
+name="amigassh"
+tags="network, cryptography, communication"
+version="1.33"
+cpu=68020
+require="amigaos>3"
+description="SSH2 for the Amiga"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/comm/net/amigassh.lha*1c46a1b6768f04166e42936850708a9f89fd5ff3b5ba9565671242f90b68f1af"
+    )
+upstream="https://aminet.net/package/comm/net/amigassh"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "amigassh" || exit 1
+
+    copy "libcryptossh.library" "Libs/"
+
+    for file in amigascp amigassh amigasshd amigasshkeygen; do copy "$file" "C/"; done
+
+    for file in template/*; do copy "$file" "Prefs/Env-Archive/.ssh/${file##*/}"; done
+
+    copy "COPYING" "Locale/License/$name-$version/"
+    copy "amigassh.readme" "Locale/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+#  user_patch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
