@@ -1,0 +1,66 @@
+name="pfs3"
+tags="filesystem"
+version="3.1"
+cpu=68000
+require=""
+description="open source version of Professional File System III"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/disk/misc/pfs3aio.lha*4837919cfebd78a4ce70206e4e5acb5430ca35d958bfbdab524ac2d14febf104"
+    "https://aminet.net/disk/misc/pfs3aio.readme*f2749199c372eb3f7bc6d7247cff13104951306faecb79eb0b4c2f5fcdb4bed0"
+    "https://raw.githubusercontent.com/tonioni/pfs3aio/refs/heads/master/LICENSE*1b610f6ad78974740693e84ee00ff5033debeea0782834a00d7c70e6127b1883"
+    )
+upstream="https://aminet.net/package/disk/misc/pfs3aio"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    copy "pfs3aio" "L/"
+    copy "pfs3aio-custom" "L/"
+
+cat << "EOF" > howto.txt
+https://forum.amiga.org/index.php?topic=76061.msg857830#msg857830
+1. Downloaded pf3aio from aminet (https://aminet.net/disk/misc/pfs3aio.lha)
+2. Extracted the archive to RAM:
+3. Copied pfs3aio to L: [note the extract generates two files in ram: pfs3aio and pfs3aio-custom. I used pfs3aio) if you want you can extract direct to L:
+4. Opened HDToolBox [you will find it in the Tools drawer]
+5. Selected Partition Drive
+6. Select Advanced Options [will bring up additional buttons & options]
+7. Click Add/Update ...
+8. Click Add New File System
+9. Navigate to L: and select pfs3aio that was saved in step 3 [alternatively type L:pfs3aio) and then click "OK"
+10. Dos Type is: 0x50465303; Version is 19 and Revision is 2. Click OK
+11. Select the partition you want to use PFS3AIO; Click "Change"
+12. Select PFS\03 in the file System Drop Down
+13. Identifier should be the same as step 10
+14. MASK = 0x7FFFFFFE (Six Fs)
+15. MAX Transfer = 0xFFFFFF (Six Fs)
+16. File System Block Size. I've set mine to 512 but you can set different values depending on your set up / drive capacity.
+17. Tick Automount this partition (if not already ticked)
+18. Click "OK".
+19. In the main HDToolBox screen click "bootable" if you want to make it a bootable partition else leave unticked.
+20. Set buffers (I have mine set at 300 for my boot partition and 512 for my larger work partitions - note: the larger the buffer the more ram you need. I've got 128MB on my CSMKII)
+20. Click "OK"
+21. Reboot the Amiga (it may ask you to do this after clicking OK).
+EOF
+
+    copy "LICENSE" "Locale/Help/License/$name-$version/"
+    copy "pfs3aio.readme" "Locale/Help/Readme/$name-$version/"
+    copy "howto.txt" "Locale/Help/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+#  userpatch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
