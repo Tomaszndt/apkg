@@ -251,7 +251,7 @@ function protect() {
 	echo "$perms" > "$1.uaem"
 }
 
-function stat() {
+function amistat() {
 	local stat="null"
 	echo "$1"
 	if [ -f "$1.uaem" ]; then
@@ -569,7 +569,55 @@ function detectos() {
 	echo "$os"
 }
 
+# 1 path to file
+function file_type {
+	local file_output
+	local r="none"
+	local tmp
+	local size
 
+	file_output="$(file "$1")"
+	file_output="${file_output#* }"
+
+	case "$file_output" in
+		"AmigaDOS script") r="script" ;;
+		"AmigaGuide file") r="guide" ;;
+		"AmigaOS bitmap font") r="font.bitmap" ;;
+		"AmigaOS loadseg()ble executable/binary") 
+			r="exe/lib" 
+		;;
+		"AmigaOS object/library data") r="o" ;;
+		"AmigaOS outline font") r="font.outline" ;;
+		"AmigaOS outline tag") r="font.tag" ;;
+		"AmigaOS shared library") r="lib" ;;
+		"Amiga Workbench disk icon") r="info.disk" ;;
+		"Amiga Workbench drawer icon") r="info.drawer" ;;
+		"Amiga Workbench garbage icon") r="info.garbage" ;;
+		"Amiga Workbench project icon") r="info.project" ;;
+		"Amiga Workbench tool icon") r="info.tool" ;;
+		PNG*) 
+			r="image.png"
+			tmp="$(grep -obaUP "\x69\x63\x4f\x6e" "$1" )" # icOn
+			tmp="${tmp%:*}"
+			[[ "$tmp" ]] && {
+				r="info"
+				size="$(stat -c %s "$1")"
+				tmp="$( dd if="$1" bs=1 skip=$(( tmp + 4 )) count=$(( size - tmp - 20 )) status=none | od -An -t x1 )"
+				tmp="${tmp// /}"
+				if [[ $tmp =~ 8000100f(........) ]]; then
+					case "${BASH_REMATCH[0]}" in
+						"8000100f00000001") r+=".disk" ;;
+						"8000100f00000002") r+=".drawer" ;;
+						"8000100f00000003") r+=".tool" ;;
+						"8000100f00000004") r+=".project" ;;
+						"8000100f00000005") r+=".garbage" ;;
+					esac
+				fi
+			}
+		;;
+	esac
+	echo "$r"
+}
 
 #############################
 # main fuctionality
