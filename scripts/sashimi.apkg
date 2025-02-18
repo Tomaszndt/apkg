@@ -11,7 +11,7 @@ upstream="https://m68k.aminet.net/package/dev/debug/Sashimi"
 # functions
 #  makedir     path (relative to $pkgdir)
 #  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
-#  user_patch  filename, mode (all, end), needle, tag, text
+#  userpatch  filename, mode (all, end), needle, tag, text
 # variables
 #  $srcdir
 #  $pkgdir

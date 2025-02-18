@@ -39,7 +39,7 @@ function post_install {
    path sc:c add
 EOF
 
-    user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$txt"
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$txt"
 }
 
 # vim: ts=4:syntax=sh:

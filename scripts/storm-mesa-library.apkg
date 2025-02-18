@@ -48,10 +48,10 @@ function build {
 }
 
 # this function is executed on installation after all files have been copied
-#  user_patch filename mode needle tag text
+#  userpatch filename mode needle tag text
 function post_install {
-    user_patch "${root}S/Startup-Sequence" "" ".*SetPatch.*" "$name-$version" "c:NewWPA8"
-    user_patch "${root}S/User-Startup" "end" "*" "$name-$version" "assign mesa: sys:Libs"
+    userpatch "${root}S/Startup-Sequence" "" ".*SetPatch.*" "$name-$version" "c:NewWPA8"
+    userpatch "${root}S/User-Startup" "end" "*" "$name-$version" "assign mesa: sys:Libs"
 }
 
 # vim: ts=4:syntax=sh:

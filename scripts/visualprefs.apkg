@@ -14,7 +14,7 @@ upstream="https://aminet.net/package/util/wb/VisualPrefs"
 # functions
 #  makedir     path (relative to $pkgdir)
 #  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
-#  user_patch  filename, mode (all, end), needle, tag, text
+#  userpatch  filename, mode (all, end), needle, tag, text
 # variables
 #  $srcdir
 #  $pkgdir
@@ -50,7 +50,7 @@ function build {
 
 # this function is executed on installation after all files have been copied
 function post_install {
-    user_patch "${root}S/Startup-Sequence" "before" ".*IPrefs.*" "$name-$version" "run >nil: C:VisualPrefs"
+    userpatch "${root}S/Startup-Sequence" "before" ".*IPrefs.*" "$name-$version" "run >nil: C:VisualPrefs"
 }
 
 # vim: ts=4:syntax=sh:

@@ -50,7 +50,7 @@ if exists "User/Database/BeeBase/"
 endif
 EOF
 
-   user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+   userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
 }
 
 # vim: ts=4:syntax=sh:

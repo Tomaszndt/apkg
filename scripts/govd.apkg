@@ -51,7 +51,7 @@ NO_RESTART_INFO=1' > GoVD.conf
 }
 
 # this function is executed on installation after all files have been copied
-#  user_patch filename mode needle tag text
+#  userpatch filename mode needle tag text
 function post_install {
     :
 }

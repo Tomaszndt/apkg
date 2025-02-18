@@ -45,7 +45,7 @@ function post_install {
 assign AMISSL: Libs/AmiSSL
 EOF
 
-   user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+   userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
 
 }
 

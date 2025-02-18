@@ -37,7 +37,7 @@ function build {
 
 # this function is executed on installation after all files have been copied
 function post_install {
-    user_patch "${root}S/User-Startup" "end" "" "$name-$version" "C:CopyMemAIO"
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "C:CopyMemAIO"
 }
 
 # vim: ts=4:syntax=sh:

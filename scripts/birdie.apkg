@@ -13,7 +13,7 @@ upstream="https://aminet.net/package/util/wb/birdie2000"
 # functions
 #  makedir     path (relative to $pkgdir)
 #  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
-#  user_patch  filename, mode (all, end), needle, tag, text
+#  userpatch  filename, mode (all, end), needle, tag, text
 # variables
 #  $srcdir
 #  $pkgdir
@@ -35,8 +35,8 @@ function build {
 # this function is executed on installation after all files have been copied
 function post_install {
     :
-    # user_patch "${root}S/Startup-Sequence" "" ".*IPrefs.*" "$name-$version" "run >NIL: C:Birdie ? <ENV:Birdie.prefs"
-    user_patch "${root}S/User-Startup" "end" "" "$name-$version" 'run >NIL: C:Birdie ? <ENV:Birdie.prefs'
+    # userpatch "${root}S/Startup-Sequence" "" ".*IPrefs.*" "$name-$version" "run >NIL: C:Birdie ? <ENV:Birdie.prefs"
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" 'run >NIL: C:Birdie ? <ENV:Birdie.prefs'
 }
 
 # vim: ts=4:syntax=sh:

@@ -13,7 +13,7 @@ upstream="https://aminet.net/package/util/wb/newmeter"
 # functions
 #  makedir     path (relative to $pkgdir)
 #  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
-#  user_patch  filename, mode (all, end), needle, tag, text
+#  userpatch  filename, mode (all, end), needle, tag, text
 # variables
 #  $srcdir
 #  $pkgdir

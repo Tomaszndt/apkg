@@ -385,7 +385,7 @@ function copy() {
 # 3 needle (insert after line matching this)
 # 4 tag (tag block with this)
 # 5 text (text to be inserted)
-function user_patch() {
+function userpatch() {
 	local file
 	local filename
 	local mode="$2"
@@ -584,7 +584,8 @@ function file_type {
 		"AmigaGuide file") r="guide" ;;
 		"AmigaOS bitmap font") r="font.bitmap" ;;
 		"AmigaOS loadseg()ble executable/binary") 
-			r="exe/lib" 
+			r="executable"
+			[[ $1 == *.library ]] && r="library"
 		;;
 		"AmigaOS object/library data") r="o" ;;
 		"AmigaOS outline font") r="font.outline" ;;

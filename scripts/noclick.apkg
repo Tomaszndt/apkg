@@ -28,7 +28,7 @@ function build {
 
 function post_install {
 
-    user_patch "${root}S/User-Startup" "end" "" "$name-$version" "C:NoClick"
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "C:NoClick"
 
 }
 

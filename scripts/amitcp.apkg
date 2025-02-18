@@ -23,14 +23,14 @@ function build {
 }
 
 # this function is executed on installation after all files have been copied
-#  user_patch filename mode needle tag text
+#  userpatch filename mode needle tag text
 function post_install {
     local inject
     FS= read -r -d '' inject <<EOF
    assign AmiTCP: Libs/AmiTCP
 EOF
 
-    user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
 
 }
 

@@ -64,7 +64,7 @@ If EXISTS S:Network-Startup
 EndIf
 EOF
 
-   user_patch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+   userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
 
 }
 

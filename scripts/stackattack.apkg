@@ -24,11 +24,11 @@ function build {
 }
 
 # this function is executed on installation after all files have been copied
-#  user_patch filename mode(before,end,all) needle tag text
+#  userpatch filename mode(before,end,all) needle tag text
 function post_install {
 
-    user_patch "${root}S/Startup-Sequence" "" ".*SetPatch.*" "$name-$version" "StackAttack"
-    user_patch "${root}S/Startup-Sequence" "before" ".*LoadWB.*" "$name-$version" "StackAttack AUTO"
+    userpatch "${root}S/Startup-Sequence" "" ".*SetPatch.*" "$name-$version" "StackAttack"
+    userpatch "${root}S/Startup-Sequence" "before" ".*LoadWB.*" "$name-$version" "StackAttack AUTO"
 
 }
 
