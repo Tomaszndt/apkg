@@ -1,0 +1,44 @@
+name="mce"
+tags="filesystem"
+version="15.3"
+cpu=68000
+require="amigaos>3.2, openurl-library"
+description="Multi-game Character Editor"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/game/edit/MCE.lha*69b7d7d9b686473e1dce7e2a46d0e0fd896cda3285ebb1b2482f0700c9bd78a2"
+    )
+upstream="https://aminet.net/package/game/edit/MCE"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd MCE || exit 1
+
+    copy "MCE" "Games/MCE/"
+    copy "MCE.info" "Games/MCE/"
+
+    copy "MCE.guide" "Locale/Help/"
+    copy "MCE.guide.info" "Locale/Help/"
+
+    IFS=$'\n'
+    for file in $(find Images/ -type f); do copy "$file" "Games/MCE/$file"; done
+    for file in $(find Examples/ -type f); do copy "$file" "Games/MCE/$file"; done
+    unset IFS
+}
+
+# this function is executed on installation after all files have been copied
+#  userpatch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
