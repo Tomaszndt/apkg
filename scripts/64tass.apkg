@@ -13,10 +13,10 @@ function build {
 
 	copy "64tass-1.59.3120-src/64tass.68k" "C/64tass"	
 
-	copy 64tass-1.59.3120-src/README "Locale/Readme/64tass-$version/README"
+	copy 64tass-1.59.3120-src/README "User/Doc/Readme/64tass-$version/README"
 
 	for f in 64tass-1.59.3120-src/LICENSE*; do
-		copy "$f" "Locale/License/$name-$version/${f##*/}"
+		copy "$f" "User/Doc/License/$name-$version/${f##*/}"
 	done
 	
 	#typeset -a arr=();
