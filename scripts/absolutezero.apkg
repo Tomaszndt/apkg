@@ -32,7 +32,7 @@ function build {
     copy "AbsoluteZero68k" "Games/AbsoluteZero/"
     copy "AbsoluteZero68k.info" "Games/AbsoluteZero/"
 
-    copy "ReadMe" "Locale/Readme/$name-$version/"
+    copy "ReadMe" "User/Doc/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied
