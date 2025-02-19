@@ -5,12 +5,12 @@
 #   asterisk separated array of source url, sha256 sum and optional download file name
 name="iconlib"
 tags="library, icon"
-version="46.4.594"
+version="46.4.592"
 cpu=68020
 require=""
 description="free icon.library in optimized ASM code"
 packager="lobotomius@gmail.com"
-source=("https://aminet.net/util/libs/IconLib_46.4.lha*9c966de4bc6d004a3cbe8b5ec1225313d4a431e703bd172f2a259d3fc27702d7*$name-$version.lha")
+source=("https://aminet.net/util/libs/IconLib_46.4.lha*6b21685e35dd8984dc6f1b7144ea131b0c74d4db2d24fd5dba08b1b43c3b41eb")
 upstream="https://aminet.net/package/util/libs/IconLib_46.4"
 
 # avoid using underscore as the first character in your variable names
