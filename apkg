@@ -625,10 +625,15 @@ function file_type {
 # 1 name
 # 2 path
 function add_assign {
+	local path="$2"
+
+	[[ $path != *:* ]] && path="SYS:${path}"
+	[[ $path == */ ]] && path="${path:0:0-1}"
+
 	if [[ ${assigns["$1"]} ]]; then
-		assigns["${1^^}"]+=" $2"
+		assigns["${1^^}"]+=" $path"
 	else
-		assigns["${1^^}"]="$2"
+		assigns["${1^^}"]="$path"
 	fi
 }
 
@@ -663,6 +668,23 @@ function read_assigns {
 		done
 
 	done
+}
+
+# amiga path to linux filesystem path translation
+# 1 amiga path
+function path_atol {
+	local path="$1"
+	local ret="$path"
+	local assign
+	local value
+
+	while [[ $path =~ ([a-zA-Z][a-zA-Z0-9]*:)(.*) ]]; do # can actually contain all sorts of crazy chars
+		assign="${BASH_REMATCH[1]^^}"
+		value="${assigns[$assign]}"
+		path="${value}/${BASH_REMATCH[2]}"
+	done
+
+	echo "$path"
 }
 
 #############################
@@ -1442,13 +1464,15 @@ v["cpu"]="$cpu"
 v["APKG"]="$APKG"
 
 declare -A assigns
-add_assign "sys:" "$(realpath ${v['root']})"
+assigns['SYS:']="$(realpath "${v['root']}")"
 add_assign "C:" "SYS:C"
-add_assign "s:" "SYS:S"
-add_assign "libs:" "SYS:Libs"
-add_assign "devs:" "SYS:Devs"
-add_assign "fonts:" "SYS:Fonts"
-add_assign "l:" "SYS:L"
+add_assign "DEVS:" "SYS:Devs"
+add_assign "ENVARC:" "Prefs/Env-Archive"
+add_assign "FONTS:" "SYS:Fonts"
+add_assign "L:" "SYS:L"
+add_assign "LIBS:" "SYS:Libs"
+add_assign "RAM:" "SYS:RAM"
+add_assign "S:" "SYS:S"
 read_assigns "S/Startup-Sequence"
 read_assigns "S/User-Startup"
 
