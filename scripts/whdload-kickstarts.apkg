@@ -1,0 +1,36 @@
+name="whdload-kickstarts"
+tags="whdload, rom, kickstart"
+version="1"
+cpu=68000
+require=""
+description="roms required by many whdloads"
+packager="lobotomius@gmail.com"
+source=(
+    "Kickstarts.7z*bc4730aa5c3f4c91d1fd99597e4c6c1bac30b3bf086efb1398642ed4c9c758dc"
+    )
+upstream="http://whdload.de/index.html"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd Kickstarts || exit 1
+
+    for file in *; do copy "$file" "Devs/Kickstarts/$file"; done
+
+}
+
+# this function is executed on installation after all files have been copied
+#  userpatch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
