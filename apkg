@@ -25,6 +25,8 @@ return_str=""
 # system="" # amiga model
 # language="" # ISO code
 
+echo "apkg $_apkg_version $(date)" > apkg.log
+
 _ts_msg_number=0;
 # $1 string, $2 prefix
 function _echo() {
@@ -336,7 +338,7 @@ function makedir() {
 			s="$s$d/"
 		fi
 		mkdir -p "$s" &> /dev/null
-		if [ ! -f "$s.uaem" ]; then
+		if [ ! -f "${s%/*}.uaem" ]; then
 			perm=$(sprotect "$d" "rwed" "$pkgname")
 			echo "$perm" > "${s:0:${#s}-1}.uaem"
 		fi
@@ -816,7 +818,7 @@ function repo_add_package() {
 	file="${1}"
 
 	[[ ! -f "${repopath}repo.db" ]] && repo_init "$repopath"
-	[[ $(sqlite3 "${repopath}repo.db" 'select sqlite_version()') ]] && repo_init "$repopath"
+	[[ "$(sqlite3 "${repopath}repo.db" 'select sqlite_version()')" < "3" ]] && repo_init "$repopath"
 
 	meta=$(package_meta "$file")
 
@@ -830,8 +832,12 @@ function repo_add_package() {
 
 	query="insert into packages ('file', 'name', 'version', 'cpu', 'tags', 'built', 'packager', 'url') values ('${file##*/}', '$name', '$version', '$cpu', '$tags', '$built', '$packager', '$url' ) "
 	tmp=$(sqlite3 "${repopath}repo.db" "select name from packages where name='$name' and version ='$version'")
-	[[ $tmp ]] || sqlite3 "${repopath}repo.db" "$query"
-	_echo "@added $name, $version into $repopath"
+	if [[ "$tmp" < "0" ]]; then
+		sqlite3 "${repopath}repo.db" "$query"
+		_echo "@added $name, $version into $repopath"
+	else
+		_echo "@$name, $version already present in $repopath"
+	fi
 }
 
 # populate repository database
