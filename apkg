@@ -815,6 +815,8 @@ function repo_add_package() {
 	[[ "$2" ]] && repopath="$2" || repopath="${repo}"
 	file="${1}"
 
+	[[ ! -f "${repopath}repo.db" ]] && repo_init "$repopath"
+
 	meta=$(package_meta "$file")
 
 	name=$(meta_get "$meta" "name")
