@@ -1461,7 +1461,10 @@ function install_repo() {
 
 [[ -z "$APKG" ]] && APKG="$HOME/.apkg"
 [[ "$APKG" != */ ]] && APKG="$APKG/"
-[[ ! -d "$APKG" ]] && _echo "%invalid working directory path: '$APKG'"
+[[ ! -d "$APKG" ]] && {
+	_echo "@creating working directory path: '$APKG'"
+	mkdir -p "$APKG"
+	}
 [[ ! -d "${APKG}repo" ]] && mkdir "${APKG}repo"
 [[ ! -d "${APKG}tmp" ]] && mkdir "${APKG}tmp"
 [[ ! -d "${APKG}downloads" ]] && mkdir "${APKG}downloads"
