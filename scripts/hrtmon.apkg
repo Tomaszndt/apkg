@@ -1,0 +1,45 @@
+name="hrtmon"
+tags="freezer, debuger, monitor, crack, analysis"
+version="2.38"
+cpu=68000
+require=""
+description="FREE 'Action-Replay' like monitor"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/wepl/hrtmon/releases/download/v2.38/hrtmon238.lha*03004c36a149ceb65733a6265637a08b19552cf7e4d9c102c49b6322045e36c7"
+    )
+upstream="https://aminet.net/package/util/libs/ttflib68040"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "hrtmon" || exit 1
+
+    for file in HRTmon HRTmon.data HRTmonGUI2.gui HRTmonGUI2.gui.info HRTmonPrefs HRTmonPrefs.info *.iff *.raw; do 
+        copy "$file" "Dev/Hrtmon/"
+    done
+
+    copy "HRTmon.guide" "Locale/Help/"
+    copy "HRTmon.guide.info" "Locale/Help/"
+
+    copy "HRTmon.readme" "User:Doc/Readme/$name-$version/"
+    copy "readme.txt" "User:Doc/Readme/$name-$version/"
+    copy "readme-whdload.txt" "User:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
