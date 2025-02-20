@@ -671,7 +671,7 @@ function read_assigns {
 		name="${a[1]}"
 
 		for i in $(seq 2 $(( ${#a[@]} - 1 )) ); do
-			[[ $i != "ADD" && $i != "DEFER" ]] && add_assign "$name" "${b[$i]}"
+			[[ ${a[i]} != *ADD* && ${a[$i]} != *DEFER* ]] && add_assign "$name" "${b[$i]}"
 		done
 
 	done
