@@ -1,0 +1,35 @@
+name="test"
+tags="testing"
+version="0.0.1"
+cpu=68040
+require=""
+description=""
+packager="lobotomius@gmail.com"
+source=(
+    "test.lha*d7425d05428b759b3d19357a232df6ecae4c79171f09e9d7a93f3f9ed0ecafcf"
+    )
+upstream="https://aminet.net/package/util/libs/ttflib68040"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    makedir "USER:abc/def"
+    copy "test.txt" "amissl:/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

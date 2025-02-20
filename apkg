@@ -305,24 +305,30 @@ function makedir() {
 	local perm
 	local d=""
 	local s="$pkgdir"
-	local tmp="$1"
-	
-	if [ -d "$pkgdir$tmp" ]; then return_str="$pkgdir/$tmp/"; return; fi
+	local path="$1"
+	local assign
+	local value
+	local save
 
-	if [[ "$tmp" == $pkgdir* ]]; then
-		tmp="${1#$pkgdir/}"
-	fi
+	if [ -d "$pkgdir$path" ]; then return_str="$pkgdir/$path/"; return; fi
 
-	if [[ "${tmp:0:1}" == "/" ]]; then
-		tmp="${tmp:1}"
-	fi
+	[[ "$path" == $pkgdir* ]] && path="${1#$pkgdir/}"
 
-	if [[ "${tmp:0-1}" == "/" ]]; then
-		tmp="${tmp:0:${#tmp}-1}"
-	fi
+	[[ "${path:0:1}" == "/" ]] && path="${path:1}"
+
+	[[ "${path:0-1}" == "/" ]] && path="${path:0:${#path}-1}"
+
+
+	save="${assigns['SYS:']}"; assigns['SYS:']=""
+	while [[ $path =~ ([a-zA-Z][a-zA-Z0-9]*:)(.*) ]]; do # can actually contain all sorts of crazy chars
+		assign="${BASH_REMATCH[1]^^}"
+		value="${assigns[$assign]}"
+		path="${value}/${BASH_REMATCH[2]}"
+	done
+	assigns['SYS:']="$save"
 
 	IFS='/'
-	for d in $tmp; do
+	for d in $path; do
 		e=$(find "$s" -maxdepth 1 -type d -iname "$d")
 		if [[ $e ]]; then 
 			s="$s${e##*/}/"; 
@@ -644,27 +650,28 @@ function read_assigns {
 	local line
 	local a
 	local name
+	local tmp
 
 	readarray -t lines < "${v['root']}$1" || return 1
 
 	for line in "${lines[@]}"; do
 		[[ $line == *\;* ]] && continue
-		line="${line^^}"
-		[[ $line != *ASSIGN* ]] && continue
-		[[ $line == *EXISTS* ]] && continue	
+		[[ ${line^^} != *ASSIGN* ]] && continue
+		[[ ${line^^} == *EXISTS* ]] && continue	
 
 		line="${line//\"}"
-		line="${line//ADD}"
-		line="${line//DEFER}"
+		tmp="$line"
+		line="${line^^}"
 
 		read -ra a <<< "$line"
+		read -ra b <<< "$tmp"
 
-		[[ ${a[0]} != ASSIGN ]] && continue
+		[[ ${a[0]^^} != ASSIGN ]] && continue
 
 		name="${a[1]}"
 
 		for i in $(seq 2 $(( ${#a[@]} - 1 )) ); do
-			add_assign "$name" "${a[$i]}"
+			[[ $i != "ADD" && $i != "DEFER" ]] && add_assign "$name" "${b[$i]}"
 		done
 
 	done
@@ -674,9 +681,12 @@ function read_assigns {
 # 1 amiga path
 function path_atol {
 	local path="$1"
-	local ret="$path"
 	local assign
 	local value
+	local c
+	local p
+	local t
+	local a
 
 	while [[ $path =~ ([a-zA-Z][a-zA-Z0-9]*:)(.*) ]]; do # can actually contain all sorts of crazy chars
 		assign="${BASH_REMATCH[1]^^}"
@@ -684,7 +694,18 @@ function path_atol {
 		path="${value}/${BASH_REMATCH[2]}"
 	done
 
-	echo "$path"
+	[[ -d "${path}" ]] && { echo "${path}"; return 0; }
+
+	p="/"
+	IFS=$'/'; read -ra a <<< "$path"; unset IFS
+	for c in "${a[@]}"; do
+		[[ $c ]] && {
+			t="$(find "$p" -maxdepth 1 -type d -iname "$c" 2>/dev/null)"
+			if [[ $t ]]; then p="${t}"; else _echo "%path not found $path ($p,$t)"; fi
+		}
+	done
+	
+	echo "$p"
 }
 
 #############################
@@ -1070,7 +1091,7 @@ function pkg_make() {
 		
 	done
 
-	local pkgname="$name:$version:$cpu"
+	local pkgname="$name~$version~$cpu"
 	
 	rm -r "${v['APKG']}tmp/" &> /dev/null 
 	mkdir -p "${v['APKG']}tmp"
@@ -1445,6 +1466,14 @@ function install_repo() {
 [[ ! -d "${APKG}tmp" ]] && mkdir "${APKG}tmp"
 [[ ! -d "${APKG}downloads" ]] && mkdir "${APKG}downloads"
 [[ ! -d "${APKG}cache" ]] && mkdir "${APKG}cache"
+[[ ! -d "${APKG}RAM" ]] && { 
+	mkdir "${APKG}RAM"; 
+	mkdir "${APKG}RAM/T"; 
+	mkdir "${APKG}RAM/CLIPBOARDS"; 
+	mkdir "${APKG}RAM/ENV"
+	}
+
+declare -A assigns
 
 source "~/.apkg/apkg.config" &> /dev/null
 source "./apkg.config" &> /dev/null
@@ -1463,18 +1492,17 @@ v["repo"]="$repo"
 v["cpu"]="$cpu"
 v["APKG"]="$APKG"
 
-declare -A assigns
 assigns['SYS:']="$(realpath "${v['root']}")"
+assigns['RAM:']="${APKG}RAM"
 add_assign "C:" "SYS:C"
 add_assign "DEVS:" "SYS:Devs"
 add_assign "ENVARC:" "Prefs/Env-Archive"
 add_assign "FONTS:" "SYS:Fonts"
 add_assign "L:" "SYS:L"
 add_assign "LIBS:" "SYS:Libs"
-add_assign "RAM:" "SYS:RAM"
 add_assign "S:" "SYS:S"
-read_assigns "S/Startup-Sequence"
-read_assigns "S/User-Startup"
+read_assigns "S/Startup-Sequence" &> /dev/null
+read_assigns "S/User-Startup" &> /dev/null
 
 #
 # print config
