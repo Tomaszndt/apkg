@@ -32,6 +32,8 @@ function build {
    #  for file in Libs/mui/*; do copy "$file" "Libs/MUI/$file"; done
    unset IFS
 
+   makedir "Libs/MUI/Locale"
+
    copy ReadMe.AmigaOS3 "Locale/Readme/$name-$version/ReadMe.AmigaOS3"
 
    copy "PSI" "Libs/MUI/PSI"
