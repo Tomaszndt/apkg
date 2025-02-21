@@ -324,7 +324,7 @@ function makedir() {
 	assigns['SYS:']="$save"
 
 	while [[ $path =~ /*([^/]+)(.*) ]]; do
-		d="${BASH_REMATCH[1	]}"
+		d="${BASH_REMATCH[1]}"
 		patharray+=("$d")
 		path="${BASH_REMATCH[2]}"
 	done
@@ -337,7 +337,7 @@ function makedir() {
 			s="$s$d/"
 		fi
 		mkdir -p "$s" &> /dev/null
-		if [ ! -f "${s%/*}.uaem" ]; then
+		if [[ ! -f "${s%/*}.uaem" ]]; then
 			perm=$(sprotect "$d" "rwed" "$pkgname")
 			echo "$perm" > "${s:0:${#s}-1}.uaem"
 		fi
