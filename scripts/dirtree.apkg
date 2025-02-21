@@ -1,32 +1,58 @@
 name="dirtree"
 tags=""
-version="1.2"
+version="2.0"
 cpu=68000
 require=""
 description="apkg directory structure"
 packager="lobotomius@gmail.com"
-source=()
+source=("dirtree_icons.zip*e9dfb8b16070c0a26beb05aef92376b0007b7f7f5b55244d7bfc21ce1da79a56")
 upstream=""
 
 function build {
-	cd "$srcdir"
-	
-	makedir "apkg"
-	
-	makedir "Dev"
-	makedir "Dev/doc"
-	makedir "Dev/source"
 
-	makedir "Locale"	
-	makedir "Locale/Readme"
-	makedir "Locale/License"
-	makedir "Locale/Manual"
+	local file
 	
-	makedir "Tools/Disk"
-	makedir "Tools/Audio"
-	makedir "Tools/Image"
-	makedir "Tools/Game"
-	makedir "Tools/Development"
+	# SYS: 
+	makedir "Dev/"
+
+	# User:
+	makedir "USER:Doc"
+	makedir "USER:Doc/License"
+	makedir "USER:Doc/Readme"
+	makedir "USER:Games"
+	makedir "USER:Images"
+	makedir "USER:Music"
+	makedir "USER:Music/MP3"
+	makedir "USER:Music/Mod"
+
+	cd "dirtree_icons" || exit 1
+
+	makedir "apkg"
+
+	copy "Dev.info" "SYS:/"
+	copy "User.info" "SYS:/" # todo copy to actual assign
+
+	copy "User/Doc.info" "USER:/"
+	copy "User/Doc/License.info" "USER:Doc/"
+	copy "User/Doc/Readme.info" "USER:Doc/"
+
+	copy "User/Games.info" "USER:/"
+	copy "User/Images.info" "USER:/"
+
+	copy "User/Music.info" "USER:/"
+	copy "User/Music/Mod.info" "USER:Music/"
+	copy "User/Music/MP3.info" "USER:Music/"
+
+	# IFS=$'\n'
+	# for file in $(find User/ -type f -name "*.info"); do
+	# 	copy "$file" "USER:${file#*/}"
+	# done
+	# unset IFS
+
+	copy "readme.txt" "USER:Doc/Readme/$name-$version/Readme"
 }
 
+function post_install {
+    :
+}
 # vim: ts=4:syntax=sh:
