@@ -27,7 +27,7 @@ upstream="http://janeway.exotica.org.uk/release.php?id=65620"
 function build {
 	# we are in "$srcdir"
 
-    copy "magic%20milktunnel.mod" "User/Music/mod/whiskas/magic milktunnel.mod"
+    copy "magic%20milktunnel.mod" "User:Music/Mod/Whiskas/Magic milktunnel.mod"
 
 }
 
