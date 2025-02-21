@@ -165,20 +165,13 @@ done
 
 # 1 file
 function base() {
-	local tmp
-	tmp="$1"
-	echo "${tmp##*/}"
+	[[ $1 =~ .*[:/]([^:/]+) ]] && echo "${BASH_REMATCH[1]}"
 }
 
 # 1 file
 function path() {
-	local tmp
-	tmp="${1%/*}"
-
-	if [[ $tmp == "$1" ]]; then
-		echo ""; 
-	else
-		echo "$tmp/"
+	if [[ $1 =~ (.+[:/]).* ]]; then
+		echo "${BASH_REMATCH[1]}"
 	fi
 }
 
@@ -388,7 +381,6 @@ function copy() {
 
 	cp -f "${srcdir}${spath}${sbase}" "${return_str}${dbase}" &&
 	echo "$perm" > "${return_str}${dbase}.uaem" #|| exit 1
-
 }
 
 # patch aos startup like files
