@@ -1244,7 +1244,7 @@ function install_file() {
 	local pdestination=$(path "$destination")
 	local bdestination=$(base "$destination")
 
-	if [ -f "$destination" ]; then
+	if [[ -f "$destination" ]]; then
 		_echo "@$destination backed up in $backup"
 		cp "$destination" "$backup"
 		rm "$destination"
@@ -1254,7 +1254,7 @@ function install_file() {
 		cp "$source" "$destination"
 	fi
 
-	if [ -f "$source.uaem" ]; then
+	if [[ -f "$source.uaem" ]]; then
 		cp "$source.uaem" "$destination.uaem"
 	fi
 
@@ -1356,16 +1356,11 @@ function install_package() {
 	pkgversion=$(meta_get "$meta" "version")
 	backup="$pkgname-$pkgversion"
 
-	if [ -f "$root/apkg/$backup.rollback" ]; then
-		_echo "!$filename already installed"
-		exit 1
-	else
-		:
-	fi
+	[[ -f "$root/apkg/$backup.rollback" ]] && _echo "%$filename already installed"
 
 	_echo "#installing $_filename"
 
-	_echo "detected Amiga OS version $osversion"
+	# _echo "detected Amiga OS version $osversion" # not used here at the moment
 	
 	tmpdir="${v['APKG']}tmp/"
 	rm -r "$tmpdir" #&> /dev/null
@@ -1392,13 +1387,15 @@ function install_package() {
 		fbase=$(base "$f")
 		if [[ "$f/" == "$tmpdir" ]]; then continue; fi
 		if [ -d "$f" ]; then
-			mkdir -p "$root/${f:$tmpdir_length}"
-			protect "$root/${f:$tmpdir_length}"
-			echo -e "dirdelete ${f:$tmpdir_length}" >> "${root}/apkg/$pkgname-$pkgversion.rollback"
+			[[ ! -d "$root/${f:$tmpdir_length}" ]] && {
+				mkdir -p "$root/${f:$tmpdir_length}"
+				protect "$root/${f:$tmpdir_length}"
+				echo -e "dirdelete ${f:$tmpdir_length}" >> "${root}/apkg/$pkgname-$pkgversion.rollback"
+			}
 		fi
 		if [ -f "$f" ]; then
 			if [ -f "$root/${f:$tmpdir_length}" ]; then
-				#_echo "@conflicting file: $root/${f:$tmpdir_length}"
+				# conflicting file
 				install_file "$f" "${root}${f:$tmpdir_length}" "${root}apkg/backup/$backup"
 
 				echo "filedelete ${f:$tmpdir_length}" >> "${root}apkg/$pkgname-$pkgversion.rollback"
