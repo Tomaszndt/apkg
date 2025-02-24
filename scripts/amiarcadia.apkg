@@ -1,0 +1,55 @@
+name="amiarcadia"
+tags="game, emulator"
+version="34.0"
+cpu=68020
+require="amigaos>3.2"
+description=""
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/misc/emu/AmiArcadia.lha*6254b23cb0ee4c03cd9eed58001eb9db19888418abce4b912019e1149d025b39"
+    )
+upstream="https://aminet.net/package/misc/emu/AmiArcadia"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd AmiArcadia || exit 1
+
+    makedir "USER:Games/AmiArcadia/Configs"
+    makedir "USER:Games/AmiArcadia/Disks"
+    makedir "USER:Games/AmiArcadia/Games"
+    makedir "USER:Games/AmiArcadia/Projects"
+    makedir "USER:Games/AmiArcadia/Screenshots"
+    makedir "USER:Games/AmiArcadia/Tapes"
+
+    for file in AmiArcadia Configs Disks Games Icons Projects Screenshots Tapes; do
+        copy "${file}.info" "USER:Games/AmiArcadia/"
+    done
+    for file in ARexx/*; do copy "$file" "$USER:Games/AmiArcadia/$file"; done
+    for file in Sounds/*; do copy "$file" "$USER:Games/AmiArcadia/$file"; done
+    IFS=$'\n'
+    for file in $(find Icons/ -type f); do copy "$file" "$USER:Games/AmiArcadia/${file#*/}"; done
+    for file in $(find Images/ -type f); do copy "$file" "$USER:Games/AmiArcadia/${file#*/}"; done
+    unset IFS
+    copy "AmiArcadia" "USER:Games/AmiArcadia/"
+
+    copy "AmiArcadia.guide" "Locale/Help/"
+    copy "AmiArcadia.guide.info" "Locale/Help/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
