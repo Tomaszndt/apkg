@@ -103,7 +103,7 @@ short mode i=install, b=build, pi=package-info
 
 EOF
 
-	for binary in sqlite3 7z lha zip unzip unlzx rar xdftool ifftool infotool ipfs; do
+	for binary in sqlite3 7z lha zip unzip unlzx rar unadf xdftool ifftool infotool ipfs; do
 		[[ $(which "$binary" 2>/dev/null ) ]] && str_avail="$str_avail $binary" || str_missing="$str_missing $binary"
 	done
 
@@ -201,6 +201,9 @@ function unpack() {
 		;;
 		"7z")
 			7z x "$1" -o"$2" &> /dev/null
+		;;
+		"adf")
+			unadf -d "$2" "$1" &> /dev/null
 		;;
 		*)
 			_echo "@unsupported archive type: $ext";

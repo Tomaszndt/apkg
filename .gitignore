@@ -13,6 +13,7 @@ tmp
 *.lzx
 *.key
 *.hdf
+*.iso
+*.adf
 iff*
-Images/*
 apkg.log
