@@ -303,6 +303,7 @@ function dirdelete() {
 # 1 path relative to $pkgdir
 # 2 icon [wb31] TODO
 # > return_str contains amiga valid path
+declare -A _makedir_cache
 function makedir() {
 	local perm
 	local d=""
@@ -311,17 +312,18 @@ function makedir() {
 	local assign
 	local value
 	local save
+	local savepath
 	declare -a patharray=()
-
-	if [ -d "$pkgdir$path" ]; then return_str="$pkgdir/$path/"; return; fi
 
 	[[ "$path" == $pkgdir* ]] && path="${1#$pkgdir/}"
 
 	[[ "${path:0:1}" == "/" ]] && path="${path:1}"
-
 	[[ "${path:0-1}" == "/" ]] && path="${path:0:${#path}-1}"
 
+	[[ -d "$pkgdir$path" ]] && { return_str="$pkgdir$path"; return; }
+	[[ ${_makedir_cache["$path"]} ]] && { return_str="${_makedir_cache["$path"]}"; return; }
 
+	savepath="$path"
 	save="${assigns['SYS:']}"; assigns['SYS:']=""
 	while [[ $path =~ ([a-zA-Z][a-zA-Z0-9]*:)(.*) ]]; do # can actually contain all sorts of crazy chars
 		assign="${BASH_REMATCH[1]^^}"
@@ -350,6 +352,7 @@ function makedir() {
 		fi
 	done
 
+	_makedir_cache["$savepath"]="$s"
 	return_str="$s"
 }
 
