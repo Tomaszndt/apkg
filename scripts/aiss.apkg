@@ -1,0 +1,46 @@
+name="aiss"
+tags="gui, image, toolbar"
+version="4.6"
+cpu=68000
+require=""
+description="Amiga Image Storage System"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/misc/aiss46.lha*ab14f157a65772867cd36404701d82ff5d5bf433d8e46194e5e66c8d46e50c54*$name-$version.lha"
+    )
+upstream="https://aminet.net/package/util/misc/aiss46"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "AISS4.6" || exit 1
+
+    copy "AISS.readme" "USER:/Readme/"
+
+    makedir "SYS:Classes/ToolbarImages/Contrib"
+
+    for file in Installation/Images/*; do
+        copy "${file}" "SYS:Classes/ToolbarImages/Default/${file##*/}"
+    done
+
+    copy "Installation/AISS" "SYS:WBStartup/" "srwed"
+    copy "Installation/AISS.info" "SYS:WBStartup/"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
