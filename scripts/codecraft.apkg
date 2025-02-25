@@ -1,0 +1,40 @@
+name="codecraft"
+tags="text, editor, code, ide"
+version="1.15"
+cpu=68020
+require="amigaos>3.2.1"
+description=""
+packager="lobotomius@gmail.com"
+source=(
+    "http://boemann.dk/codecraft/Codecraft.adf*13bdb0856a9511db38e29b5b74cb17c0b6fe4cf8edb1349bef10ca455e0aa60c*$name-$version.adf"
+    )
+upstream="http://boemann.dk/codecraft/"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy "files/Codecraft" "SYS:Dev/"
+    copy "files/Codecraft.info" "SYS:Dev/"
+
+    for file in images/*; do copy "$file" "HELP:english/Codecraft/images/${file##*/}"; done
+    for file in tefiles/*; do copy "$file" "SYS:Tools/TextEditFileTypes/${file##*/}"; done
+
+    copy "User.guide" "HELP:English/Codecraft.guide"
+    copy "User.guide.info" "HELP:English/Codecraft.guide.info"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
