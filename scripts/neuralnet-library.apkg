@@ -1,0 +1,40 @@
+name="neuralnet-library"
+tags="library, neural, nn"
+version="5.0"
+cpu=68040
+require="amigaos>3"
+description="Shared library for neural networks"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/dev/misc/neuralnetlib.lha*c64c4fa511a1387c187ddab6715e09061cc639bb6081721e609bee9e004615b7*$name-$version.lha"
+    )
+upstream="https://aminet.net/package/dev/misc/neuralnetlib"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "neuralnetlib" || exit 1
+
+    copy "libs/neuralnet.library_68040" "Libs/neuralnet.library"
+
+    copy "README" "USER:Readme/$name-$version/${file}"
+    copy "doc/manual" "USER:Readme/$name-$version/${file}"
+    
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
