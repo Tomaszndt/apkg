@@ -1,0 +1,47 @@
+name="mysticview"
+tags="view, image, thumbnail"
+version="1.07"
+cpu=68020
+require="amigaos>3, render-library, guigfx-library, neuralnet-library"
+description="RTG datatype picture viewer"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/gfx/show/MysticView.lha*d83c9cf8021e8140e30727aad341a8c745317400084d247c974107ba2c4d44b2*$name-$version.lha"
+    )
+upstream="https://aminet.net/package/gfx/show/MysticView"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    cd "MysticView" || exit 1
+
+    copy "libs/mysticview.library" "LIBS:/"
+
+    copy "MysticView" "SYS:Utilities/"
+    copy "MysticView.info" "SYS:Utilities/"
+
+    copy "MysticView.guide" "HELP:/"
+    copy "MysticView.guide.info" "HELP:/"
+
+    copy "README" "USER:Readme/$name-$version/"
+    copy "HISTORY" "USER:Readme/$name-$version/"
+    copy "COPYING" "USER:License/$name-$version/"
+    
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
