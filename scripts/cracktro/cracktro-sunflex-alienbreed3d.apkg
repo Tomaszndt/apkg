@@ -1,0 +1,35 @@
+name="cracktro-sunflex-alienbreed3d"
+tags="cracktro, sunflex"
+version="1"
+cpu=68020
+require=""
+description="cracktro"
+packager="lobotomius@gmail.com"
+source=(
+    "https://files.scene.org/view/mirrors/amigascne/Groups/S/Sunflex/SXI-TrAlienBreed3d2*f3c923191a280ae3d5b51212f1c425bf2d742e5629f3e45caf277f121f3f0b05"
+    )
+upstream="https://www.pouet.net/prod.php?which=20598"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    copy "SXI-TrAlienBreed3d2" "USER:Scene/Cracktro/Sunflex/"
+    
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

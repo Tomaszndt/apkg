@@ -1,0 +1,35 @@
+name="cracktro-crystal+melon-superfrog"
+tags="cracktro, crystal, melon"
+version="1"
+cpu=68020
+require=""
+description="superfrog cracktro"
+packager="lobotomius@gmail.com"
+source=(
+    "https://ftp.untergrund.net/users/hitchhikr/old/crystal.zip*47c6cfc82cfe87a018067c4d2dd2431a958248333fcef592e5856e915d556d0d*$name-$version.lha"
+    )
+upstream="https://www.pouet.net/prod.php?which=26695"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    copy "Crystal" "USER:Scene/Cracktro/Crystal+Melon/"
+    
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:

@@ -1,0 +1,35 @@
+name="cracktro-paradox+thefrogbulls-banshee"
+tags="cracktro, paradox, the frog bulls"
+version="1"
+cpu=68020
+require=""
+description="banshee cracktro"
+packager="lobotomius@gmail.scom"
+source=(
+    "https://ftp.untergrund.net/users/hitchhikr/old/pdx9.zip*c53908e08483def8fd1457c9464b8263c861807bbd0b031c303a6841a85d1c59*$name-$version.lha"
+    )
+upstream="https://www.pouet.net/prod.php?which=10026"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    copy "pdx9" "USER:Scene/Cracktro/Paradox+TheFrogBulls/"
+    
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+   :
+}
+
+# vim: ts=4:syntax=sh:
