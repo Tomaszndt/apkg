@@ -306,14 +306,9 @@ function dirdelete() {
 declare -A _makedir_cache
 function makedir() {
 	local perm
-	local d=""
 	local s="$pkgdir"
 	local path="$1"
-	local assign
-	local value
 	local save
-	local savepath
-	declare -a patharray=()
 
 	[[ "$path" == $pkgdir* ]] && path="${1#$pkgdir/}"
 
@@ -323,36 +318,15 @@ function makedir() {
 	[[ -d "$pkgdir$path" ]] && { return_str="$pkgdir$path"; return; }
 	[[ ${_makedir_cache["$path"]} ]] && { return_str="${_makedir_cache["$path"]}"; return; }
 
-	savepath="$path"
-	save="${assigns['SYS:']}"; assigns['SYS:']=""
-	while [[ $path =~ ([a-zA-Z][a-zA-Z0-9]*:)(.*) ]]; do # can actually contain all sorts of crazy chars
-		assign="${BASH_REMATCH[1]^^}"
-		value="${assigns[$assign]}"
-		path="${value}/${BASH_REMATCH[2]}"
-	done
+	save="${assigns['SYS:']}"; assigns['SYS:']="${pkgdir}"
+	s="$(path_resolve_amiga "$path")"
 	assigns['SYS:']="$save"
 
-	while [[ $path =~ /*([^/]+)(.*) ]]; do
-		d="${BASH_REMATCH[1]}"
-		patharray+=("$d")
-		path="${BASH_REMATCH[2]}"
-	done
+	s="$(path_existing_amiga "$s")/"
 
-	for d in "${patharray[@]}"; do
-		e=$(find "$s" -maxdepth 1 -type d -iname "$d")
-		if [[ $e ]]; then 
-			s="$s${e##*/}/"; 
-		else
-			s="$s$d/"
-		fi
-		mkdir -p "$s" &> /dev/null
-		if [[ ! -f "${s%/*}.uaem" ]]; then
-			perm=$(sprotect "$d" "rwed" "$pkgname")
-			echo "$perm" > "${s:0:${#s}-1}.uaem"
-		fi
-	done
+	mkdir -p "$s"
 
-	_makedir_cache["$savepath"]="$s"
+	_makedir_cache["$path"]="$s"
 	return_str="$s"
 }
 
@@ -686,36 +660,55 @@ function read_assigns {
 	done
 }
 
-# amiga path to linux filesystem path translation
 # 1 amiga path
-function path_atol {
+# r full path
+function path_resolve_amiga {
 	local path="$1"
-	local assign
-	local value
-	local c
-	local p
-	local t
-	local a
 
-	while [[ $path =~ ([a-zA-Z][a-zA-Z0-9]*:)(.*) ]]; do # can actually contain all sorts of crazy chars
+	[[ $path =~ [^:]+:.* ]] || path="SYS:$path"
+
+	while [[ $path =~ ([^:]*:)(.*) ]]; do
 		assign="${BASH_REMATCH[1]^^}"
 		value="${assigns[$assign]}"
 		path="${value}/${BASH_REMATCH[2]}"
 	done
 
-	[[ -d "${path}" ]] && { echo "${path}"; return 0; }
+	return_str="$path"
+	echo "$path"
+}
 
-	p="/"
-	IFS=$'/'; read -ra a <<< "$path"; unset IFS
-	for c in "${a[@]}"; do
-		[[ $c ]] && {
-			t="$(find "$p" -maxdepth 1 -type d -iname "$c" 2>/dev/null)"
-			if [[ $t ]]; then p="${t}"; else _echo "%path not found $path ($p,$t)"; fi
+# 1 path full directory path
+function path_existing_amiga {
+	local path="$1"
+	local -a component_array
+	local component
+	local existing_component
+
+	[[ ${path:0-1} != '/' ]] && path="$path/"
+
+	p="${path}"
+	while [[ ${#p} -gt 0 ]]; do
+		component="${p%%/*}"
+		component_array+=("${component}")
+		p="${p#*/}"
+	done
+
+	p=""
+	for component in "${component_array[@]}"; do
+		[[ ${#component} -gt 0 ]] && {
+			existing_component="$(find "$p" -maxdepth 1 -type d -iname "$component" 2>/dev/null)"
+			existing_component="${existing_component##*/}"
+			if [[ $existing_component ]]; then 
+				p="${p}/${existing_component}"; 
+			else 
+				p="${p}/${component}"; 
+			fi
 		}
 	done
-	
+
+	return_str="$p"
 	echo "$p"
-}
+} 
 
 #############################
 # main fuctionality
