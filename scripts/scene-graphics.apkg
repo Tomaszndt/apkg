@@ -20,7 +20,7 @@ upstream="http://janeway.exotica.org.uk/search.php"
 function build {
 
     for file in *; do
-        copy "$file" "User/Scene/Graphics/${file}"
+        copy "$file" "User:Scene/Graphics/${file}"
     done
 
 }
