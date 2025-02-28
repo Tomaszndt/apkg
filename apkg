@@ -621,56 +621,61 @@ function file_type {
 	echo "$r"
 }
 
-# 1 name
-# 2 path
+# 1 name assign name
+# 2 path assign value to add
 function add_assign {
+	local name="$1"
 	local path="$2"
 
+	[[ ${name:0-1} != ':' ]] && name="${name}:"
 	[[ $path != *:* ]] && path="SYS:${path}"
 	[[ $path == */ ]] && path="${path:0:0-1}"
 
-	if [[ ${assigns["$1"]} ]]; then
-		assigns["${1^^}"]+=" $path"
+	if [[ ${assigns["$name"]} ]]; then
+		assigns["${name^^}"]+=" $path"
 	else
-		assigns["${1^^}"]="$path"
+		assigns["${name^^}"]="$path"
 	fi
 }
 
-# 1 path to startup file
+# 1 path to startup file relative to $root
 function read_assigns {
 	local text
 	local lines
 	local line
-	local a
+	local -a array=()
 	local name
 	local tmp
 
 	readarray -t lines < "${v['root']}$1" || return 1
-
 	for line in "${lines[@]}"; do
 		[[ $line == *\;* ]] && continue
-		[[ ${line^^} != *ASSIGN* ]] && continue
+		[[ ${line^^} =~ [^\ ]*ASSIGN.* ]] || continue
 		[[ ${line^^} == *EXISTS* ]] && continue	
 
-		echo "$line" #>&2
-		line="${line//add}"
+		echo "i $line"
 
-		line="${line//\"}"
+		array=()
 		tmp="$line"
-		line="${line^^}"
+		while [[ $tmp =~ ([[:graph:]]+) ]]; do
+			token="${BASH_REMATCH[1]}"
+			[[ ${token^^} != ADD && ${token^^} != DEFER ]] && {
+				array+=("$token")
+			}
+			tmp="${tmp/$token}"
+		done
 
-		read -ra a <<< "$line"
-		read -ra b <<< "$tmp"
+		[[ ${array[0]^^} != ASSIGN ]] && continue
 
-		[[ ${a[0]^^} != ASSIGN ]] && continue
+		name="${array[1]}"
 
-		name="${a[1]}"
-
-		for i in $(seq 1 $(( ${#a[@]} - 1 )) ); do
-			[[ ${a[i]} != *ADD* && ${a[$i]} != *DEFER* && ${a[$i]^^} != "${name^^}" ]] && add_assign "$name" "${b[$i]}"
+		for i in "${array[@]:2}"; do
+		echo "+ $name" "$i"
+			add_assign "$name" "$i"
 		done
 
 	done
+
 }
 
 # 1 amiga path
@@ -1540,8 +1545,8 @@ add_assign "FONTS:" "SYS:Fonts"
 add_assign "L:" "SYS:L"
 add_assign "LIBS:" "SYS:Libs"
 add_assign "S:" "SYS:S"
-read_assigns "S/Startup-Sequence" &> /dev/null
-read_assigns "S/User-Startup" &> /dev/null
+read_assigns "S/Startup-Sequence" #&> /dev/null
+read_assigns "S/User-Startup" #&> /dev/null
 
 #
 # print config
