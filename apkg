@@ -653,8 +653,6 @@ function read_assigns {
 		[[ ${line^^} =~ [^\ ]*ASSIGN.* ]] || continue
 		[[ ${line^^} == *EXISTS* ]] && continue	
 
-		echo "i $line"
-
 		array=()
 		tmp="$line"
 		while [[ $tmp =~ ([[:graph:]]+) ]]; do
@@ -670,7 +668,6 @@ function read_assigns {
 		name="${array[1]}"
 
 		for i in "${array[@]:2}"; do
-		echo "+ $name" "$i"
 			add_assign "$name" "$i"
 		done
 
@@ -695,7 +692,7 @@ function path_resolve_amiga {
 	while [[ $path =~ ([^:]*:)(.*) ]]; do
 		assign="${BASH_REMATCH[1]^^}"
 		value="${assigns[$assign]}"
-		value=${value% *}
+		value=${value%% *}
 		path="${value}/${BASH_REMATCH[2]}"
 	done
 	assigns['SYS:']="$save_sys"
