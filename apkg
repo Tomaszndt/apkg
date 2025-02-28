@@ -315,19 +315,29 @@ function makedir() {
 	[[ "${path:0:1}" == "/" ]] && path="${path:1}"
 	[[ "${path:0-1}" == "/" ]] && path="${path:0:${#path}-1}"
 
-	[[ -d "$pkgdir$path" ]] && { return_str="$pkgdir$path"; return; }
-	[[ ${_makedir_cache["$path"]} ]] && { return_str="${_makedir_cache["$path"]}"; return; }
+	if [[ -d "$pkgdir$path" ]]; then 
+		return_str="$pkgdir$path"; 
+		echo "$return_str"; 
+		return 
+	fi
+	if [[ ${_makedir_cache["$path"]} ]]; then
+		return_str="${_makedir_cache["$path"]}"; 
+		echo "$return_str"; 
+		return; 
+	fi
 
-	save="${assigns['SYS:']}"; assigns['SYS:']="${pkgdir}"
 	s="$(path_resolve_amiga "$path")"
-	assigns['SYS:']="$save"
+	s="$(path_existing_amiga "$s" "${v['root']}" )/"
 
-	s="$(path_existing_amiga "$s")/"
+	[[ ${s:0:1} == '/' ]] && s="${s:1}"
+	[[ ${s:0-1} == '/' ]] && s="${s:0:0-1}"
+	s="${pkgdir}${s}"
 
-	mkdir -p "$s"
+	mkdir -p "${s}"
 
 	_makedir_cache["$path"]="$s"
 	return_str="$s"
+	echo "$s"
 }
 
 # to use within build scripts
@@ -354,17 +364,17 @@ function copy() {
 	dpath=$(path "$2")
 
 	if [[ ! $dbase ]]; then dbase="$sbase"; fi
-
 	perm="rwed"
 	if [ -n "$3" ]; then
 		perm="$3"
 	fi
 	perm=$(sprotect "$dbase" "$perm" "${pkgname}")
 
-	makedir "${dpath}"
+	tmp="$(makedir "${dpath}")"
 
-	cp -f "${srcdir}${spath}${sbase}" "${return_str}${dbase}" &&
-	echo "$perm" > "${return_str}${dbase}.uaem" #|| exit 1
+	cp -f "${srcdir}${spath}${sbase}" "${tmp}/${dbase}" &&
+	echo "$perm" > "${tmp}/${dbase}.uaem" #|| exit 1
+
 }
 
 # patch aos startup like files
@@ -662,29 +672,42 @@ function read_assigns {
 
 # 1 amiga path
 # r full path
+declare -A _cache_path_resolve_amiga
 function path_resolve_amiga {
 	local path="$1"
+	local save_sys
 
-	[[ $path =~ [^:]+:.* ]] || path="SYS:$path"
+	if [[ $path =~ [^:]+\:.* ]]; then
+		:
+	else
+		path="SYS:$path"
+	fi
 
+	save_sys="${assigns['SYS:']}"; assigns['SYS:']=""
 	while [[ $path =~ ([^:]*:)(.*) ]]; do
 		assign="${BASH_REMATCH[1]^^}"
 		value="${assigns[$assign]}"
 		path="${value}/${BASH_REMATCH[2]}"
 	done
+	assigns['SYS:']="$save_sys"
 
 	return_str="$path"
-	echo "$path"
+	echo "$return_str"
 }
 
-# 1 path full directory path
+# 1 path full amiga directory path
+# 2 path reference path directory names are matched against
 function path_existing_amiga {
 	local path="$1"
+	local path_reference="$2"
 	local -a component_array
 	local component
 	local existing_component
+	local p
 
 	[[ ${path:0-1} != '/' ]] && path="$path/"
+
+	[[ ${path_reference:0-1} == '/' ]] && path_reference="${path_reference:0:0-1}"
 
 	p="${path}"
 	while [[ ${#p} -gt 0 ]]; do
@@ -696,7 +719,7 @@ function path_existing_amiga {
 	p=""
 	for component in "${component_array[@]}"; do
 		[[ ${#component} -gt 0 ]] && {
-			existing_component="$(find "$p" -maxdepth 1 -type d -iname "$component" 2>/dev/null)"
+			existing_component="$(find "$path_reference$p" -maxdepth 1 -type d -iname "$component" 2>/dev/null)"
 			existing_component="${existing_component##*/}"
 			if [[ $existing_component ]]; then 
 				p="${p}/${existing_component}"; 
@@ -705,6 +728,8 @@ function path_existing_amiga {
 			fi
 		}
 	done
+
+	p="${p/$path_reference}"
 
 	return_str="$p"
 	echo "$p"
@@ -1490,6 +1515,7 @@ source "./apkg.config" &> /dev/null
 [[ ! -d "$root" ]] && _echo "%invalid target root path: '$root'"
 [[ ! -d "$repo" ]] && _echo "%invalid repo path: '$repo'"
 
+root="$(realpath "$root")"
 [[ "$root" != */ ]] && root="$root/"
 [[ "$repo" != */ ]] && repo="$repo/"
 
