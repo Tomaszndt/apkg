@@ -42,8 +42,8 @@ function build {
     unset IFS
     copy "AmiArcadia" "USER:Games/AmiArcadia/"
 
-    copy "AmiArcadia.guide" "Locale/Help/"
-    copy "AmiArcadia.guide.info" "Locale/Help/"
+    copy "AmiArcadia.guide" "HELP:"
+    copy "AmiArcadia.guide.info" "HELP:"
 
 }
 

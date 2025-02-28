@@ -24,7 +24,7 @@ function build {
 
     cd "AISS4.6" || exit 1
 
-    copy "AISS.readme" "USER:/Readme/"
+    copy "AISS.readme" "USER:Doc/Readme/"
 
     makedir "SYS:Classes/ToolbarImages/Contrib"
 

@@ -5,7 +5,7 @@ cpu=68000
 require=""
 description="apkg directory structure"
 packager="lobotomius@gmail.com"
-source=("dirtree_icons.zip*0fddb0b1d8c6d293b2d33ba2c4c3c9337f28d8a5bf96bb540786c9b4c1e8e35d")
+source=("dirtree_icons.zip*ec03700cb8194fcc0399d45a517af874d35eafdce58a4473a49dcae1ea21f25b")
 upstream=""
 
 function build {

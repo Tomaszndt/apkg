@@ -25,7 +25,7 @@ function build {
 	# we are in "$srcdir"
 
     for file in *; do
-        copy "${file}" "User/Scene/Demo/UNIQUE/Origins/${file}"
+        copy "${file}" "USER:Scene/Demos/UNIQUE/Origins/${file}"
     done
 
 }

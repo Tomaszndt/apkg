@@ -23,8 +23,8 @@ function build {
     cd "ADiffView" || exit 1
 
     copy "ADiffView" "Dev/"
-    copy "ADiffView.guide" "Locale/Help/"
-    copy "LICENSE-3RD-PARTY.txt" "Locale/Help/License/$name-$version/"
+    copy "ADiffView.guide" "HELP:/"
+    copy "LICENSE-3RD-PARTY.txt" "USER:Doc/License/$name-$version/"
 
 }
 

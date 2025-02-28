@@ -10,18 +10,13 @@ upstream="http://m68k.aminet.net/package/dev/cross/64tass"
 
 function build {
 
-
 	copy "64tass-1.59.3120-src/64tass.68k" "C/64tass"	
 
-	copy 64tass-1.59.3120-src/README "User/Doc/Readme/64tass-$version/README"
+	copy 64tass-1.59.3120-src/README "User:Doc/Readme/64tass-$version/README"
 
 	for f in 64tass-1.59.3120-src/LICENSE*; do
-		copy "$f" "User/Doc/License/$name-$version/${f##*/}"
+		copy "$f" "User:Doc/License/$name-$version/${f##*/}"
 	done
 	
-	#typeset -a arr=();
-	#arr+=*.c; arr+=("Makefile.amigaos");
-	#zip -9 64tass.zip ${arr[@]}
-
 }
 # vim: ts=4:syntax=sh:

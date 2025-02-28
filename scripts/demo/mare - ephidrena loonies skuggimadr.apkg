@@ -34,7 +34,7 @@ function build {
         echo -ne "installing $total files: $(( $tick * 100 / $total ))%\r"
         tick=$(( tick += 1 ))
         f="${file:2}"
-        copy "${f}" "User/Scene/Demo/Ephidrena Loonies Skuggimadr/Mare/${f#*/}"
+        copy "${f}" "USER:Scene/Demos/Ephidrena Loonies Skuggimadr/Mare/${f#*/}"
     done
     unset IFS
     echo ""

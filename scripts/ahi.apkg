@@ -24,15 +24,20 @@ function build {
     cd "m68k-amigaos-ahi" || exit 1
 
     for file in COPYING*; do
-        copy "$file" "Locale/License/$name-$version/$file"
+        copy "$file" "USER:Doc/License/$name-$version/$file"
     done
-    copy "ahiusr.readme" "Locale/Readme/$name-$version/ahiusr.readme"
-    copy "ChangeLog" "Locale/Readme/$name-$version/ChangeLog"
+    copy "ahiusr.readme" "USER:Doc/Readme/$name-$version/ahiusr.readme"
+    copy "ChangeLog" "USER:Doc/Readme/$name-$version/ChangeLog"
 
     cd "User" || exit 1
 
-    copy "Docs/ahiusr.guide" "Locale/Help/ahi.guide"
-    copy "Docs/ahiusr.pdf" "Locale/Help/ahi.pdf"
+    copy "Docs/ahiusr.guide" "Help:ahi.guide"
+    copy "Docs/ahiusr.pdf" "Help:ahi.pdf"
+
+    # dont need the mwb icon
+    rm Prefs/AHI.MWB.info
+    # as to omit emu10kx.audio and avoid the openpci open error message
+    rm Devs/AHI/emu10kx.audio
 
     IFS=$'\n'
     for dir in C Devs L Prefs; do
@@ -42,11 +47,6 @@ function build {
     done
     unset IFS
 
-    rm "$pkgdir/Prefs/AHI.MWB.info" && rm "$pkgdir/Prefs/AHI.MWB.info.uaem"
-    # dont need the mwb icon
-
-    rm "$pkgdir/Devs/AHI/emu10kx.audio" && rm "$pkgdir/Devs/AHI/emu10kx.audio.uaem"
-    # as to omit emu10kx.audio and avoid the openpci open error message
 }
 
 # this function is executed on installation after all files have been copied

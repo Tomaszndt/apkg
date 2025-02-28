@@ -154,8 +154,8 @@ AwAABOkDAABQSwUGAAAAAAEAAQBcAAAAWAIAAAAA"
     copy "documentation/History.readme" "Locale/Readme/$name-$version/"
     copy "documentation/P96Prefs.guide" "Locale/Help/"
     copy "documentation/P96Prefs.guide.info" "Locale/Help/"
-    copy "documentation/P96_english.guide" "Locale/Help/"
-    copy "documentation/P96_english.guide.info" "Locale/Help/"
+    copy "documentation/P96_english.guide" "locale/help/"
+    copy "documentation/P96_english.guide.info" "HELP:/"
 
 }
 

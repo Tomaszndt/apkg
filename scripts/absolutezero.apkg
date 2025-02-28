@@ -19,20 +19,20 @@ upstream="https://aminet.net/package/game/jump/AbsoluteZero"
 function build {
     local file
 
-    copy "AbsoluteZero1.1.1.info" "Games/AbsoluteZero.info"
+    copy "AbsoluteZero1.1.1.info" "USER:Games/AbsoluteZero.info"
 
     cd "AbsoluteZero1.1.1" || exit 1
 
     IFS=$'\n'
     for file in $(find data -type f); do
-        copy "${file}" "Games/AbsoluteZero/${file}"
+        copy "${file}" "USER:Games/AbsoluteZero/${file}"
     done
     unset IFS
 
-    copy "AbsoluteZero68k" "Games/AbsoluteZero/"
-    copy "AbsoluteZero68k.info" "Games/AbsoluteZero/"
+    copy "AbsoluteZero68k" "USER:Games/AbsoluteZero/"
+    copy "AbsoluteZero68k.info" "USER:Games/AbsoluteZero/"
 
-    copy "ReadMe" "User/Doc/Readme/$name-$version/"
+    copy "ReadMe" "User:Doc/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied

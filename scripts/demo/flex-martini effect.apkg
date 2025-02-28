@@ -31,8 +31,9 @@ function build {
     for file in $(find . ! -type d ); do
         echo -ne "installing $total files: $(( $tick * 100 / $total ))% \r"
         tick=$(( tick += 1 ))
-        copy "${file:2}" "User/Scene/Demo/FLEX/the martini effect/${file:2}"
+        copy "${file:2}" "USER:Scene/Demos/FLEX/the martini effect/${file:2}"
     done
     unset IFS
 
 }
+# vim: ts=4:syntax=sh:
