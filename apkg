@@ -298,147 +298,6 @@ function dirdelete() {
 	fi
 }
 
-# to use within build scripts
-# create a directory
-# 1 path relative to $pkgdir
-# 2 icon [wb31] TODO
-# > return_str contains amiga valid path
-declare -A _makedir_cache
-function makedir() {
-	local perm
-	local s="$pkgdir"
-	local path="$1"
-	local save
-
-	[[ "$path" == $pkgdir* ]] && path="${1#$pkgdir/}"
-
-	[[ "${path:0:1}" == "/" ]] && path="${path:1}"
-	[[ "${path:0-1}" == "/" ]] && path="${path:0:${#path}-1}"
-
-	if [[ -d "$pkgdir$path" ]]; then 
-		return_str="$pkgdir$path"; 
-		echo "$return_str"; 
-		return 
-	fi
-	if [[ ${_makedir_cache["$path"]} ]]; then
-		return_str="${_makedir_cache["$path"]}"; 
-		echo "$return_str"; 
-		return; 
-	fi
-
-	s="$(path_resolve_amiga "$path")"
-	s="$(path_existing_amiga "$s" "${v['root']}" )/"
-
-	[[ ${s:0:1} == '/' ]] && s="${s:1}"
-	[[ ${s:0-1} == '/' ]] && s="${s:0:0-1}"
-	s="${pkgdir}${s}"
-
-	mkdir -p "${s}"
-
-	_makedir_cache["$path"]="$s"
-	return_str="$s"
-	echo "$s"
-}
-
-# to use within build scripts
-# copy single file
-# 1 source
-# 2 destination relative to $pkgdir
-# 3 permissions
-function copy() {
-	local perm
-	local sbase
-	local spath
-	local dpath
-	local dbase
-	local tmp="$2"
-	local subdir=""
-	local p=""
-
-	tmp=$(realpath "$1")  || _echo "%invalid file/path: $1"
-	tmp="${tmp/$srcdir/}"
-	sbase=$(base "$tmp")
-	spath=$(path "$tmp")
-
-	dbase=$(base "$2")
-	dpath=$(path "$2")
-
-	if [[ ! $dbase ]]; then dbase="$sbase"; fi
-	perm="rwed"
-	if [ -n "$3" ]; then
-		perm="$3"
-	fi
-	perm=$(sprotect "$dbase" "$perm" "${pkgname}")
-
-	tmp="$(makedir "${dpath}")"
-
-	cp -f "${srcdir}${spath}${sbase}" "${tmp}/${dbase}" &&
-	echo "$perm" > "${tmp}/${dbase}.uaem" #|| exit 1
-
-}
-
-# patch aos startup like files
-#  adds tagged blocks around inserted text
-# 1 filename
-# 2 mode (all, end)
-# 3 needle (insert after line matching this)
-# 4 tag (tag block with this)
-# 5 text (text to be inserted)
-function userpatch() {
-	local file
-	local filename
-	local mode="$2"
-	local needle="$3"
-	local tag="$4"
-	local text="$5"
-	local patched="0"
-	local out=""
-	local p
-	local b
-	local tmp
-
-	p=$(path "$1")
-	b=$(base "$1")
-	filename=$(find "$p" -iname "$b")
-	if [[ ! $filename ]]; then
-		filename="${p}${b}"
-		touch "$filename"
-	fi
-	filename=$(realpath "$1")
-
-	file=$(< "$filename")
-
-	if [[ $mode == *end* ]]; then
-		out=$(< "$filename")$'\n'$'\n'";BEGIN ${tag}"$'\n'"$text"$'\n'";END ${tag}"$'\n'
-	else
-		IFS=$'\n'
-		for line in $file; do
-			if [[ $line =~ $needle ]]; then
-				tmp=$'\n'";BEGIN ${tag}"$'\n'"$text"$'\n'";END ${tag}"$'\n'
-				if [[ $mode == *before* ]]; then
-					[[ $patched -eq 0 ]] && {
-						out+="$tmp"
-						[[ $mode != *all* ]] && patched=1
-					}
-					out+="$line"$'\n'
-				else
-					out+="$line"$'\n'
-					[[ $patched -eq 0 ]] && {
-						out+="$tmp"
-						[[ $mode != *all* ]] && patched=1
-					}
-				fi
-			else
-				out+="$line"$'\n'
-			fi
-		done
-	fi # mode==end
-	unset IFS
-
-	cp "$filename" "${v['root']}apkg/backup/${backup}/${filename##*/}"
-	echo "filecopy \"${v['root']}apkg/backup/${backup}/${filename##*/}\" \"$1\"" >> "${v['root']}apkg/$backup.rollback"
-	echo "$out" > "$filename"
-}
 
 # detect amiga os version
 # 1 path to amiga os root directory
@@ -566,6 +425,152 @@ function detectos() {
 	esac 
 
 	echo "$os"
+}
+
+# to use within build scripts
+# copy single file
+# 1 source
+# 2 destination relative to $pkgdir
+# 3 permissions
+function copy() {
+	local perm
+	local sbase
+	local spath
+	local dpath
+	local dbase
+	local tmp="$2"
+	local subdir=""
+	local p=""
+
+	tmp=$(realpath "$1")  || _echo "%invalid file/path: $1"
+	tmp="${tmp/$srcdir/}"
+	sbase=$(base "$tmp")
+	spath=$(path "$tmp")
+
+	dbase=$(base "$2")
+	dpath=$(path "$2")
+
+	if [[ ! $dbase ]]; then dbase="$sbase"; fi
+	perm="rwed"
+	if [ -n "$3" ]; then
+		perm="$3"
+	fi
+	perm=$(sprotect "$dbase" "$perm" "${pkgname}")
+
+	tmp="$(make_dir "${dpath}")"
+
+	cp -f "${srcdir}${spath}${sbase}" "${tmp}/${dbase}" &&
+	echo "$perm" > "${tmp}/${dbase}.uaem" #|| exit 1
+
+}
+
+function makedir {
+	make_dir "$1" > /dev/null
+}
+
+# to use within build scripts
+# create a directory
+# 1 path relative to $pkgdir
+# 2 icon [wb31] TODO
+# > return_str contains amiga valid path
+declare -A _makedir_cache
+function make_dir {
+	local perm
+	local s="$pkgdir"
+	local path="$1"
+	local save
+
+	[[ "$path" == $pkgdir* ]] && path="${1#$pkgdir/}"
+
+	[[ "${path:0:1}" == "/" ]] && path="${path:1}"
+	[[ "${path:0-1}" == "/" ]] && path="${path:0:${#path}-1}"
+
+	if [[ -d "$pkgdir$path" ]]; then 
+		return_str="$pkgdir$path"; 
+		echo "$return_str"; 
+		return 
+	fi
+	if [[ ${_makedir_cache["$path"]} ]]; then
+		return_str="${_makedir_cache["$path"]}"; 
+		echo "$return_str"; 
+		return; 
+	fi
+
+	s="$(path_resolve_amiga "$path")"
+	s="$(path_existing_amiga "$s" "${v['root']}" )/"
+
+	[[ ${s:0:1} == '/' ]] && s="${s:1}"
+	[[ ${s:0-1} == '/' ]] && s="${s:0:0-1}"
+	s="${pkgdir}${s}"
+
+	mkdir -p "${s}"
+
+	_makedir_cache["$path"]="$s"
+	return_str="$s"
+	echo "$s"
+}
+
+# patch aos startup like files
+#  adds tagged blocks around inserted text
+# 1 filename
+# 2 mode (all, end)
+# 3 needle (insert after line matching this)
+# 4 tag (tag block with this)
+# 5 text (text to be inserted)
+function userpatch() {
+	local file
+	local filename
+	local mode="$2"
+	local needle="$3"
+	local tag="$4"
+	local text="$5"
+	local patched="0"
+	local out=""
+	local p
+	local b
+	local tmp
+
+	p=$(path "$1")
+	b=$(base "$1")
+	filename=$(find "$p" -iname "$b")
+	if [[ ! $filename ]]; then
+		filename="${p}${b}"
+		touch "$filename"
+	fi
+	filename=$(realpath "$1")
+
+	file=$(< "$filename")
+
+	if [[ $mode == *end* ]]; then
+		out=$(< "$filename")$'\n'$'\n'";BEGIN ${tag}"$'\n'"$text"$'\n'";END ${tag}"$'\n'
+	else
+		IFS=$'\n'
+		for line in $file; do
+			if [[ $line =~ $needle ]]; then
+				tmp=$'\n'";BEGIN ${tag}"$'\n'"$text"$'\n'";END ${tag}"$'\n'
+				if [[ $mode == *before* ]]; then
+					[[ $patched -eq 0 ]] && {
+						out+="$tmp"
+						[[ $mode != *all* ]] && patched=1
+					}
+					out+="$line"$'\n'
+				else
+					out+="$line"$'\n'
+					[[ $patched -eq 0 ]] && {
+						out+="$tmp"
+						[[ $mode != *all* ]] && patched=1
+					}
+				fi
+			else
+				out+="$line"$'\n'
+			fi
+		done
+	fi # mode==end
+	unset IFS
+
+	cp "$filename" "${v['root']}apkg/backup/${backup}/${filename##*/}"
+	echo "filecopy \"${v['root']}apkg/backup/${backup}/${filename##*/}\" \"$1\"" >> "${v['root']}apkg/$backup.rollback"
+	echo "$out" > "$filename"
 }
 
 # 1 path to file
