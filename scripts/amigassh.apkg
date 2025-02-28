@@ -23,14 +23,14 @@ function build {
 
     cd "amigassh" || exit 1
 
-    copy "libcryptossh.library" "Libs/"
+    copy "libcryptossh.library" "Libs:"
 
-    for file in amigascp amigassh amigasshd amigasshkeygen; do copy "$file" "C/"; done
+    for file in amigascp amigassh amigasshd amigasshkeygen; do copy "$file" "C:"; done
 
     for file in template/*; do copy "$file" "Prefs/Env-Archive/.ssh/${file##*/}"; done
 
-    copy "COPYING" "Locale/License/$name-$version/"
-    copy "amigassh.readme" "Locale/Readme/$name-$version/"
+    copy "COPYING" "USER:Doc/License/$name-$version/"
+    copy "amigassh.readme" "USER:Doc/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied

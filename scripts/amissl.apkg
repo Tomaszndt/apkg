@@ -21,7 +21,7 @@ function build {
 
     cd "AmiSSL" || exit 1
 
-    copy "Libs/AmigaOS3/AmiSSL/68020-40/amissl_v341.library" "Libs/amissl.library"
+    copy "Libs/AmigaOS3/AmiSSL/68020-40/amissl_v341.library" "Libs:amissl.library"
     copy "Libs/AmigaOS3/amisslmaster.library" "Libs/"
     copy "C/AmigaOS3/OpenSSL" "C/"
 
@@ -30,7 +30,7 @@ function build {
     done
 
     for file in Doc/*; do 
-        copy "$file" "Locale/Readme/$name-$version/${file##*/}";
+        copy "$file" "USER:Doc/Readme/$name-$version/${file##*/}";
     done
 
     makedir "Libs/AmiSSL/UserCerts"

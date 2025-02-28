@@ -34,11 +34,11 @@ function build {
     for file in AmiArcadia Configs Disks Games Icons Projects Screenshots Tapes; do
         copy "${file}.info" "USER:Games/AmiArcadia/"
     done
-    for file in ARexx/*; do copy "$file" "$USER:Games/AmiArcadia/$file"; done
-    for file in Sounds/*; do copy "$file" "$USER:Games/AmiArcadia/$file"; done
+    for file in ARexx/*; do copy "$file" "USER:Games/AmiArcadia/$file"; done
+    for file in Sounds/*; do copy "$file" "USER:Games/AmiArcadia/$file"; done
     IFS=$'\n'
-    for file in $(find Icons/ -type f); do copy "$file" "$USER:Games/AmiArcadia/${file#*/}"; done
-    for file in $(find Images/ -type f); do copy "$file" "$USER:Games/AmiArcadia/${file#*/}"; done
+    for file in $(find Icons/ -type f); do copy "$file" "USER:Games/AmiArcadia/${file#*/}"; done
+    for file in $(find Images/ -type f); do copy "$file" "USER:Games/AmiArcadia/${file#*/}"; done
     unset IFS
     copy "AmiArcadia" "USER:Games/AmiArcadia/"
 

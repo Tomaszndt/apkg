@@ -45,11 +45,11 @@ function build {
     copy AmigaAMP-Prefs "Tools/AmigaAMP/AmigaAMP-Prefs"
     copy AmigaAMP-Prefs.info "Tools/AmigaAMP/AmigaAMP-Prefs.info"
 
-    copy "AmigaAMP.doc" "Locale/Readme/$name-$version/AmigaAMP.doc"
-    copy "AmigaAMP.dok" "Locale/Readme/$name-$version/AmigaAMP.dok"
-    copy "AmigaAMP.readme" "Locale/Readme/$name-$version/AmigaAMP.readme"
-    copy "FAQ.readme" "Locale/Readme/$name-$version/FAQ.readme"
-    copy "AREXX.readme" "Locale/Readme/$name-$version/AREXX.readme"
+    copy "AmigaAMP.doc" "USER:Doc/Readme/$name-$version/AmigaAMP.doc"
+    copy "AmigaAMP.dok" "USER:Doc/Readme/$name-$version/AmigaAMP.dok"
+    copy "AmigaAMP.readme" "USER:Doc/Readme/$name-$version/AmigaAMP.readme"
+    copy "FAQ.readme" "USER:Doc/Readme/$name-$version/FAQ.readme"
+    copy "AREXX.readme" "USER:Doc/Readme/$name-$version/AREXX.readme"
 
 }
 
