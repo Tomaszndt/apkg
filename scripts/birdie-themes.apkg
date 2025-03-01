@@ -33,7 +33,7 @@ function build {
     for file in *.jpg; do copy "$file" "Prefs/Presets/BirdirPatterns/$file"; done
     for file in RMBirdie/birdiepatt/*; do copy "$file" "Prefs/Presets/RMBirdie/${file##*/}.iff"; done
 
-    for file in *.readme; do copy "$file" "Locale/Readme/$name-$version/$file"; done
+    for file in *.readme; do copy "$file" "USER:Doc/Readme/$name-$version/$file"; done
 
 }
 

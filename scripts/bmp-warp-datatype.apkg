@@ -186,8 +186,8 @@ AAAAAwADAO0AAAA8IgAAAAA="
     copy "BMP" "Devs/DataTypes/"
     copy "BMP.info" "Devs/DataTypes/"
 
-    copy "WarpBMPdt/WarpBMP.guide" "Locale/Help/"
-    copy "WarpBMPdt/WarpBMP.guide.info" "Locale/Help/"
+    copy "WarpBMPdt/WarpBMP.guide" "HELP:"
+    copy "WarpBMPdt/WarpBMP.guide.info" "HELP:"
 }
 
 # this function is executed on installation after all files have been copied

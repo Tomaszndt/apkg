@@ -24,12 +24,12 @@ function build {
 
     cd "BoardsLib" || exit 1
 
-    copy "libs/boards.library" "Libs/"
+    copy "libs/boards.library" "LIBS:"
     copy "Utilities/Showboards.info" "Utilities/"
-    copy "Utilities/showboards" "C/"
+    copy "Utilities/showboards" "C:"
 
-    copy "BoardsLib.readme" "Locale/Readme/$name-$version/${file}"
-    copy "BoardsLib.guide" "Locale/Help/"
+    copy "BoardsLib.readme" "USER:Doc/Readme/$name-$version/${file}"
+    copy "BoardsLib.guide" "HELP:"
 
 }
 

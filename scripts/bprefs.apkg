@@ -26,10 +26,10 @@ function build {
     copy "Birdie Prefs" "Prefs/"
     copy "Birdie Prefs.info" "Prefs/"
 
-    copy "Birdie Prefs.guide" "Locale/Help/"
-    copy "Birdie Prefs.guide.info" "Locale/Help/"
+    copy "Birdie Prefs.guide" "HELP:"
+    copy "Birdie Prefs.guide.info" "HELP:"
 
-    copy "bprefs.readme" "Locale/Readme/$name-$version/"
+    copy "bprefs.readme" "USER:Doc/Readme/$name-$version/"
 
 }
 

@@ -20,7 +20,7 @@ upstream="https://sourceforge.net/projects/beebase/"
 
 function build {
     local file
-    local dst="User/Database/BeeBase/"
+    local dst="USER:App/Database/BeeBase/"
 
     cd "BeeBase" || exit 1
 
@@ -34,8 +34,8 @@ function build {
     for file in Docs/English/*; do copy "$file" "${dst}Docs/"; done
     for file in rexx/*; do copy "$file" "${dst}rexx/"; done
 
-    for file in COPYING*; do copy "$file" "Locale/License/$name-$version/"; done
-    copy "ReadMe" "Locale/Readme/$name-$version/"
+    for file in COPYING*; do copy "$file" "USER:Doc/License/$name-$version/"; done
+    copy "ReadMe" "USER:Doc/Readme/$name-$version/"
 
 }
 
@@ -45,8 +45,8 @@ function post_install {
     local inject=""
 
 FS= read -r -d '' inject <<EOF
-if exists "User/Database/BeeBase/"
-   assign BeeBase: "User/Database/BeeBase/"
+if exists User/App/Database/BeeBase
+   assign BeeBase: User/App/Database/BeeBase
 endif
 EOF
 

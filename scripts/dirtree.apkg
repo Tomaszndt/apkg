@@ -17,6 +17,7 @@ function build {
 	└ Dev
 
 	USER:
+	├─ App
 	├─ Doc
 	│ ├─ License
 	│ └─ Readme
