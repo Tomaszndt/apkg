@@ -6,7 +6,7 @@ require="amigaos>3"
 description="SSH2 for the Amiga"
 packager="lobotomius@gmail.com"
 source=(
-    "https://aminet.net/comm/net/amigassh.lha*1c46a1b6768f04166e42936850708a9f89fd5ff3b5ba9565671242f90b68f1af"
+    "https://aminet.net/comm/net/amigassh.lha*f7085c96a0b25081048b579dff462e949081507acb3f9b641f72fdf1c9085a2e*$name-$version.lha"
     )
 upstream="https://aminet.net/package/comm/net/amigassh"
 
