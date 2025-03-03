@@ -11,9 +11,9 @@ upstream="http://m68k.aminet.net/package/util/arc/lhasa-0.3.1"
 function build {
 	cd "lhasa-0.3.1" || exit 1
 
-	copy lhasa "C/lhasa"	
+	copy lhasa "C:lhasa"	
 
-	copy COPYING "/Locale/License/lhasa-0.3.1/COPYING"
+	copy COPYING "USER:Doc/License/lhasa-0.3.1/COPYING"
 }
 
 function post_install {

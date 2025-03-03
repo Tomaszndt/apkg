@@ -24,14 +24,13 @@ function build {
 
     cd "jpeg.library" || exit 1
 
-    copy "usr/Libs/jpeg.library_040std" "Libs/jpeg.library"
+    copy "usr/Libs/jpeg.library_040std" "Libs:jpeg.library"
     copy "usr/Prefs/JpegLibrary" "Prefs/"
     copy "usr/Prefs/JpegLibrary.info" "Prefs/"
 
-    copy "usr/Prefs/JpegLibrary.guide" "Locale/Help/"
+    copy "usr/Prefs/JpegLibrary.guide" "Help:"
 
-    copy "Readme" "Locale/Readme/$name-$version/"
-    # copy "rewincy.info" "Locale/Readme/$name-$version/"
+    copy "Readme" "USER:Doc/Readme/$name-$version/"
 
 }
 

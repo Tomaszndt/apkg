@@ -22,13 +22,14 @@ function build {
 
     # create target amiga os directory structure
 
-    copy "Sys/l/ixpipe-handler" "L/ixpipe-handler"
-    copy "Sys/libs/ixemul.library" "Libs/ixemul.library"
-    copy "Sys/libs/ixnet.library" "Libs/ixnet.library"
+    copy "Sys/l/ixpipe-handler" "L:ixpipe-handler"
+    copy "Sys/libs/ixemul.library" "Libs:ixemul.library"
+    copy "Sys/libs/ixnet.library" "Libs:ixnet.library"
 
-    copy "Sys/prefs/ixbl_MUI" "Prefs/ixbl"
-    copy "Sys/prefs/ixbl_MUI.info" "Prefs/ixbl.info"
+    copy "Sys/prefs/ixbl_MUI" "Prefs/Ixbl"
+    copy "Sys/prefs/ixbl_MUI.info" "Prefs/Ixbl.info"
 
-    copy "Sys/l/IMPORTANT.txt" "Locale/Readme/$name-$version/IMPORTANT.txt"
+    copy "Sys/l/IMPORTANT.txt" "USER:Doc/Readme/$name-$version/IMPORTANT.txt"
 
 }
+# vim: ts=4:syntax=sh:

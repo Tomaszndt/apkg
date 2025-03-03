@@ -25,9 +25,9 @@ function build {
     copy "Devs/DataTypes/Koala" "Devs/DataTypes/"
     copy "Devs/DataTypes/Koala.info" "Devs/DataTypes/"
 
-    copy "aminet_readme.txt" "Locale/Readme/"
-    copy "Koala_DataType.guide" "Locale/Help/"
-    copy "Koala_DataType.guide.info" "Locale/Help/"
+    copy "aminet_readme.txt" "USER:Doc/Readme/"
+    copy "Koala_DataType.guide" "Help:"
+    copy "Koala_DataType.guide.info" "Help:"
 
 }
 

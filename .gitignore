@@ -5,6 +5,7 @@ scripts-wip
 scripts-old
 test
 tmp
+.vscode
 *.bash
 *.iff
 *.c
@@ -12,8 +13,8 @@ tmp
 *.lha
 *.lzx
 *.key
-*.hdf
 *.iso
+*.hdf
 *.adf
 iff*
 apkg.log

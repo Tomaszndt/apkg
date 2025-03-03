@@ -26,8 +26,8 @@ function build {
 
     # catdvi -e 2 -l 27 "Docs/English/MagicASL.dvi" > MagicASL.dvi.txt && copy "MagicASL.dvi.txt" "Locale/Readme/$name-$version/"
 
-    copy "C/PatchAsl" "C/"
-    copy "../magicasl-40.7m1/MagicASL.library" "Libs/"
+    copy "C/PatchAsl" "C:"
+    copy "../magicasl-40.7m1/MagicASL.library" "Libs:"
 
     IFS=$'\n'
     for file in $(find ./Libs/MUI/ -type f); do 
@@ -35,16 +35,16 @@ function build {
     done
     unset IFS
 
-    copy "MagicASL.readme" "Locale/Readme/$name-$version/"
-    copy "../magicasl-40.7m1/changes.readme" "Locale/Readme/$name-$version/"
+    copy "MagicASL.readme" "USER:Doc/Readme/$name-$version/"
+    copy "../magicasl-40.7m1/changes.readme" "USER:Doc/Readme/$name-$version/"
 
-    copy "Help/English/MagicASL.guide" "Locale/Help/"
+    copy "Help/English/MagicASL.guide" "HELP:"
 }
 
 # this function is executed on installation after all files have been copied
 #  userpatch filename mode needle tag text
 function post_install {
-    userpatch "${root}S/Startup-Sequence" "before" ".*SetPatch.*" "$name-$version" "run <>nil: c:PatchAsl"
+    userpatch "${root}S/Startup-Sequence" "before" ".*SetPatch.*" "$name-$version" "run <>nil: C:PatchAsl"
 }
 
 # vim: ts=4:syntax=sh:

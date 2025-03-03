@@ -21,8 +21,8 @@ function build {
 
     cd "jfifdt44.18" || exit 1
 
-    copy "JFIFdt.guide" "Locale/Help/"
-    copy "JFIFdt44.readme" "Locale/Readme/$name-$version/"
+    copy "JFIFdt.guide" "Help:"
+    copy "JFIFdt44.readme" "USER:Doc/Readme/$name-$version/"
 
     copy "Devs/Datatypes/JFIF" "Devs/DataTypes/"
     copy "Devs/Datatypes/JFIF.info" "Devs/DataTypes/"

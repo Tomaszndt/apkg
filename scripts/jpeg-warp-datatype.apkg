@@ -826,8 +826,8 @@ AwAABOkDAABQSwUGAAAAAAMAAwDwAAAAxrAAAAAA"
     copy "JPEG" "Devs/DataTypes/"
     copy "JPEG.info" "Devs/DataTypes/"
 
-    copy "WarpJPEGdt/WarpJPEG.guide" "Locale/Help/"
-    copy "WarpJPEGdt/WarpJPEG.guide.info" "Locale/Help/"
+    copy "WarpJPEGdt/WarpJPEG.guide" "HELP:"
+    copy "WarpJPEGdt/WarpJPEG.guide.info" "HELP:"
 }
 
 # this function is executed on installation after all files have been copied

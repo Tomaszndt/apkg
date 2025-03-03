@@ -21,8 +21,8 @@ function build {
 	
     cd MMULib || exit 1
 
-    copy "Libs/mmu.library" "Libs/mmu.library"
-    copy "Libs/68040.library" "Libs/68040.library"
+    copy "Libs/mmu.library" "Libs:mmu.library"
+    copy "Libs/68040.library" "Libs:68040.library"
 
 }
 

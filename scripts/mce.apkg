@@ -23,15 +23,15 @@ function build {
 
     cd MCE || exit 1
 
-    copy "MCE" "Games/MCE/"
-    copy "MCE.info" "Games/MCE/"
+    copy "MCE" "USER:Games/MCE/"
+    copy "MCE.info" "USER:Games/MCE/"
 
-    copy "MCE.guide" "Locale/Help/"
-    copy "MCE.guide.info" "Locale/Help/"
+    copy "MCE.guide" "HELP:"
+    copy "MCE.guide.info" "HELP:"
 
     IFS=$'\n'
-    for file in $(find Images/ -type f); do copy "$file" "Games/MCE/$file"; done
-    for file in $(find Examples/ -type f); do copy "$file" "Games/MCE/$file"; done
+    for file in $(find Images/ -type f); do copy "$file" "USER:Games/MCE/$file"; done
+    for file in $(find Examples/ -type f); do copy "$file" "USER:Games/MCE/$file"; done
     unset IFS
 }
 

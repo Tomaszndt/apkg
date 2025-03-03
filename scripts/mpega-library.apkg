@@ -29,9 +29,9 @@ function build {
 
     cd "mpega_library" || exit 1
 
-    copy "libs/mpega040FPU.library" "Libs/mpega.library"
-    copy "mpega_library.doc" "Locale/Readme/$name-$version/mpega_library.doc"
-    copy "mpega_library.readme" "Locale/Readme/$name-$version/mpega_library.readme"
+    copy "libs/mpega040FPU.library" "Libs:mpega.library"
+    copy "mpega_library.doc" "USER:Doc/Readme/$name-$version/mpega_library.doc"
+    copy "mpega_library.readme" "USER:Doc/Readme/$name-$version/mpega_library.readme"
 
 }
 

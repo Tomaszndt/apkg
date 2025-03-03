@@ -19,7 +19,7 @@ upstream="https://github.com/dmcoles/gnu_make_amiga"
 # this function is executed on build
 function build {
 
-    copy "make" "C/"
+    copy "make" "C:"
 
 }
 

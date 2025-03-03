@@ -41,7 +41,7 @@ MagicMenu/2:
 	KCPUCenter=Yes
 	PreferScreenColours=No
 	Delayed=No
-	DrawFrames=Yes
+	DrawFrames=No
 	CastShadows=Yes
 	PDMode=0x00
 	PDLook=0x02
@@ -55,9 +55,9 @@ MagicMenu/2:
 	DarkEdge.R=0x00000000
 	DarkEdge.G=0x00000000
 	DarkEdge.B=0x00000000
-	Background.R=0xb0b0b0b0
-	Background.G=0xb0b0b0b0
-	Background.B=0xb0b0b0b0
+	Background.R=0xc8c8c8c8
+	Background.G=0xc8c8c8c8
+	Background.B=0xc8c8c8c8
 	Text.R=0x00000000
 	Text.G=0x00000000
 	Text.B=0x00000000

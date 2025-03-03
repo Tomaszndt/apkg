@@ -26,9 +26,9 @@ function build {
     copy "MagicMenu/020/MagicMenuPrefs" "Prefs/"
     copy "MagicMenu/020/MagicMenuPrefs.info" "Prefs/"
 
-    copy "MagicMenu/readme.text" "Locale/Readme/$name-$version/"
-    copy "MagicMenu/MagicMenu.guide" "Locale/Help/"
-    copy "MagicMenu/MagicMenu.guide.info" "Locale/Help/"
+    copy "MagicMenu/readme.text" "USER:Doc/Readme/$name-$version/"
+    copy "MagicMenu/MagicMenu.guide" "Help:"
+    copy "MagicMenu/MagicMenu.guide.info" "HELP:"
 
 }
 
