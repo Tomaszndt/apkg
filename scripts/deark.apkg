@@ -23,12 +23,12 @@ function build {
 
     cd deark-1.6.5 || exit 1
 
-    copy "deark.68k" "C/deark"
+    copy "deark.68k" "C:deark"
 
     for file in formats.txt readme.md technical.md; do 
-        copy "$file" "Locale/Readme/$name-$version/$file"
+        copy "$file" "USER:Doc/Readme/$name-$version/$file"
     done
-    copy "COPYING" "Locale/License/$name-$version/COPYING"
+    copy "COPYING" "USER:Doc/License/$name-$version/COPYING"
 
 }
 

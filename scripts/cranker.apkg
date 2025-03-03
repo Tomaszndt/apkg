@@ -20,8 +20,8 @@ function build {
 
 	cd "$name-$version" || exit 1
 
-	copy "cranker" "C/cranker"	
-	copy README "Locale/Readme/$name-$version/README"
-	copy decruncher.asm "Source/decruncher.asm"
+	copy "cranker" "C:cranker"	
+	copy README "USER:Doc/Readme/$name-$version/README"
+	copy decruncher.asm "Dev/Source/decruncher.asm"
 }
 # vim: ts=4:syntax=sh:

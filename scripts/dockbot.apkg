@@ -20,9 +20,9 @@ function build {
 
     cd DockBot || exit 1
 
-    copy "doc/DockBot.guide" "Locale/Help/DockBot.guide"
-    copy "doc/DockBot.guide.info" "Locale/Help/DockBot.guide.info"
-    copy "doc/dockbot.doc" "Locale/Help/dockbot.doc"
+    copy "doc/DockBot.guide" "Help:DockBot.guide"
+    copy "doc/DockBot.guide.info" "Help:DockBot.guide.info"
+    copy "doc/dockbot.doc" "Help:dockbot.doc"
 
     copy "DockBot.prefs" "Prefs/Env-Archive/DockBot.prefs"
 
@@ -36,8 +36,8 @@ function build {
 
     copy "extras/parm.library" "Utilities/DockBot/parm.library"
 
-    copy "LICENCE" "Locale/Help/$name-$version/LICENCE"
-    copy "README.md" "Locale/Readme/$name-$version/README.md"
+    copy "LICENCE" "USER:Doc/License/$name-$version/LICENCE"
+    copy "README.md" "USER:Doc/Readme/$name-$version/README.md"
 
     copy "src/Images/DockBotStart.info" "WBStartup/DockBotStart.info"
 

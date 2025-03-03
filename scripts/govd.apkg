@@ -33,7 +33,7 @@ POSITION=7
 LAYOUT=1
 ALWAYS_ON_TOP=1
 WINDOW_WITH_BORDERS=0
-WINDOW_WITH_DRAGBAR=0
+WINDOW_WITH_DRAGBAR=1
 HIDE_WINDOW_ON_STARTUP=0
 SHORTCUTS_SWITCH=1
 SHORTCUTS_NEXT=1
@@ -44,7 +44,7 @@ NO_RESTART_INFO=1' > GoVD.conf
 
     copy "GoVD" "WBStartup/"; copy "GoVD.info" "WBStartup/"
     copy "GoVD-conf" "Prefs/"; copy "GoVD-conf.info" "Prefs/"
-    copy "GoVD.readme" "Locale/Help/Readme/$name-$version/"
+    copy "GoVD.readme" "USER:Doc/Readme/$name-$version/"
 
     copy "GoVD.conf" "Prefs/Env-Archive/"
 

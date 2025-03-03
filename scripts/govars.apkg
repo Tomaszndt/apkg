@@ -23,7 +23,7 @@ function build {
 
     copy "GoVars/GoVars" "Utilities/"
     copy "GoVars/GoVars.info" "Utilities/"
-    copy "GoVars/GoVars.readme" "Locale/Readme/$name-$version/"
+    copy "GoVars/GoVars.readme" "USER:Doc/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied

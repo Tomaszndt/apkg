@@ -20,7 +20,7 @@ upstream="https://bitplan.pl/govd/index.html"
 
 function build {
 
-    copy "govd.key" "S/"
+    copy "govd.key" "S:"
 
 }
 

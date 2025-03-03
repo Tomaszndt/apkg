@@ -24,12 +24,12 @@ function build {
 
     cd "expat" || exit 1
 
-    copy "Libs/expat.library" "Libs/"
+    copy "Libs/expat.library" "Libs:"
 
-    for file in doc/*; do copy "$file" "Locale/Readme/$name-$version/${file#/}"; done
+    for file in doc/*; do copy "$file" "USER:Doc/Readme/$name-$version/${file#/}"; done
 
-    copy "Expat.readme" "Locale/Readme/$name-$version/"
-    copy "COPYING" "Locale/License/$name-$version/"
+    copy "Expat.readme" "USER:Doc/Readme/$name-$version/"
+    copy "COPYING" "USER:Doc/License/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied

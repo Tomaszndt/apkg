@@ -24,13 +24,13 @@ function build {
 
     cd "codesets" || exit 1
 
-    copy "Libs/AmigaOS3/codesets.library" "Libs/"
+    copy "Libs/AmigaOS3/codesets.library" "LIBS:"
 
     for file in Charsets/*; do
-        copy "$file" "Libs/$file"
+        copy "$file" "LIBS:$file"
     done
 
-    copy "ReadMe" "Locale/Readme/$name-$version/"
+    copy "ReadMe" "USER:Doc/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied

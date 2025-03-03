@@ -55,10 +55,10 @@ AAAAioqKvb2919fX"
 
     cd "CPU-A" || exit 1
 
-    copy "LICENSE" "Locale/License/$name-$version/"
-    copy "LICENSE.info" "Locale/License/$name-$version/"
-    copy "CPU-A.readme" "Locale/Readme/$name-$version/"
-    copy "CPU-A.readme.info" "Locale/Readme/$name-$version/"
+    copy "LICENSE" "USER:Doc/License/$name-$version/"
+    copy "LICENSE.info" "USER:Doc/License/$name-$version/"
+    copy "CPU-A.readme" "USER:Doc/Readme/$name-$version/"
+    copy "CPU-A.readme.info" "USER:Doc/Readme/$name-$version/"
 
     copy "CPU-A" "Utilities/CPU-A/"
     copy "CPU-A.info" "Utilities/CPU-A/"

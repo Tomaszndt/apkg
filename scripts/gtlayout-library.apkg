@@ -21,10 +21,10 @@ upstream="https://aminet.net/package/dev/gui/gtlayout"
 # this function is executed on build
 function build {
 
-    copy "Libs/gtlayout.library.020" "Libs/gtlayout.library"
+    copy "Libs/gtlayout.library.020" "Libs:gtlayout.library"
 
-    copy "README" "Locale/Readme/$name-$version/"
-    copy "Doc/gtlayout.doc" "Locale/Readme/$name-$version/"
+    copy "README" "USER:Doc/Readme/$name-$version/"
+    copy "Doc/gtlayout.doc" "USER:Doc/Readme/$name-$version/"
 
 }
 

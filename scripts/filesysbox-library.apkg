@@ -24,10 +24,10 @@ function build {
 
     cd "filesysbox" || exit 1
 
-    copy "Libs/filesysbox.library.020" "Libs/filesysbox.library"
+    copy "Libs/filesysbox.library.020" "Libs:filesysbox.library"
 
-    for file in README releasenotes; do copy "$file" "Locale/Readme/$name-$version/${file}"; done
-    for file in LICENSE*; do copy "$file" "Locale/License/$name-$version/${file}"; done
+    for file in README releasenotes; do copy "$file" "USER:Doc/Readme/$name-$version/${file}"; done
+    for file in LICENSE*; do copy "$file" "USER:Doc/License/$name-$version/${file}"; done
 
 }
 

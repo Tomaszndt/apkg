@@ -135,7 +135,7 @@ NC5pbmZvVVQFAAM04pxndXgLAAEE6AMAAATpAwAAUEsFBgAAAAADAAMABgEAAJUVAAAAAA=="
         copy "$file" "Utilities/DirectoryOpus4/"
     done
 
-    copy "dopus.library" "Libs/"
+    copy "dopus.library" "LIBS:"
 
     # https://sourceforge.net/projects/diropus4/
 }

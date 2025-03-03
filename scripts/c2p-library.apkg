@@ -24,10 +24,10 @@ function build {
 
     cd "c2plib" || exit 1
 
-    copy "libs/c2p.library" "Libs/"
+    copy "libs/c2p.library" "LIBS:"
 
-    copy "README" "Locale/Readme/$name-$version/"
-    copy "LICENSE" "Locale/License/$name-$version/"
+    copy "README" "USER:Doc/Readme/$name-$version/"
+    copy "LICENSE" "USER:Doc/License/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied

@@ -23,13 +23,13 @@ function build {
 
     cd "FullPalette" || exit 1
 
-    copy "FPPrefs" "C/"
+    copy "FPPrefs" "C:"
 
     copy "FullPalette" "Prefs/"
     copy "FullPalette.info" "Prefs/"
 
-    copy "DocsEnglish/FullPalette.guide" "Locale/Help/"
-    copy "DocsEnglish/FullPalette.guide.info" "Locale/Help/"
+    copy "DocsEnglish/FullPalette.guide" "HELP:"
+    copy "DocsEnglish/FullPalette.guide.info" "HELP:"
 
 }
 

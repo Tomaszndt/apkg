@@ -18,10 +18,10 @@ function build {
 	copy "FileX.68040" "Dev/FileX"
     copy "icons/FileX.GI.info" "Dev/FileX.info"
 
-    for file in arexx/*; do copy "$file" "S/${file##*/}" "srwd"; done
+    for file in arexx/*; do copy "$file" "S:${file##*/}" "srwd"; done
 
-    for file in docs/english/*.doc*; do copy "$file" "Locale/Readme/$name-$version/${file##*/}"; done
-    for file in docs/english/*.guide*; do copy "$file" "Locale/Readme/$name-$version/${file##*/}"; done
+    for file in docs/english/*.doc*; do copy "$file" "USER:Doc/Readme/$name-$version/${file##*/}"; done
+    for file in docs/english/*.guide*; do copy "$file" "USER:Doc/Readme/$name-$version/${file##*/}"; done
 }
 
 # vim: ts=4:syntax=sh:
