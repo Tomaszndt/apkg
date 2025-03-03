@@ -28,8 +28,8 @@ function build {
         copy "$file" "Dev/Hrtmon/"
     done
 
-    copy "HRTmon.guide" "Locale/Help/"
-    copy "HRTmon.guide.info" "Locale/Help/"
+    copy "HRTmon.guide" "HELP:"
+    copy "HRTmon.guide.info" "HELP:"
 
     copy "HRTmon.readme" "User:Doc/Readme/$name-$version/"
     copy "readme.txt" "User:Doc/Readme/$name-$version/"

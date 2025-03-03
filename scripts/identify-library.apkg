@@ -24,13 +24,13 @@ function build {
 
     cd "Identify" || exit 1
 
-    copy "libs/identify.library" "Libs/identify.library"
-    copy "libs/rexxidentify.library" "Libs/rexxidentify.library"
-    copy "docs/Identify-E.guide" "Locale/Help/Identify.guide"
-    copy "docs/Identify-E.guide.info" "Locale/Help/Identify.guide.info"
-    copy "../FILE_ID.DIZ" "Locale/Help/Readme/$name-$version/"
+    copy "libs/identify.library" "Libs:identify.library"
+    copy "libs/rexxidentify.library" "Libs:rexxidentify.library"
+    copy "docs/Identify-E.guide" "HELP:Identify.guide"
+    copy "docs/Identify-E.guide.info" "HELP:Identify.guide.info"
+    copy "../FILE_ID.DIZ" "USER:Doc/Readme/$name-$version/"
 
-    for file in c/*; do copy "$file" "C/${file##*/}"; done
+    for file in c/*; do copy "$file" "C:${file##*/}"; done
 }
 
 # this function is executed on installation after all files have been copied

@@ -19,20 +19,20 @@ upstream="https://aminet.net/package/util/misc/Installer-43_3"
 function build {
 	# we are in "$srcdir"
 	
-    copy "Installer43_3/Installer" "C/Installer"
+    copy "Installer43_3/Installer" "C:Installer"
 
-    copy "Installer43_3/Installer.guide" "Locale/Help/Installer.guide"
-    copy "Installer43_3/Installer.guide.info" "Locale/Help/Installer.guide.info"
+    copy "Installer43_3/Installer.guide" "Help:Installer.guide"
+    copy "Installer43_3/Installer.guide.info" "Help:Installer.guide.info"
 
-    copy "Installer43_3/Installer.license" "Locale/License/$name-$version/Installer.license"
-    copy "Installer43_3/Installer.license.info" "Locale/License/$name-$version/Installer.license.info"
-    copy "Installer43_3/Legal.README" "Locale/License/$name-$version/Installer.README"
-    copy "Installer43_3/Legal.README.info" "Locale/License/$name-$version/Installer.README.info"
+    copy "Installer43_3/Installer.license" "USER:Doc/License/$name-$version/Installer.license"
+    copy "Installer43_3/Installer.license.info" "USER:Doc/License/$name-$version/Installer.license.info"
+    copy "Installer43_3/Legal.README" "USER:Doc/Readme/$name-$version/Installer.README"
+    copy "Installer43_3/Legal.README.info" "USER:Doc/Readme/$name-$version/Installer.README.info"
 
-    copy "Installer43_3/SampleScripts/Surfer-Install" "Source/$name-$version/Surfer-Install"
-    copy "Installer43_3/SampleScripts/Surfer-Install.info" "Source/$name-$version/Surfer-Install.info"
-    copy "Installer43_3/SampleScripts/install-test" "Source/$name-$version/install-test"
-    copy "Installer43_3/SampleScripts/install-test.info" "Source/$name-$version/install-test.info"
+    copy "Installer43_3/SampleScripts/Surfer-Install" "Dev/Source/$name-$version/Surfer-Install"
+    copy "Installer43_3/SampleScripts/Surfer-Install.info" "Dev/Source/$name-$version/Surfer-Install.info"
+    copy "Installer43_3/SampleScripts/install-test" "Dev/Source/$name-$version/install-test"
+    copy "Installer43_3/SampleScripts/install-test.info" "Dev/Source/$name-$version/install-test.info"
 
 }
 

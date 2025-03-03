@@ -29,7 +29,7 @@ function build {
 
     cd "IconLib_46.4" || exit 1
 
-    copy "Libs/icon.library" "Libs/icon.library"
+    copy "Libs/icon.library" "LIBS:icon.library"
 
 }
 

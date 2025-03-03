@@ -19,8 +19,8 @@ upstream="https://aminet.net/package/dev/asm/ira"
 #  $pkgdir
 
 function build {
-    copy "ira/ira_68k" "C/ira"
-    copy "ira/ira.readme" "Locale/Readme/$name-$version/"
+    copy "ira/ira_68k" "C:ira"
+    copy "ira/ira.readme" "USER:Doc/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied

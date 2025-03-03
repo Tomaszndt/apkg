@@ -24,10 +24,10 @@ function build {
     cd "iGame-v2.4.6" || exit 1
 
     for file in genres iGame iGame.guide iGame.guide.info igame.iff; do
-        copy "$file" "Games/iGame/"
+        copy "$file" "USER:Games/iGame/"
     done
-    copy "iGame.040" "Games/iGame/iGame"
-    copy "extras/icons/igame_drawer.info" "Games/iGame.info"
+    copy "iGame.040" "USER:Games/iGame/iGame"
+    copy "extras/icons/igame_drawer.info" "USER:Games/iGame.info"
 
 }
 

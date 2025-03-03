@@ -20,17 +20,17 @@ function build {
 
     # cd "RenderLib_v32" || exit 1
 
-    copy "libs/guigfx.library_68040" "Libs/guigfx.library"
+    copy "libs/guigfx.library_68040" "Libs:guigfx.library"
 
     for file in Prefs/Env-Archive/guigfx/*; do
         copy "$file" "$file"
     done
 
-    copy "COPYING" "Locale/License/$name-$version/"
-    copy "README" "Locale/Readme/$name-$version/"
-    copy "doc/examples" "Locale/Readme/$name-$version/"
-    copy "doc/history" "Locale/Readme/$name-$version/"
-    copy "doc/prefs" "Locale/Readme/$name-$version/"
+    copy "COPYING" "USER:Doc/License/$name-$version/"
+    copy "README" "USER:Doc/Readme/$name-$version/"
+    copy "doc/examples" "USER:Doc/Readme/$name-$version/"
+    copy "doc/history" "USER:Doc/Readme/$name-$version/"
+    copy "doc/prefs" "USER:Doc/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied
