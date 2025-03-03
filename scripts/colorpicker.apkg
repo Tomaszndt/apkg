@@ -1,0 +1,40 @@
+name="colorpicker"
+tags="workbench, utility, colour, palette"
+version="1.3"
+cpu=68020
+require=""
+description="Define, save & lock ALL Workbench colors"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/wb/ColorPicker.lha*faa97a7d2f3dcbde4bd99705d546f3a26e01203b8f87a19471db1d84654d4154*$name-$version.lha"
+    )
+upstream="https://aminet.net/package/util/wb/ColorPicker"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "ColorPicker" || exit 1
+
+    copy "ColorPicker" "Utilities/"
+    copy "ColorPicker.info" "Utilities/"
+
+    copy "ColorPicker.readme" "USER:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+#  userpatch filename mode needle tag text
+function post_install {
+    :
+    userpatch "${root}S/Startup-Sequence" "after" ".*IPrefs.*" "$name-$version" " FPPrefs"
+}
+
+# vim: ts=4:syntax=sh:
