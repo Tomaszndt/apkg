@@ -580,10 +580,15 @@ function file_type {
 	local tmp
 	local size
 
-	file_output="$(file "$1")"
-	file_output="${file_output#* }"
+	file_output_full="$(file "$1")"
+	file_output="${file_output_full#* }"
 
 	case "$file_output" in
+		LHa) r="archive.lha" ;;
+		LZX) r="archive.lzx" ;;
+		Zip) r="archive.zip" ;;
+		RAR) r="archive.rar" ;;
+		7-zip) r="archive.7z" ;;
 		"AmigaDOS script") r="script" ;;
 		"AmigaGuide file") r="guide" ;;
 		"AmigaOS bitmap font") r="font.bitmap" ;;
@@ -621,6 +626,11 @@ function file_type {
 					esac
 				fi
 			}
+		;;
+		*)
+			case $file_output_full in
+				*tar*) r="archive.tar" ;;
+			esac
 		;;
 	esac
 	echo "$r"
