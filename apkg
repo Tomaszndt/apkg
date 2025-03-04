@@ -191,7 +191,7 @@ function unpack() {
 	case "$ext" in
 		"lha")
 			# lha xw="$2" "$1" &> /dev/null
-			7z x "$1" -o"$2" &> /dev/null
+			7z x -aot "$1" -o"$2" &> /dev/null
 		;;
 		"run")	# assuming lha self extracting archive
 			lha xw="$2" "$1" &> /dev/null
