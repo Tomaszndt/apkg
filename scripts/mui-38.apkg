@@ -29,7 +29,7 @@ function build {
     # for file in $(find Locale); do copy "$file" "Libs/MUI/${file}"; done
     unset IFS
 
-    copy ReadMe "Locale/Readme/$name-$version/ReadMe"
+    copy ReadMe "USER:Doc/Readme/$name-$version/ReadMe"
 
     for file in *.info; do copy "$file" "Libs/MUI/${file}"; done
 
