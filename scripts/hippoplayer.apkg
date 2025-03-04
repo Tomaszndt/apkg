@@ -1,0 +1,68 @@
+# consider all fields obligatory
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="hippoplayer"
+tags="audio, sound, mod, player"
+version="2.61"
+cpu=68020
+require="reqtools-library, ahi, xpkmaster, xfdmaster"
+description="multiformat module player"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/mus/play/hippoplayer.lha*837913afd07a68168ee8f6451896268e762cc3542fb28b7e041e70841f53b387"
+    "https://aminet.net/mus/play/hippoplayerupdate.lha*7a2b25e051be3c5410c061210d3181bf9ba9f6e0eccd40da0d0e73288b085788"
+    )
+upstream="https://aminet.net/package/mus/play/hippoplayer"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    copy "playsid.library" "LIBS:"
+    copy "HippoSupport/Libs/mline.library" "LIBS:"
+
+    copy "HippoPlayer/HippoPlayer.PS3M" "S:"
+    copy "HippoPlayer.group" "S:"
+
+    copy "HiP" "USER:App/Music/"
+    copy "HippoSupport/Icons/HiP_NI2.info" "USER:App/Music/HiP.info"
+
+    copy "HippoPlayer/HiP.guide" "HELP:"
+    copy "HippoPlayer/HiP.guide.info" "HELP:"
+
+    copy "hippoplayer.readme" "USER:Doc/Readme/$name-$version/"
+    copy "hippoplayerupdate.readme" "USER:Doc/Readme/$name-$version/"
+    copy "playsid.library.readme" "USER:Doc/Readme/$name-$version/"
+
+    echo 'UEsDBBQAAgAIAItmZFqRSODBCQEAAMgKAAARABwASGlwcG9QbGF5ZXIucHJlZnNVVAkAA4b3xmcz
++MZndXgLAAEE6AMAAATpAwAAE2VkYOBhYmRgZoAADRDxH8phqOZhzGAQB2MlRl6YaGhxapG+b2lx
+ZrK+b36KPsPgAMGRwVYMgw4kW+VkJCrY5WXmWClUKOh6Fub6+gWWKyipFitR0Y7SvKrMAqgtuln5
+1DUe5o+qCpgNuQq6hUDfUNuW8Pyi7KTUvOQMhlEwCkbBKBgFgx5wMDiW5BckVuml5eeVIFfHVh6Z
+BQX5ATmJlalFeu5F+aUF1Lb6PxgxTgGxgxx9B2HtX6ehbK+XmZeWX1OcW5Cjp2xfA+YXg6i8EhCZ
+WAwVKikCMYqLNbEYY/SfkYGVfq5WF2BgJCM2/jMBiWqe//+JSDMJKZmJufl5KeiphqwGHchCAFBL
+AQIeAxQAAgAIAItmZFqRSODBCQEAAMgKAAARABgAAAAAAAAAAACkgQAAAABIaXBwb1BsYXllci5w
+cmVmc1VUBQADhvfGZ3V4CwABBOgDAAAE6QMAAFBLBQYAAAAAAQABAFcAAABUAQAAAAA=' | base64 -d > HippoPlayer.prefs.zip
+    unzip HippoPlayer.prefs.zip
+
+    copy "HippoPlayer.prefs" "S:"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
