@@ -1,0 +1,45 @@
+# consider all fields obligatory
+# require 
+#   is a coma separated list of package name and version relation, eg
+#   amigaos>3.1, ixemul=48.3, mui<5, sqlite (no version specified means any is required)
+# source
+#   asterisk separated array of source url, sha256 sum and optional download file name
+name="powerpacker-library"
+tags="pack, crunch, library"
+version="37.8"
+cpu=68020
+require=""
+description="optimised version of powerpacker.library"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/util/libs/pplib020.lha*9ef7adf4b903028c274f84e574a175adcf61a4f353dd32a3f24f62353d0df543"
+    )
+upstream="https://aminet.net/package/util/libs/pplib020"
+
+# avoid using underscore as the first character in your variable names
+
+# this function is executed on build
+# functions
+#   makedir path (relative to $pkgdir)
+#   copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#   $srcdir
+#   $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    copy "PowerPacker.library" "LIBS:"
+    copy "PPLoadSeg020" "C:PPLoadSeg"
+
+    copy "PPLoadSeg020.doc" "USER:Doc/readme/$name-$version/"
+    copy "PPlib020.readme" "USER:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
