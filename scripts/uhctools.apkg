@@ -1,0 +1,85 @@
+name="uhctools"
+tags="cli, script, internet"
+version="1.8"
+cpu=68000
+require=""
+description="collection of programs and scripts for Amiga computers"
+packager="lobotomius@gmail.com"
+source=(
+    "http://uhc.megaburken.net/uhcinstall*6571e9647e45e3cdd6a4e61e6858822e3c0a18b1568f531e9331f5335ff761cb"
+    "http://uhc.megaburken.net/uhctools_os3.lha*2bff8af9955c4ae4b0c4256fec277b896c147ca1fa49b5dcb747bf3147a44f13"
+    )
+upstream="http://uhc.megaburken.net/"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+    local dir
+
+echo '; $VER: UHC-Startup 1.4 (16.1.2023) UHC Tools Startup
+
+If EXISTS SYS:UHC
+  Assign UHC: SYS:UHC
+  Path UHC:C UHC:S ADD
+
+  If EXISTS UHC:EXTBIN
+    Path UHC:EXTBIN ADD
+  EndIf
+
+  If EXISTS UHC:UHC-User-Startup
+    ; Execute all scripts in the UHC-User-Startup directory
+    List UHC:UHC-User-Startup FILES PAT "~(#?.info)" LFORMAT="Execute *"%P%N*"" >T:UHC-User-Startup.temp
+    Delete >NIL: T:UHC-User-Startup.temp
+  EndIf
+EndIf' > UHC-Startup
+
+    IFS=$'\n'
+    for dir in C Packages UHCHelp; do
+        for file in $(find $dir/ -type f); do copy "$file" "SYS:UHC/$file"; done
+    done
+    for file in $(find S/ -type f); do copy "$file" "SYS:UHC/$file" "srwed"; done
+    unset IFS
+
+    for file in UHCMirrorList UHCSearchList UHCSearchTypes changelog packages.cache revision uhcinstall UHCSetDirectory.info; do 
+        copy "$file" "SYS:UHC/$file"
+    done
+    for file in StartARexx UHC-Startup UHCFixENV UHCPostUpdate UHCPurge UHCSetDirectory; do
+        copy "$file" "SYS:UHC/" "srwed"
+    done
+
+    copy "S/uhcupdate" "S:" "srwed"
+
+    echo "SYS:UHC" > "UHCBIN"
+    copy "UHCBIN" "ENVARC:"
+
+    echo "T:" > "TEMPDIR"
+    echo "0" > "SHOWARCHIVER"
+    echo "1" > "SHOWPROGRESS"
+    echo "uhc.megaburken.net/uhcsearch" > "SEARCHURL"
+    echo "type" > "READER"
+    echo "de.aminet.net/aminet/" > "AMINETMIRROR"
+    echo "os3" > "ARCH"
+
+    for file in TEMPDIR TEMPDIR SHOWARCHIVER SHOWPROGRESS SEARCHURL READER AMINETMIRROR ARCH; do
+        copy "$file" "ENVARC:UHC/"
+    done
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    local uhcs='if exists SYS:UHC/UHC-Startup
+   execute SYS:UHC/UHC-Startup
+endif'
+   userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$uhcs"
+}
+
+# vim: ts=4:syntax=sh:
