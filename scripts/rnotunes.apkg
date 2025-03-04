@@ -1,0 +1,43 @@
+name="rnotunes"
+tags="music, player, mod, mp3, ogg"
+version="1.1"
+cpu=68000
+require="mui-thebar, ahi, codesets-library, guigfx-library, render-library, reqtools-library"
+description="FREE 'Action-Replay' like monitor"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/mus/play/RNOTunes_68k_FPU.lha*541f877d0c8a3c9dc310858d064eec16d7e61ca54eaaa1f744022428fdc232b2"
+    )
+upstream="https://aminet.net/package/mus/play/RNOTunes_68k_FPU"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "RNOTunes_68k_FPU/" || exit 1
+
+    for file in *.hwp RNOTunes; do copy "$file" "USER:App/Music/RNOTunes/"; done
+    IFS=$'\n'
+    for file in $(find gfx/ -type f); do copy "$file" "USER:App/Music/RNOTunes/$file"; done
+    unset IFS
+
+    # copy "Icons_by_AMIGASYSTEM/RNOTunes-48.info" "USER:App/Music/RNOTunes/RNOTunes.info"
+    copy "Icons_by_AMIGASYSTEM/OS3.2.info" "USER:App/Music/RNOTunes.info"
+
+    copy "ReadMe.txt" "USER:Doc/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
