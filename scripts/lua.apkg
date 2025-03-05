@@ -1,0 +1,45 @@
+name="lua"
+tags="scripting, programming, language"
+version="5.2.1"
+cpu=68020
+require="ixemul, amitcp"
+description="Lua is a powerful, fast, lightweight, embeddable scripting language"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/dev/lang/lua_68k.lha*0a2a884abca0c10e96737ef69dbb672897ff7bb8e2cfe87b26510cd7ea26eb5a")
+upstream="https://aminet.net/package/dev/misc/renderlib68k"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+    cd "lua_68k" || exit 1
+
+    makedir "Dev/Lua/Modules/"
+    makedir "Dev/Lua/Libs/"
+
+    copy "GG/local/bin/lua" "C:"
+    copy "GG/local/bin/luac" "C:"
+
+    man -P cat "GG/local/man/man1/lua.1" > lua.1.txt
+    man -P cat "GG/local/man/man1/luac.1" > luac.1.txt
+
+    for file in README lua_68k.readme lua.1.txt luac.1.txt; do
+        copy "$file" "USER:Doc/Readme/$name-$version/"
+    done
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    local luausr='setenv LUA_PATH "Dev/Lua/Modules/?;Dev/Lua/?"
+setenv LUA_CPATH "Dev/Lua/Libs/?;Dev/Lua/?"'
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$luausr"
+}
+
+# vim: ts=4:syntax=sh:
