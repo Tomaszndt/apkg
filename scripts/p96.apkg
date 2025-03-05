@@ -151,11 +151,11 @@ AwAABOkDAABQSwUGAAAAAAEAAQBcAAAAWAIAAAAA"
 
     for file in prefs/*; do copy "$file" "Prefs/${file##*/}"; done
 
-    copy "documentation/History.readme" "Locale/Readme/$name-$version/"
-    copy "documentation/P96Prefs.guide" "Locale/Help/"
-    copy "documentation/P96Prefs.guide.info" "Locale/Help/"
-    copy "documentation/P96_english.guide" "locale/help/"
-    copy "documentation/P96_english.guide.info" "HELP:/"
+    copy "documentation/History.readme" "USER:Doc/Readme/$name-$version/"
+    copy "documentation/P96Prefs.guide" "HELP:"
+    copy "documentation/P96Prefs.guide.info" "HELP:"
+    copy "documentation/P96_english.guide" "HELP:"
+    copy "documentation/P96_english.guide.info" "HELP:"
 
 }
 

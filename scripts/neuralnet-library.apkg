@@ -24,10 +24,10 @@ function build {
 
     cd "neuralnetlib" || exit 1
 
-    copy "libs/neuralnet.library_68040" "Libs/neuralnet.library"
+    copy "libs/neuralnet.library_68040" "Libs:neuralnet.library"
 
-    copy "README" "USER:Readme/$name-$version/${file}"
-    copy "doc/manual" "USER:Readme/$name-$version/${file}"
+    copy "README" "USER:Doc/Readme/$name-$version/${file}"
+    copy "doc/manual" "USER:Doc/Readme/$name-$version/${file}"
     
 }
 

@@ -19,8 +19,8 @@ upstream="https://aminet.net/package/disk/misc/NoClick"
 function build {
 	# we are in "$srcdir"
 	
-    copy "NoClick/NoClick" "C/NoClick"
-    copy "NoClick/NoClick.readme" "Locale/Readme/$name-$version/NoClick.readme"
+    copy "NoClick/NoClick" "C:NoClick"
+    copy "NoClick/NoClick.readme" "USER:/Doc/Readme/$name-$version/NoClick.readme"
     copy "NoClick/NoClick.info" "Utilities/NoClick.info"
 }
 

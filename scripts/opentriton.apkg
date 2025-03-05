@@ -46,19 +46,19 @@ b25QcmVmcy50cmlVVAUAA03ZkGd1eAsAAQToAwAABOkDAABQSwUGAAAAAAQABABrAQAADwIAAAAA"
 
     cd Triton || exit 1
 
-    copy "ReadMe" "Locale/Readme/Readme/$name-$version/ReadMe"
-    copy "Docs/History" "Locale/Readme/Readme/$name-$version/History"
-    copy "Docs/Triton.guide" "Locale/Help/Triton.guide"
-    copy "Docs/Triton.guide.info" "Locale/Help/Triton.guide.info"
+    copy "ReadMe" "USER:Doc/Readme/$name-$version/ReadMe"
+    copy "Docs/History" "USER:Doc/Readme/$name-$version/History"
+    copy "Docs/Triton.guide" "Help:Triton.guide"
+    copy "Docs/Triton.guide.info" "Help:Triton.guide.info"
 
     copy "Prefs/Triton" "Prefs/Triton"
     copy "Prefs/Triton.info" "Prefs/Triton.info"
 
-    copy "libs39/triton.library" "Libs/triton.library"
+    copy "libs39/triton.library" "Libs:triton.library"
 
     echo "$settings" | base64 -d > settings.zip && 
-    unzip -q settings.zip &&
-    for file in Triton/*; do copy "$file" "Prefs/Env-Archive/${file##*/}"; done
+    unzip -q settings.zip
+    for file in Triton/*; do copy "$file" "Prefs/Env-Archive/Triton/${file##*/}"; done
 
 }
 

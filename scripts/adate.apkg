@@ -28,7 +28,7 @@ function build {
 	# we are in "$srcdir"
 
     copy "adate" "C/adate"
-    copy "adate.readme" "User:Doc/Readme/"
+    copy "adate.readme" "User:Doc/Readme/$name-$version/"
 
 }
 

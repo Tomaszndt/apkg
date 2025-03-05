@@ -27,8 +27,8 @@ function build {
     copy "NewMeter" "WBStartup/"
     copy "NewMeter.info" "WBStartup/"
 
-    copy "Tooltypes" "Locale/Help/Readme/$name-$version/"
-    copy "Tooltypes.info" "Locale/Help/Readme/$name-$version/"
+    copy "Tooltypes" "USER:/Doc/Readme/$name-$version/"
+    copy "Tooltypes.info" "USER:/Doc/Readme/$name-$version/"
 
 }
 

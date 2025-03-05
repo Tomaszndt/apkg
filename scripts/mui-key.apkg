@@ -20,7 +20,7 @@ upstream=""
 
 function build {
 
-    copy "MUI.KEY" "S/"
+    copy "MUI.KEY" "S:"
 
 }
 

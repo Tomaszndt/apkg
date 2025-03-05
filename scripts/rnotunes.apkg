@@ -24,7 +24,7 @@ function build {
 
     cd "RNOTunes_68k_FPU/" || exit 1
 
-    for file in *.hwp RNOTunes; do copy "$file" "USER:App/Music/RNOTunes/"; done
+    for file in *.hwp RNOTunes*; do copy "$file" "USER:App/Music/RNOTunes/"; done
     IFS=$'\n'
     for file in $(find gfx/ -type f); do copy "$file" "USER:App/Music/RNOTunes/$file"; done
     unset IFS

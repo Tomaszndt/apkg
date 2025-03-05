@@ -32,9 +32,9 @@ function build {
     copy "MysticView.guide" "HELP:/"
     copy "MysticView.guide.info" "HELP:/"
 
-    copy "README" "USER:Readme/$name-$version/"
-    copy "HISTORY" "USER:Readme/$name-$version/"
-    copy "COPYING" "USER:License/$name-$version/"
+    copy "README" "USER:Doc/Readme/$name-$version/"
+    copy "HISTORY" "USER:Doc/Readme/$name-$version/"
+    copy "COPYING" "USER:Doc/License/$name-$version/"
     
 }
 

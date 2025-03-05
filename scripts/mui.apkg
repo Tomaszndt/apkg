@@ -34,7 +34,7 @@ function build {
 
    makedir "Libs/MUI/Locale"
 
-   copy ReadMe.AmigaOS3 "Locale/Readme/$name-$version/ReadMe.AmigaOS3"
+   copy ReadMe.AmigaOS3 "USER:/Doc/Readme/$name-$version/ReadMe.AmigaOS3"
 
    copy "PSI" "Libs/MUI/PSI"
    copy "PatchASL" "Libs/MUI/PatchASL"

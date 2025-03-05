@@ -25,7 +25,7 @@ function build {
     cd "openpci2.1_beta4_081009" || exit 1
 
     copy "openpci.library" "Libs/openpci.library"
-    copy "README.openpci_V2.1" "Locale/Readme/$name-$version/README.openpci_V2.1"
+    copy "README.openpci_V2.1" "USER:/Doc/Readme/$name-$version/README.openpci_V2.1"
 
 }
 

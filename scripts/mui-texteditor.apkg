@@ -24,8 +24,8 @@ function build {
    for file in Libs/MUI/AmigaOS3/*; do copy "$file" "Libs/MUI/Libs/mui/${file##*/}"; done
 
    for file in Docs/*; do copy "$file" "Libs/MUI/Docs/English/${file##*/}"; done
-   for file in ChangeLog* ReadMe*; do copy "$file" "Locale/Readme/$name-$version/"; done
-   for file in COPYING*; do copy "$file" "Locale/License/$name-$version/"; done
+   for file in ChangeLog* ReadMe*; do copy "$file" "USER:/Doc/Readme/$name-$version/"; done
+   for file in COPYING*; do copy "$file" "USER:/Doc/License/$name-$version/"; done
 }
 
 # this function is executed on installation after all files have been copied

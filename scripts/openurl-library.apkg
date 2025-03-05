@@ -24,17 +24,17 @@ function build {
 
     cd "OpenURL" || exit 1
 
-    copy "Libs/AmigaOS3/openurl.library" "Libs/"
-    copy "C/AmigaOS3/OpenURL" "C/"
+    copy "Libs/AmigaOS3/openurl.library" "Libs:"
+    copy "C/AmigaOS3/OpenURL" "C:"
 
-    copy "COPYING" "Locale/License/$name-$version/"
-    copy "COPYING.info" "Locale/License/$name-$version/"
-    copy "ReadMe" "Locale/Readme/$name-$version/"
-    copy "ReadMe.info" "Locale/Readme/$name-$version/"
-    copy "ChangeLog" "Locale/Readme/$name-$version/"
-    copy "ChangeLog.info" "Locale/Readme/$name-$version/"
-    copy "OpenURL.guide" "Locale/Help/"
-    copy "OpenURL.guide.info" "Locale/Help/"
+    copy "COPYING" "USER:Doc/License/$name-$version/"
+    copy "COPYING.info" "USER:Doc/License/$name-$version/"
+    copy "ReadMe" "USER:Doc/Readme/$name-$version/"
+    copy "ReadMe.info" "USER:Doc/Readme/$name-$version/"
+    copy "ChangeLog" "USER:Doc/Readme/$name-$version/"
+    copy "ChangeLog.info" "USER:Doc/Readme/$name-$version/"
+    copy "OpenURL.guide" "HELP:"
+    copy "OpenURL.guide.info" "HELP:"
 
     copy "Prefs/AmigaOS3/OpenURL" "Prefs/"
     copy "Prefs/AmigaOS3/OpenURL.info" "Prefs/"
