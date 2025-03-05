@@ -28,7 +28,7 @@ function build {
     copy "Ranchero" "WBStartup/"
     copy "Ranchero.info" "WBStartup/"
 
-    copy "Ranchero.readme" "Locale/Readme/$name-$version/"
+    copy "Ranchero.readme" "USER:Doc/Readme/$name-$version/"
     # copy "rewincy.info" "Locale/Readme/$name-$version/"
 
 }

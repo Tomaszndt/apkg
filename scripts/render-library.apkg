@@ -20,10 +20,10 @@ function build {
 
     cd "RenderLib_v32" || exit 1
 
-    copy "libs/render.library_68040" "Libs/render.library"
+    copy "libs/render.library_68040" "Libs:render.library"
 
-    for file in HISTORY README; do copy "$file" "Locale/Readme/$name-$version/"; done
-    copy "COPYING" "Locale/License/$name-$version/"
+    for file in HISTORY README; do copy "$file" "USER:Doc/Readme/$name-$version/"; done
+    copy "COPYING" "USER:Doc/License/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied
