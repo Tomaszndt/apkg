@@ -19,7 +19,9 @@ upstream="https://aminet.net/package/comm/net/AmiTCP-bin-30b2"
 #  $pkgdir
 
 function build {
-    makedir "Libs/AmiTCP/"
+    makedir "Libs:AmiTCP/"
+    
+    copy "AmiTCP-3.0b2/libs/usergroup.library" "LIBS:"
 }
 
 # this function is executed on installation after all files have been copied

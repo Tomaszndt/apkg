@@ -24,9 +24,9 @@ upstream="https://aminet.net/package/util/libs/ReqToolsLib"
 function build {
 	# we are in "$srcdir"
 
-    copy "ReqToolsLib/reqtools.library" "Libs/reqtools.library"
-    copy "ReqToolsLib/LICENSE" "Locale/License/$name-$version/LICENSE"
-    copy "ReqToolsLib/README" "Locale/Readme/$name-$version/README"
+    copy "ReqToolsLib/reqtools.library" "Libs:reqtools.library"
+    copy "ReqToolsLib/LICENSE" "USER:Doc/License/$name-$version/LICENSE"
+    copy "ReqToolsLib/README" "USER:Doc/Readme/$name-$version/README"
 
 }
 

@@ -1,43 +1,41 @@
 name="scout"
-tags="utility, information"
+tags="utility, system, monitor"
 version="3.6"
-cpu=68000
-require="mui-nlist, identify-library"
-description="System monitor"
+cpu=68020
+require="identify-library, mui-nlist"
+description="Scout is a tool that allows you to monitor your computer system"
 packager="lobotomius@gmail.com"
-source=(
-    "https://aminet.net/util/moni/Scout_os3.lha*ac0e6af5a28987c3c1136d380f93b07aa628065316dd368d23af05bfa055958e"
-    )
+source=("https://aminet.net/util/moni/Scout_os3.lha*ac0e6af5a28987c3c1136d380f93b07aa628065316dd368d23af05bfa055958e")
 upstream="https://aminet.net/package/util/moni/Scout_os3"
 
+# this function is executed on build
 # functions
-#  makedir     path (relative to $pkgdir)
-#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
-#  userpatch  filename, mode (all, end), needle, tag, text
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
 # variables
 #  $srcdir
 #  $pkgdir
 
-# this function is executed on build
 function build {
-
-    copy "Scout.info" "Utilities/"
 
     cd "Scout" || exit 1
 
-    copy "Scout.os3" "Utilities/Scout/Scout"
-    copy "Scout.os3.info" "Utilities/Scout/Scout.info"
+    copy "Scout.os3" "Utilities/Scout"
+    copy "Scout.os3.info" "Utilities/Scout.info"
 
-    copy "Scout.readme" "Locale/Readme/$name-$version/"
-    copy "help/english/scout.doc" "Locale/Readme/$name-$version/"
-    copy "help/english/scout.pdf" "Locale/Readme/$name-$version/"
-    copy "help/english/scout.guide" "Locale/Help/"
-    copy "help/english/scout.guide.info" "Locale/Help/"
+    copy "Scout.readme" "USER:Doc/Readme/$name-$version/"
+    copy "Scout.history" "USER:Doc/Readme/$name-$version/"
+    copy "help/english/scout.pdf" "USER:Doc/Readme/$name-$version/"
+
+    copy "help/english/scout-39.guide" "HELP:"
+    copy "help/english/scout.guide" "HELP:"
 }
 
 # this function is executed on installation after all files have been copied
 function post_install {
-    :
+    local luausr='setenv LUA_PATH "Dev/Lua/Modules/?;Dev/Lua/?"
+setenv LUA_CPATH "Dev/Lua/Libs/?;Dev/Lua/?"'
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$luausr"
 }
 
 # vim: ts=4:syntax=sh:
