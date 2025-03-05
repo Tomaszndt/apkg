@@ -20,7 +20,12 @@ function build {
 # this function is executed on installation after all files have been copied
 
 function post_install {
-   :
+	local usrasg='assign >NIL: exists USER:
+if warn
+   assign USER: SYS:User
+endif'
+
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$usrasg"
 }
 
 # vim: ts=4:syntax=sh:

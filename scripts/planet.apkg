@@ -23,7 +23,7 @@ function build {
 
     IFS=$'\n'
     for file in $(find . -type f); do
-        copy "$file" "User/${file#*/}"
+        copy "$file" "User:Misc/${file#*/}"
     done
     unset IFS
 }

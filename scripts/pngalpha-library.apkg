@@ -23,8 +23,8 @@ function build {
 
     cd "pngalpha_library20"
 
-    copy "README" "Locale/Readme/$name-$version/"
-    copy "Libs/pngalpha.library" "Libs/"
+    copy "README" "USER:Dev/Readme/$name-$version/"
+    copy "Libs/pngalpha.library" "Libs:"
 
 }
 

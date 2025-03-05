@@ -25,14 +25,14 @@ function build {
 
     cd "PopupMenuUser" || exit 1
 
-    copy "libs/popupmenu.library" "Libs/"
+    copy "libs/popupmenu.library" "Libs:"
     copy "prefs/PopupMenu" "Prefs/"
     copy "prefs/PopupMenu.info" "Prefs/"
-    copy "PopupMenu.guide.info" "Locale/Help"
+    copy "PopupMenu.guide.info" "HELP:"
 
-    copy "pmuser.readme" "Locale/Readme/$name-$version/"
-    copy "PopupMenu.guide" "Locale/Help"
-    copy "PopupMenu.guide.info" "Locale/Help"
+    copy "pmuser.readme" "USER:Doc/Readme/$name-$version/"
+    copy "PopupMenu.guide" "Help:"
+    copy "PopupMenu.guide.info" "Help:"
 
 }
 

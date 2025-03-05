@@ -27,7 +27,7 @@ function build {
     copy "devs/datatypes/QOI.info" "Devs/DataTypes/"
     copy "classes/datatypes/qoi.datatype" "Classes/DataTypes/"
 
-    copy "README.md" "Locale/Readme/$name-$version/"
+    copy "README.md" "USER:Doc/Readme/$name-$version/"
 
 }
 

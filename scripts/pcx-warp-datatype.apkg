@@ -170,8 +170,8 @@ AACjHgAAAAA="
     copy "PCX" "Devs/DataTypes/"
     copy "PCX.info" "Devs/DataTypes/"
 
-    copy "WarpPCXdt/WarpPCX.guide" "Locale/Help/"
-    copy "WarpPCXdt/WarpPCX.guide.info" "Locale/Help/"
+    copy "WarpPCXdt/WarpPCX.guide" "HELP:"
+    copy "WarpPCXdt/WarpPCX.guide.info" "HELP:"
 }
 
 # this function is executed on installation after all files have been copied

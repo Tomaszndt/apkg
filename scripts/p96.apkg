@@ -129,24 +129,24 @@ AwAABOkDAABQSwUGAAAAAAEAAQBcAAAAWAIAAAAA"
     copy "Commodities/P96ScreenCx" "WBStartup/Disabled/"
     copy "Commodities/P96ScreenCx.info" "WBStartup/Disabled/"
 
-    copy "Libs/Picasso96API.library" "Libs/"
-    copy "Libs/Picasso96/emulation.library" "Libs/Picasso96/"
-    copy "Libs/Picasso96/rtg.library" "Libs/Picasso96/"
+    copy "Libs/Picasso96API.library" "Libs:"
+    copy "Libs/Picasso96/emulation.library" "Libs:Picasso96/"
+    copy "Libs/Picasso96/rtg.library" "Libs:Picasso96/"
 
-    copy "Devs/Monitors/uaegfx" "Devs/Monitors/uaegfx"
-    copy "Devs/Monitors/uaegfx.info" "Devs/Monitors/uaegfx.info"
-    copy "devs/monitors/Native" "Devs/Monitors/"
-    copy "devs/monitors/Native.info" "Devs/Monitors/"
-    copy "devs/monitors/Picasso96" "Devs/Monitors/"
-    copy "devs/monitors/Picasso96.info" "Devs/Monitors/"
+    copy "Devs/Monitors/uaegfx" "Devs:Monitors/uaegfx"
+    copy "Devs/Monitors/uaegfx.info" "Devs:Monitors/uaegfx.info"
+    copy "devs/monitors/Native" "Devs:Monitors/"
+    copy "devs/monitors/Native.info" "Devs:Monitors/"
+    copy "devs/monitors/Picasso96" "Devs:Monitors/"
+    copy "devs/monitors/Picasso96.info" "Devs:Monitors/"
 
     for file in Prefs/Env-Archive/Picasso96/*; do
         copy "$file" "$file"
     done
-    copy "Devs/Picasso96Settings" "Devs/"
+    copy "Devs/Picasso96Settings" "Devs:"
 
     for file in FindBoard FindCVPPC FindGVP110 FindIndiECSv4 FindPCI Reboot; do
-        copy "$file" "C/"
+        copy "$file" "C:"
     done
 
     for file in prefs/*; do copy "$file" "Prefs/${file##*/}"; done
