@@ -39,12 +39,12 @@ ABhIRUxQTUFOPUhFTFA6WlNoZWxsLmRvYwA="
     copy "ZShell/ZSH" "C/ZSH"
     copy "ZShell/ZStart.OS3" "S/ZStart"
 
-    copy "ZShell/ReadMe" "Locale/Readme/$name-$version/ReadMe"
-    copy "ZShell/ReadMe.info" "Locale/Readme/$name-$version/ReadMe.info"
-    copy "ZShell/ZShell.doc" "Locale/Readme/$name-$version/ZShell.doc"
-    copy "ZShell/ZShell.doc.info" "Locale/Readme/$name-$version/ZShell.doc.info"
-    copy "ZShell/ZShell.guide" "Locale/Help/$name-$version/ZShell.guide"
-    copy "ZShell/ZShell.guide.info" "Locale/Help/$name-$version/ZShell.guide.info"
+    copy "ZShell/ReadMe" "USER:Doc/Readme/$name-$version/ReadMe"
+    copy "ZShell/ReadMe.info" "USER:Doc/Readme/$name-$version/ReadMe.info"
+    copy "ZShell/ZShell.doc" "USER:Doc/Readme/$name-$version/ZShell.doc"
+    copy "ZShell/ZShell.doc.info" "USER:Doc/Readme/$name-$version/ZShell.doc.info"
+    copy "ZShell/ZShell.guide" "Help:ZShell.guide"
+    copy "ZShell/ZShell.guide.info" "Help:ZShell.guide.info"
 
     echo "${zshell_info}" | base64 -d > ZShell.info
     copy "ZShell.info" "System/ZShell.info"

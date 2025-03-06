@@ -107,10 +107,10 @@ ylklgCqmCEAAAZ0eqzIAAFlX+ACxxGf7AgAAAAAEWVo="
     for file in $(find Libs_68020+/ -type f); do copy "$file" "Libs/${file##*/}"; done
     unset IFS
 
-    copy "XpkMaster.guide" "Locale/Help/"
-    copy "XpkMaster.guide.info" "Locale/Help/"
+    copy "XpkMaster.guide" "HELP:"
+    copy "XpkMaster.guide.info" "HELP:"
 
-    copy "X-Systems.TXT" "Locale/Help/Readme/$name-$version/"
+    copy "X-Systems.TXT" "USER:Doc/Readme/$name-$version/"
 
 }
 

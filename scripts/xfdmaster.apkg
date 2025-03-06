@@ -35,11 +35,11 @@ function build {
     unset IFS
 
     for file in Docs/*; do
-        copy "$file" "Locale/Help/Readme/$name-$version/${file##*/}"
+        copy "$file" "USER:Doc/Readme/$name-$version/${file##*/}"
     done
-    copy "xfdmaster.readme" "Locale/Help/Readme/$name-$version/"
-    copy "X-Systems.TXT" "Locale/Help/Readme/$name-$version/"
-    copy "README" "Locale/Help/Readme/$name-$version/"
+    copy "xfdmaster.readme" "USER:Doc/Readme/$name-$version/"
+    copy "X-Systems.TXT" "USER:Doc/Readme/$name-$version/"
+    copy "README" "USER:Doc/Readme/$name-$version/"
 
 }
 

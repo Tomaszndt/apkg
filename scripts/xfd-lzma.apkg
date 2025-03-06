@@ -26,7 +26,7 @@ function build {
 
     copy "OS3/lzma" "Libs/xfd/"
 
-    copy "xfd_lzma.readme" "Locale/Help/Readme/$name-$version/"
+    copy "xfd_lzma.readme" "USER:Doc/Readme/$name-$version/"
 
 }
 

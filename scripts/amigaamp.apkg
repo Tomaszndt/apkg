@@ -23,10 +23,10 @@ function build {
     local file
     local dir
 
-    copy "AmigaAMP3.info" "Tools/AmigaAMP.info"
+    copy "AmigaAMP3.info" "USER:App/Music/AmigaAMP.info"
 
     for file in amiga/*; do
-        copy "$file" "Tools/AmigaAMP/Skins/${file}"
+        copy "$file" "USER:App/Music/AmigaAMP/Skins/${file}"
     done
 
     cd AmigaAMP3 || exit 1
@@ -34,16 +34,16 @@ function build {
     IFS=$'\n'
     for dir in "Plugins" "Skins"; do
         for file in $(find "$dir" -type f); do
-            copy "$file" "Tools/AmigaAMP/${file}";
+            copy "$file" "USER:App/Music/AmigaAMP/${file}";
         done
     done
     unset IFS
 
-    copy AmigaAMP "Tools/AmigaAMP/AmigaAMP"
-    copy AmigaAMP.info "Tools/AmigaAMP/AmigaAMP.info"
+    copy AmigaAMP "USER:App/Music/AmigaAMP/AmigaAMP"
+    copy AmigaAMP.info "USER:App/Music/AmigaAMP/AmigaAMP.info"
 
-    copy AmigaAMP-Prefs "Tools/AmigaAMP/AmigaAMP-Prefs"
-    copy AmigaAMP-Prefs.info "Tools/AmigaAMP/AmigaAMP-Prefs.info"
+    copy AmigaAMP-Prefs "USER:App/Music/AmigaAMP/AmigaAMP-Prefs"
+    copy AmigaAMP-Prefs.info "USER:App/Music/AmigaAMP/AmigaAMP-Prefs.info"
 
     copy "AmigaAMP.doc" "USER:Doc/Readme/$name-$version/AmigaAMP.doc"
     copy "AmigaAMP.dok" "USER:Doc/Readme/$name-$version/AmigaAMP.dok"

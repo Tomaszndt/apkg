@@ -26,8 +26,8 @@ function build {
 
     copy "Libs/z.library.020" "Libs/z.library"
 
-    for file in README releasenotes; do copy "$file" "Locale/Readme/$name-$version/${file}"; done
-    for file in LICENSE*; do copy "$file" "Locale/License/$name-$version/${file}"; done
+    for file in README releasenotes; do copy "$file" "USER:Doc/Readme/$name-$version/${file}"; done
+    for file in LICENSE*; do copy "$file" "USER:Doc/License/$name-$version/${file}"; done
 
 }
 

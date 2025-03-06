@@ -24,9 +24,9 @@ function build {
 
     for file in xdata xdump xdumps xmeta codedatacheck; do copy "$file" "C/$file"; done
 
-    copy "xdump.readme" "Locale/Readme/$name-$version/"
-    copy "licence_680x0.txt" "Locale/License/$name-$version/"
-    for file in doc/*; do copy "$file" "Locale/Help/$name-$version/$file"; done
+    copy "xdump.readme" "USER:Doc/Readme/$name-$version/"
+    copy "licence_680x0.txt" "USER:Doc/License/$name-$version/"
+    for file in doc/*; do copy "$file" "Help:$name-$version/$file"; done
 }
 
 # this function is executed on installation after all files have been copied
