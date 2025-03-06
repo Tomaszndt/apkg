@@ -819,8 +819,8 @@ L1dlYlAuaW5mb1VUBQADGPxwOHV4CwABBOgDAAAE6QMAAFBLBQYAAAAABwAHAGYCAADbrQAAAAA="
     copy "Devs/DataTypes/WebP" "Devs/DataTypes/"
     copy "Devs/DataTypes/WebP.info" "Devs/DataTypes/"
 
-    copy "WarpWebPdt/WarpWebP.guide" "Locale/Help/"
-    copy "WarpWebPdt/WarpWebP.guide.info" "Locale/Help/"
+    copy "WarpWebPdt/WarpWebP.guide" "HELP:"
+    copy "WarpWebPdt/WarpWebP.guide.info" "HELP:"
 }
 
 # this function is executed on installation after all files have been copied

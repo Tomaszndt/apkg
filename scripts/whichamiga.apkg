@@ -16,7 +16,7 @@ function build {
 	# Here is the WhichAmiga version by Wrangler: http://ftp.ziaspace.com/pub/aminet/util/moni/WhichAmiga_Extended.lha
 	# Piru's version with source: http://ftp.ziaspace.com/pub/aminet/util/moni/WhichAmiga.lha
 
-	copy "WhichAmiga" "C/"
+	copy "WhichAmiga" "C:"
 }
 
 # vim: ts=4:syntax=sh:

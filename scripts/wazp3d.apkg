@@ -27,11 +27,11 @@ function build {
     copy "Wazp3D-Prefs" "Prefs/"
     copy "Wazp3D-Prefs.info" "Prefs/"
 
-    copy "Wazp3D.library-full" "Libs/Warp3D.library"
+    copy "Wazp3D.library-full" "LIBS:Warp3D.library"
 
-    copy "Wazp3D.readme" "Locale/Readme/$name-$version/"
+    copy "Wazp3D.readme" "USER:Doc/Readme/$name-$version/"
     for file in Wazp3D-docs/*; do
-        copy "$file" "Locale/Readme/$name-$version/${file##*/}"
+        copy "$file" "USER:Doc/Readme/$name-$version/${file##*/}"
     done
 
 }

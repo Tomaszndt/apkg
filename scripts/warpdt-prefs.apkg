@@ -30,8 +30,8 @@ function build {
 
     copy "WarpDT" "Prefs/"
     copy "WarpDT.info" "Prefs/"
-    copy "Docs/WarpDTPrefs.guide" "Locale/Help/"
-    copy "Docs/WarpDTPrefs.guide.info" "Locale/Help/"
+    copy "Docs/WarpDTPrefs.guide" "HELP:"
+    copy "Docs/WarpDTPrefs.guide.info" "HELP:"
 }
 
 # this function is executed on installation after all files have been copied

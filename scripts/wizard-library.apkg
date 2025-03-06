@@ -18,7 +18,7 @@ upstream="https://aminet.net/package/util/libs/WizardLibrary"
 
 function build {
 
-    copy "wizard.library" "Libs/"
+    copy "wizard.library" "LIBS:"
 
 }
 

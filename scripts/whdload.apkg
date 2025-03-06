@@ -26,13 +26,13 @@ function build {
     for file in C/*; do copy "$file" "$file"; done
     for file in S/*; do copy "$file" "$file"; done
 
-    for file in Docs/en/*; do copy "$file" "Locale/Readme/$name-$version/html/${file##*/}"; done
+    for file in Docs/en/*; do copy "$file" "USER:Doc/Readme/$name-$version/html/${file##*/}"; done
     for file in Docs/en/*; do 
         links -dump "$file" > "${file%.*}.txt"
-        copy "${file%.*}.txt" "Locale/Readme/$name-$version/txt/${file##*/}"; 
+        copy "${file%.*}.txt" "USER:Doc/Readme/$name-$version/txt/${file##*/}"; 
     done
     for file in Docs/autodoc.html Docs/History.txt Docs/History.txt.info Docs/Patcher.txt Docs/WHDLoad.html Docs/WHDLoad.html.info; do
-        copy "$file" "Locale/Readme/$name-$version/${file##*/}"
+        copy "$file" "USER:Doc/Readme/$name-$version/${file##*/}"
     done
 }
 

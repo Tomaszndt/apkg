@@ -92,6 +92,18 @@ BFToPrUG4G2pt6sAAAAA/VurXv3o0gkAAdUX6R4AABuSqe6xxGf7AgAAAAAEWVo="
     copy "WBDock.guide" "Locale/Help/"
     copy "WBDock.guide.info" "Locale/Help/"
 
+    echo 'USER:
+SYS:System/Shell
+SYS:Utilities/MultiView
+SYS:Utilities/SnoopDos
+SYS:Utilities/Scout/Scout
+SYS:Utilities/Avalanche
+SYS:Prefs/ScreenMode
+SYS:Tools/IconEdit
+SYS:Tools/ShowConfig
+SYS:Tools/KeyShow
+SYS:Tools/Commodities/Exchange' > WBDock.config
+
     copy "WBDock.config" "WBStartup/"
     echo "$wbdockconfiginfoxz" | base64 -d | xz -d > WBDock.config.info
     copy "WBDock.config.info" "WBStartup/"

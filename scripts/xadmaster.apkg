@@ -35,21 +35,21 @@ function build {
     done
 
     for file in Docs/*; do
-        copy "$file" "Locale/Readme/$name-$version/${file##*/}"
+        copy "$file" "USER:Doc/Readme/$name-$version/${file##*/}"
     done
 
-    copy "X-Systems.TXT" "Locale/Readme/$name-$version/X-Systems.TXT"
-    copy "xadmaster020.readme" "Locale/Readme/$name-$version/xadmaster020.readme"
+    copy "X-Systems.TXT" "USER:Doc/Readme/$name-$version/X-Systems.TXT"
+    copy "xadmaster020.readme" "USER:Doc/Readme/$name-$version/xadmaster020.readme"
 
-    copy "xadmaster.guide" "Locale/Help/xadmaster.guide"
-    copy "xadmaster.guide.info" "Locale/Help/xadmaster.guide.info"
+    copy "xadmaster.guide" "Help:xadmaster.guide"
+    copy "xadmaster.guide.info" "Help:xadmaster.guide.info"
 
     cd ".."
 
-    copy "xadmaster.key" "S/xadmaster.key"
+    copy "xadmaster.key" "S:xadmaster.key"
 
     copy "xad_7z/OS3/7z" "Libs/xad/7z"
-    copy "xad_7z/xad_7z.readme" "Locale/Readme/$name-$version/xad_7z.readme"
+    copy "xad_7z/xad_7z.readme" "USER:Doc/Readme/$name-$version/xad_7z.readme"
     
 
 }
