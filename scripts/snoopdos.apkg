@@ -9,16 +9,18 @@ source=("http://aminet.net/util/moni/SnoopDos.lha*0fb51361fe82b125971b190b78a81c
 upstream="http://m68k.aminet.net/package/util/moni/SnoopDos"
 
 function build {
+	local file
+
 	copy snoopdos "Utilities/SnoopDos"	
 	copy SnoopDos.info "Utilities/SnoopDos.info"	
 
-
-	for f in Readme*; do
-		copy "$f" "Locale/Readme/$name-$version/$f"
+	for file in Readme*; do
+		copy "$file" "USER:Doc/Readme/$name-$version/$file"
 	done
-	copy SnoopDos.readme "Locale/Readme/$name-$version/SnoopDos.readme"
+	copy SnoopDos.readme "USER:Doc/Readme/$name-$version/SnoopDos.readme"
 	
-	copy SnoopDos.guide "Locale/Help/SnoopDos.guide"
-	copy SnoopDos.guide.info "Locale/Help/SnoopDos.guide.info"
+	copy SnoopDos.guide "HELP:SnoopDos.guide"
+	copy SnoopDos.guide.info "HELP:SnoopDos.guide.info"
 	
 }
+# vim: ts=4:syntax=sh:

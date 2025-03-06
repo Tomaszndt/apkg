@@ -24,8 +24,8 @@ function build {
 
     cd "sndfile" || exit 1
 
-    copy "Libs/sndfile.library.fpu" "Libs/sndfile.library"
-    copy "sndfile.readme" "Locale/Readme/$name-$version/sndfile.readme"
+    copy "Libs/sndfile.library.fpu" "Libs:sndfile.library"
+    copy "sndfile.readme" "USER:Doc/Readme/$name-$version/sndfile.readme"
 }
 
 # this function is executed on installation after all files have been copied

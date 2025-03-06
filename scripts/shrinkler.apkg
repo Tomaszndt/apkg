@@ -21,7 +21,7 @@ function build {
 	cd "shrinkler45"
 
 	copy "Amiga/Shrinkler" "C/shrinkler"	
-	copy README.txt "Locale/Readme/$name-$version/shrinkler.txt"
-	copy ShrinklerDecompress.S "Source/ShrinklerDecompress.S"
+	copy README.txt "USER:Doc/Readme/$name-$version/shrinkler.txt"
+	copy ShrinklerDecompress.S "Dev/Source/ShrinklerDecompress.S"
 }
 # vim: ts=4:syntax=sh:

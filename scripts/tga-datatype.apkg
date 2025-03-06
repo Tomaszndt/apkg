@@ -27,8 +27,8 @@ function build {
     copy "Devs/Datatypes/TGA.info" "Devs/DataTypes/"
     copy "Classes/Datatypes/TGA.datatype" "Classes/DataTypes/"
 
-    copy "TGAdt.readme" "Locale/Readme/$name-$version/"
-    copy "TGAdt.readme.info" "Locale/Readme/$name-$version/"
+    copy "TGAdt.readme" "USER:Doc/Readme/$name-$version/"
+    copy "TGAdt.readme.info" "USER:Doc/Readme/$name-$version/"
 
 }
 

@@ -22,15 +22,15 @@ function build {
 
     cd "sidid-master" || exit 1
 
-    copy "sidid.68k" "C/sidid"
+    copy "sidid.68k" "C:sidid"
 
-    copy "readme.txt" "Locale/Readme/$name-$version/"
-    copy "sidid.nfo" "Locale/Readme/$name-$version/"
+    copy "readme.txt" "USER:Doc/Readme/$name-$version/"
+    copy "sidid.nfo" "USER:Doc/Readme/$name-$version/"
 
-    copy "sidid.cfg" "User/Config/"
-    copy "tedid.cfg" "User/Config/"
+    copy "sidid.cfg" "User:Config/"
+    copy "tedid.cfg" "User:Config/"
 
-    echo "sys:User/Config/sidid.cfg" > SIDIDCFG
+    echo "USER:Config/sidid.cfg" > SIDIDCFG
     copy SIDIDCFG "Prefs/Env-Archive/"
 }
 

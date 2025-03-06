@@ -28,7 +28,7 @@ function build {
     copy "rewincy" "WBStartup/"
     copy "rewincy.info" "WBStartup/"
 
-    copy "rewincy.readme" "Locale/Readme/$name-$version/"
+    copy "rewincy.readme" "USER:Doc/Readme/$name-$version/"
     # copy "rewincy.info" "Locale/Readme/$name-$version/"
 
 }

@@ -24,7 +24,7 @@ function build {
     cd "StormMesa/AMIGA/" || exit 1
 
     for file in slibs/*; do
-        copy "$file" "Libs/${file#*/}"
+        copy "$file" "Libs:${file#*/}"
     done
 
     copy "misc/NewWPA8/NewWPA8" "C/"
@@ -39,12 +39,12 @@ function build {
     echo -n "0" > "${pkgdir}Prefs/Env-Archive/MESA/STATS"
     echo -n "1" > "${pkgdir}Prefs/Env-Archive/MESA/TRIPLE"
 
-    copy "misc/NewWPA8/NewWPA8.readme" "Locale/Readme/$name-$version/"
-    copy "HISTORY" "Locale/Readme/$name-$version/"
-    copy "First_Aid.txt" "Locale/Readme/$name-$version/"
-    copy "version" "Locale/Readme/$name-$version/"
+    copy "misc/NewWPA8/NewWPA8.readme" "USER:Doc/Readme/$name-$version/"
+    copy "HISTORY" "USER:Doc/Readme/$name-$version/"
+    copy "First_Aid.txt" "USER:Doc/Readme/$name-$version/"
+    copy "version" "USER:Doc/Readme/$name-$version/"
 
-    copy "StormMesa_e.guide" "Locale/Help/StormMesa.guide"
+    copy "StormMesa_e.guide" "Help:StormMesa.guide"
 }
 
 # this function is executed on installation after all files have been copied

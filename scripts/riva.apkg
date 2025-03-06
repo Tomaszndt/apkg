@@ -26,8 +26,8 @@ function build {
     copy "RiVA-0.54-m68k" "Tools/RiVA"
     copy "RiVA-0.54-m68k.info" "Tools/RiVA.info"
 
-    copy "README" "Locale/Readme/$name-$version/"
-    copy "RiVA.guide" "Locale/Help/"
+    copy "README" "USER:Doc/Readme/$name-$version/"
+    copy "RiVA.guide" "HELP:"
 }
 
 # this function is executed on installation after all files have been copied

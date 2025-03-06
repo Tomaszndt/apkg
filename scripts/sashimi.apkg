@@ -19,8 +19,8 @@ upstream="https://m68k.aminet.net/package/dev/debug/Sashimi"
 # this function is executed on build
 function build {
 
-    copy "sashimi" "C/"
-    copy "sashimi.doc" "Locale/Readme/$name-$version/"
+    copy "sashimi" "C:"
+    copy "sashimi.doc" "USER:Doc/Readme/$name-$version/"
 
 }
 

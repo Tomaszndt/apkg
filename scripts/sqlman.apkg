@@ -23,15 +23,15 @@ function build {
 
     cd "SQLMan" || exit 1
 
-    copy "Amiga_OS3/SQLMan_68881" "User/SQLMan/SQLMan"
-    copy "Amiga_OS3/SQLMan_68881.info" "User/SQLMan/SQLMan.info"
-    copy "Amiga_OS3/hurl.hwp" "User/SQLMan/"
+    copy "Amiga_OS3/SQLMan_68881" "User:App/Database/SQLMan/SQLMan"
+    copy "Amiga_OS3/SQLMan_68881.info" "User:App/Database/SQLMan/SQLMan.info"
+    copy "Amiga_OS3/hurl.hwp" "User:App/Database/SQLMan/"
 
-    for file in Examples/*; do copy "$file" "User/SQLMan/$file"; done
-    for file in importers/*; do copy "$file" "User/SQLMan/$file"; done
+    for file in Examples/*; do copy "$file" "User:App/Database/SQLMan/$file"; done
+    for file in importers/*; do copy "$file" "User:App/Database/SQLMan/$file"; done
 
-    copy "SQLMan.guide" "Locale/Help/"
-    copy "SQLMan.guide.info" "Locale/Help/"
+    copy "SQLMan.guide" "HELP:"
+    copy "SQLMan.guide.info" "HELP:"
 
 }
 

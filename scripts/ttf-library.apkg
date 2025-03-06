@@ -32,9 +32,9 @@ function build {
 
     for file in Bitline ftview ttfcp ttfinstall ttflist; do copy "$file" "C/"; done
 
-    copy "ttflib.guide" "Locale/Help/"
-    copy "ttflib.guide.info" "Locale/Help/"
-    copy "ttflib68040.readme" "Locale/Help/Readme/$name-$version/"
+    copy "ttflib.guide" "HELP:"
+    copy "ttflib.guide.info" "HELP:"
+    copy "ttflib68040.readme" "USER:Doc/Readme/$name-$version/"
 
 }
 

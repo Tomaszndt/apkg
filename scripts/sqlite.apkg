@@ -20,6 +20,13 @@ function build {
 
     # create target amiga os directory structure
     makedir "C"
-    copy "sqlite-3.34.0-amiga/build-m68k-amigaos/bin/sqlite3" "C/sqlite3"
+    copy "sqlite-3.34.0-amiga/build-m68k-amigaos/bin/sqlite3" "C:sqlite3"
+
+    copy "sqlite-3.34.0-amiga/README.amiga" "USER:Doc/Readme/$name-$version/"
+    copy "sqlite-3.34.0-amiga/README.md" "USER:Doc/Readme/$name-$version/"
+
+    man -P type "sqlite-3.34.0-amiga/sqlite3.1" > sqlite3.1.txt
+    copy "sqlite3.1.txt" "USER:Doc/Readme/$name-$version/"
 
 }
+# vim: ts=4:syntax=sh:

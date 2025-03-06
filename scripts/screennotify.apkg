@@ -20,12 +20,12 @@ function build {
 
     cd "ScreenNotify" || exit 1
 
-    copy "libs/screennotify.library" "Libs/screennotify.library"
+    copy "libs/screennotify.library" "Libs:screennotify.library"
 
-    copy "README" "Locale/Readme/$name-$version/README"
-    copy "README.info" "Locale/Readme/$name-$version/README.info"
-    copy "screennotify.doc" "Locale/Readme/$name-$version/screennotify.doc"
-    copy "screennotify.doc.info" "Locale/Readme/$name-$version/screennotify.doc.info"
+    copy "README" "USER:Doc/Readme/$name-$version/README"
+    copy "README.info" "USER:Doc/Readme/$name-$version/README.info"
+    copy "screennotify.doc" "USER:Doc/Readme/$name-$version/screennotify.doc"
+    copy "screennotify.doc.info" "USER:Doc/Readme/$name-$version/screennotify.doc.info"
 
 }
 
