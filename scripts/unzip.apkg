@@ -22,7 +22,7 @@ function build {
 	cd DOCS
 
 	for f in *; do
-		copy "$f" "$pkgdir/Locale/Readme/$name-$version/$f" "red"
+		copy "$f" "USER:Doc/Readme/$name-$version/$f" "red"
 	done
 }
 

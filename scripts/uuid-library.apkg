@@ -24,9 +24,9 @@ function build {
 
     cd "uuid" || exit 1
 
-    copy "Libs/uuid.library" "Libs/"
+    copy "Libs/uuid.library" "Libs:"
 
-    copy "uuid.readme" "Locale/Readme/$name-$version/${file}"
+    copy "uuid.readme" "User:Doc/Readme/$name-$version/${file}"
     
 }
 

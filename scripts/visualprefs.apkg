@@ -23,7 +23,7 @@ upstream="https://aminet.net/package/util/wb/VisualPrefs"
 function build {
     local file
 
-    copy "VisualPrefs/VisualPrefs" "C/"
+    copy "VisualPrefs/VisualPrefs" "C:"
     copy "VisualPrefs/InstallFiles/select.gadget" "Classes/Gadgets/"
 
     # copy "VisualPrefs/Tools/PatchWB/PatchWB" "WBStartup/"
@@ -32,12 +32,12 @@ function build {
     copy "VP-QuickFix/GUI_040" "Prefs/GUI"
     copy "VisualPrefs/GlowIcons/GUI.info" "Prefs/"
 
-    copy "VisualPrefs/DocsEnglish/VP-Developer.doc" "Locale/Readme/$name-$version/"
-    copy "VisualPrefs/Read me!" "Locale/Readme/$name-$version/"
+    copy "VisualPrefs/DocsEnglish/VP-Developer.doc" "USER:Doc/Readme/$name-$version/"
+    copy "VisualPrefs/Read me!" "USER:Doc/Readme/$name-$version/"
 
-    copy "VisualPrefs/DocsEnglish/VisualPrefs.guide" "Locale/Help/"
+    copy "VisualPrefs/DocsEnglish/VisualPrefs.guide" "HELP:"
 
-    copy "VisualPrefs/Prefs/Presets/GUISample.pre" "Prefs/Presets/"
+    copy "VisualPrefs/Prefs/Presets/GUISample.pre" "HELP:"
 
     cd "VisualPrefs/Prefs/Bitmaps"
     IFS=$'\n'

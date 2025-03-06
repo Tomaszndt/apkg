@@ -52,9 +52,9 @@ https://forum.amiga.org/index.php?topic=76061.msg857830#msg857830
 21. Reboot the Amiga (it may ask you to do this after clicking OK).
 EOF
 
-    copy "LICENSE" "USER:Dev/License/$name-$version/"
-    copy "pfs3aio.readme" "USER:Dev/Readme/$name-$version/"
-    copy "howto.txt" "USER:Dev/Readme/$name-$version/"
+    copy "LICENSE" "USER:Doc/License/$name-$version/"
+    copy "pfs3aio.readme" "USER:Doc/Readme/$name-$version/"
+    copy "howto.txt" "USER:Doc/Readme/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied
