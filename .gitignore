@@ -5,6 +5,7 @@ scripts-wip
 scripts-old
 test
 tmp
+tools
 .vscode
 *.bash
 *.iff
