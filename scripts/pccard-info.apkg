@@ -1,11 +1,11 @@
-name="pccard-library"
-tags="library, pcmcia"
-version="2.2"
+name="pccard-info"
+tags="utility, pcmcia, information, cli"
+version="1.2"
 cpu=68000
-require=""
-description="Library to parse PCMCIA information"
+require="pccard-library"
+description="Display details about PCMCIA cards"
 packager="lobotomius@gmail.com"
-source=("https://aminet.net/util/libs/pccard.lha*34d25edbd5f5d688079ed4dfedc25dafb98a0453da4bf000a8d13c7ac1eb5650")
+source=("https://aminet.net/util/misc/PCCardInfo.lha*6753a31988c8efd693dd670a3b535d29f74de26666b6e0c35f3e9d914f57ff19")
 upstream="https://aminet.net/package/util/libs/pccard"
 
 # functions
@@ -21,12 +21,12 @@ function build {
 
     local file
 
-    cd pccard || exit 1
+    cd PCCardInfo || exit 1
 
-    copy "Libs/pccard.library" "LIBS:"
+    copy "C/PCCardInfo" "C:"
 
-    for file in Man* Read*; do copy "$file" "USER:Doc/Readme/$name-$version/"; done
-    for file in GPL LGPL; do copy "$file" "USER:Doc/License/$name-$version/"; done
+    for file in Read*; do copy "$file" "USER:Doc/Readme/$name-$version/"; done
+    for file in Copy*; do copy "$file" "USER:Doc/License/$name-$version/"; done
 
 }
 
