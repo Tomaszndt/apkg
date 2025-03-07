@@ -29,7 +29,7 @@ function build {
     cd "Oxyron_Fourteen" || exit 1
 
     for file in *; do
-        copy "${file}" "USER:Scene/Demos/Oxyron/XIIII/${file}"
+        copy "${file}" "USER:Scene/Demo/Oxyron/XIIII/${file}"
     done
 
 }

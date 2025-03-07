@@ -5,7 +5,7 @@ cpu=68000
 require=""
 description="various scene images"
 packager="lobotomius@gmail.com"
-source=("scene-graphics.zip*32524aea0340bda0877b705e64e3968d6d629978ad9a0eea94dfe6bd6dc551ee")
+source=("scene-graphics.zip*faa699f4ac4182e931fb4996359c05918bfe8a64a7c838a3c0760093569ec4c6")
 upstream="http://janeway.exotica.org.uk/search.php"
 
 # functions

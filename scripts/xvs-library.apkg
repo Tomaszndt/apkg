@@ -28,8 +28,8 @@ function build {
 
     copy "libs/xvs.library" "Libs/"
 
-    copy "HISTORY" "USER:Dev/Readme/$name-$version/"
-    copy "README" "USER:Dev/Readme/$name-$version/"
+    copy "HISTORY" "USER:Doc/Readme/$name-$version/"
+    copy "README" "USER:Doc/Readme/$name-$version/"
 
 }
 
