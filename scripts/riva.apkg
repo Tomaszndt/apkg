@@ -23,8 +23,8 @@ function build {
 
     cd "RiVA-0.54" || exit 1
 
-    copy "RiVA-0.54-m68k" "Tools/RiVA"
-    copy "RiVA-0.54-m68k.info" "Tools/RiVA.info"
+    copy "RiVA-0.54-m68k" "USER:App/Video/RiVA"
+    copy "RiVA-0.54-m68k.info" "USER:App/Video/RiVA.info"
 
     copy "README" "USER:Doc/Readme/$name-$version/"
     copy "RiVA.guide" "HELP:"
