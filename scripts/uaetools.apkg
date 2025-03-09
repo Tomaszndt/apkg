@@ -1,0 +1,35 @@
+name="uaetools"
+tags="cli, utility, uae, system"
+version="20151114"
+cpu=68000
+require=""
+description="UAEVersion, UAEUptime & UAEWait"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/cli/UAETools.lha*72f2e598d4efde05f05d22417984f4d1f79d8f8b769a2ea3378d1a524d119cd0")
+upstream="https://aminet.net/package/util/cli/UAETools"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch   filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    local file
+
+    for file in UAEUptime UAEVersion UAEWait; do copy "$file" "C:"; done
+    copy UAETools.txt "USER:Doc/Readme/$name-$version/"
+    copy AFD-COPYRIGHT "USER:Doc/License/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
