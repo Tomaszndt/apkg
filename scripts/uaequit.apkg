@@ -1,0 +1,44 @@
+name="uaequit"
+tags="cli, utility, uae, system"
+version="20151114"
+cpu=68000
+require=""
+description="Exit UAE from within the emulated system"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/misc/emu/UAEquit.lha*7c325086d73996dec7828b1aff75779a425a22cf0b69129da8766e691cae5af6")
+upstream="https://aminet.net/package/misc/emu/UAEquit"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch   filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+echo 'Because there is no UAEquit CLI program that works when any 68060 or PPC expansions is selected.
+
+The attached that uses "uae.resource" works.
+
+Usage:
+
+"UAEquit" .................... Shutdown
+"UAEquit RESET" .............. Reset
+"UAEquit HARDRESET" .......... Hard reset
+
+(upladed with permission by the author "rbm")' > UAEQuit.readme
+
+    copy "UAEquit" "C:"
+    copy UAEQuit.readme "USER:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
