@@ -1,0 +1,38 @@
+name="fat95"
+tags="filesystem, windows, fat"
+version="3.18"
+cpu=68000
+require=""
+description="Win95/98 compatible file system"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/disk/misc/fat95.lha*2fc476ada2ee8f1bc231d49c751bc59acb8de638dede6dc07f64924497431788")
+upstream="https://aminet.net/package/disk/misc/fat95"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch   filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd fat95 || exit 1
+
+    for file in c/*; do copy "$file" "C:${file#*/}"; done
+    for file in l/*; do copy "$file" "L:${file#*/}"; done
+
+    copy fat95.readme "USER:Doc/Readme/$name-$version/"
+    copy COPYING "USER:Doc/License/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
