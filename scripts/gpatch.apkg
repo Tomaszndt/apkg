@@ -1,0 +1,40 @@
+name="gpatch"
+tags="patch, diff, dev"
+version="3.0"
+cpu=68000
+require=""
+description="Patch system for software updates"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/misc/gpatch.lha*6e00d3fef3a1e47d8abf02c324db67083ab38879b07051c4168f8c2d50c49fc7")
+upstream="https://aminet.net/package/util/misc/gpatch"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch   filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd GPatch || exit 1
+
+    copy bin/GPatch "C:"
+    copy bin/GCompare "C:"
+
+    copy "GPatch.guide" "HELP:"
+    copy "GPatchHistory.guide" "HELP:"
+    copy "GPatch.guide.info" "HELP:"
+    copy "GPatchHistory.guide.info" "HELP:"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
