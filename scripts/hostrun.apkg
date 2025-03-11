@@ -1,0 +1,37 @@
+name="hostrun"
+tags="utility, uae, system"
+version="1.7"
+cpu=68000
+require=""
+description="A small collection of tools to help Amiberry communicate with the underlying Linux OS"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/BlitterStudio/host-run/releases/download/v1.7/host-multiview-v1.2.lha*637d4da0d2677993707cc149c85471392a86853b254645b16d543ce992af578c"
+    "https://github.com/BlitterStudio/host-run/releases/download/v1.7/host-run-v1.7.lha*db4d610c449a7b8750a72d12868c74ec8ebc5c3230aabdd5daddd61ad1368f33"
+    )
+upstream="https://github.com/BlitterStudio/host-run"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch   filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy host-run "C:"
+    copy host-multiview "C:"
+    copy "README.md" "USER:Doc/readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
