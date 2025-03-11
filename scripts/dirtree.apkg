@@ -5,7 +5,7 @@ cpu=68000
 require=""
 description="apkg directory structure"
 packager="lobotomius@gmail.com"
-source=("dirtree_icons.zip*88aadf2e8fe2141e6e04bb010d82e9d4f12d52c9a2a92a1a61a49c66758b79fe")
+source=("dirtree_icons.zip*ee4e3e4ca8a9a8c12199f990ca2bd955212826b5e42d8af646337960384bee7e")
 upstream=""
 
 function build {
@@ -19,6 +19,11 @@ function build {
 
 	USER:
 	├─ App
+	│ ├─ Animation
+	│ ├─ Database
+	│ ├─ Internet
+	│ ├─ Music
+	│ └─ Video
 	├─ Config
 	├─ Doc
 	│ ├─ License
@@ -39,6 +44,11 @@ function build {
 	makedir "apkg"
 	makedir "Dev"
 	makedir "USER:App"
+	makedir "USER:App/Animation"
+	makedir "USER:App/Database"
+	makedir "USER:App/Internet"
+	makedir "USER:App/Music"
+	makedir "USER:App/Video"
 	makedir "USER:Config"
 	makedir "USER:Doc"
 	makedir "USER:Doc/License"
