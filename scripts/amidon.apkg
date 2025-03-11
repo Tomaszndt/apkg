@@ -7,6 +7,7 @@ description="A multiplatform Amiga Anim player with playlist support"
 packager="lobotomius@gmail.com"
 source=(
     "https://github.com/BlitterStudio/amidon/releases/download/v1.3/Amidon_v1.3_OS3.zip*fe772923062eb7eb83ca7aa2b60c59a2ff62652cdd1b452e2bfe1e13073cc2c6"
+    "https://github.com/BlitterStudio/amidon/blob/main/README.md*84f53aef16ee53b6b273b3022c303a317ea0e3d922399e781ff13e5f2b288fdf"
     )
 upstream="https://github.com/BlitterStudio/amidon"
 
@@ -21,6 +22,8 @@ upstream="https://github.com/BlitterStudio/amidon"
 # this function is executed on build
 function build {
     local file
+
+    copy "README.md" "USER:Doc/Readme/$name-$version/"
 
     cd Amidon_v1.3_OS3/Amidon || exit 1
 
