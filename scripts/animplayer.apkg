@@ -1,0 +1,34 @@
+name="animplayer"
+tags="player, animation"
+version="2.4"
+cpu=68020
+require="mui"
+description="A multiplatform Amiga Anim player with playlist support"
+packager="lobotomius@gmail.com"
+source=(
+    "https://github.com/BlitterStudio/AnimPlayer/releases/download/v2.4/AnimPlayer_OS3.zip*e1964c756568bf80b27c90384c02c981e4be9302f5ee9c66acb05c961578b106"
+    )
+upstream="https://github.com/BlitterStudio/AnimPlayer"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch   filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy AnimPlayer_OS3 "USER:App/Animation/AnimPlayer"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
