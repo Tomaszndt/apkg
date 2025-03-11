@@ -22,6 +22,7 @@ function build {
     cd "AmiSSL" || exit 1
 
     copy "Libs/AmigaOS3/AmiSSL/68020-40/amissl_v341.library" "Libs:amissl.library"
+    copy "Libs/AmigaOS3/AmiSSL/68020-40/amissl_v341.library" "Libs:AMISSL/"
     copy "Libs/AmigaOS3/amisslmaster.library" "Libs/"
     copy "C/AmigaOS3/OpenSSL" "C/"
 
@@ -41,11 +42,9 @@ function build {
 function post_install {
     local inject=""
 
-   IFS= read -r -d '' inject <<EOF
-assign AMISSL: Libs/AmiSSL
-EOF
+    inject='assign AMISSL: Libs/AmiSSL'
 
-   userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
 
 }
 
