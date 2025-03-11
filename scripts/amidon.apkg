@@ -3,7 +3,7 @@ tags="internet, mastodon"
 version="1.3"
 cpu=68020
 require="amissl, mui-texteditor, mui-betterstring, mui-htmlview, codesets-library, guigfx-library, render-library"
-description="A multiplatform Amiga Anim player with playlist support"
+description="Mastodon native client for computers (or emulators) running AmigaOS 3.x"
 packager="lobotomius@gmail.com"
 source=(
     "https://github.com/BlitterStudio/amidon/releases/download/v1.3/Amidon_v1.3_OS3.zip*fe772923062eb7eb83ca7aa2b60c59a2ff62652cdd1b452e2bfe1e13073cc2c6"
