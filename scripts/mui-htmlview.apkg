@@ -1,0 +1,39 @@
+name="mui-htmlview"
+tags="gui, mui, library"
+version="13.4"
+cpu=68020
+require="amigaos>3, mui>3.8"
+description="Custom class for MUI which offers HTML viewing capabilities"
+packager="lobotomius@gmail.com"
+source=("https://github.com/amiga-mui/htmlview/releases/download/13.4/MCC_HTMLview-13.4.lha*6e0c69da3b6d8214af918fa0d0a01fee93b5e25f85b4f82c7fc062f72a4d2fb5")
+upstream="https://github.com/amiga-mui/htmlview"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "MCC_HTMLview" || exit 1
+
+    IFS=$'\n'
+    for file in $(find Libs/MUI/AmigaOS3/ -type f); do 
+        echo "$file" "LIBS:${file#*/}"; 
+    done
+    unset IFS
+
+    for file in Docs/English/*; do copy "$file" "HELP:${file##*/}"; done
+    for file in ChangeLog* ReadMe*; do copy "$file" "USER:/Doc/Readme/$name-$version/"; done
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
