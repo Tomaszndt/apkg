@@ -125,6 +125,7 @@ mode         arguments           description
 ------------ ------------------- ----------------------------
 usage                            display usage information
 build        filename            build a package
+build        filename            build a package and register it with local repo
 install      package filename    install a package
 install      name(:version)      install a package
 repo-list    [path]              list repo contents
@@ -132,7 +133,7 @@ repo-rescan  [path]              recreate repository database
 repo-init    [path]              create a repo
 package-info filename            print package metadata
 
-short mode i=install, b=build, pi=package-info
+short mode i=install, b=build, m=make, pi=package-info
 
 -v         verbose output
 -root=path set root path
@@ -163,6 +164,8 @@ while [[ $# -gt 0 ]]; do
 			case "$1" in
 				"build") _mode="build"; _scan_mode="files" ;;
 				"b") _mode="build"; _scan_mode="files" ;;
+				"make") _mode="make"; _scan_mode="files" ;;
+				"m") _mode="make"; _scan_mode="files" ;;
 				"install") _mode="install"; _scan_mode="files" ;;
 				"i") _mode="install"; _scan_mode="files" ;;
 				"repo-rescan") _mode="repo-rescan"; _scan_mode="switches" ;;
@@ -912,8 +915,8 @@ function repo_add_package() {
 
 	[[ $repopath == */ ]] || repopath="${repopath}/"
 
-	[[ ! -f "${repopath}repo.db" ]] && repo_init "${repositories['local']}"
-	[[ "$(sqlite3 "${repopath}repo.db" 'select sqlite_version()')" < "3" ]] && repo_init "$repopath"
+	[[ ! -f "${repopath}repo.db" ]] && repo_init "${repopath}"
+	# [[ "$(sqlite3 "${repopath}repo.db" 'select sqlite_version()')" < "3" ]] && repo_init "$repopath"
 
 	meta=$(package_meta "$file")
 
@@ -1264,7 +1267,7 @@ function _pkg_build() {
 	# mv "${pkgdir}${pkgname}.7z" "${repositories['local']}/"
 	# repo_add_package "${pkgname}.7z"
 	
-	echo "$_pkgfile"
+	return_str="$_pkgfile"
 }
 
 # initializes apkg databases in ${config['root']}
@@ -1624,8 +1627,17 @@ case $_mode in
 		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 		for _filename in "${_input_names[@]}"; do
 			_pkg_build "$_filename"
+			_echo "created package: $return_str"
 		done
 	;;
+	"make")
+		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
+		for _filename in "${_input_names[@]}"; do
+			_pkg_build "$_filename"
+			repo_add_package "$return_str"
+			rm "$return_str"
+		done
+	;;	
 	"install")
 		tmp=0
 		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
