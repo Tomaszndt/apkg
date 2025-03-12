@@ -1,12 +1,12 @@
 name="amigassh"
 tags="network, cryptography, communication"
-version="1.35"
+version="1.36"
 cpu=68020
 require="amigaos>3"
 description="SSH2 for the Amiga"
 packager="lobotomius@gmail.com"
 source=(
-    "https://aminet.net/comm/net/amigassh.lha*64e1d1c34582da9d16136725058f947b1bd1ac3186d580fc7b3e79bf3e8c1e92*$name-$version.lha"
+    "https://aminet.net/comm/net/amigassh.lha*2e8aa741e0d39b9144a40341f22d0145be3fb3f54efc1cff97f54f431d386570*$name-$version.lha"
     )
 upstream="https://aminet.net/package/comm/net/amigassh"
 
