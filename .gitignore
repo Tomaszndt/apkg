@@ -10,6 +10,7 @@ tools
 *.bash
 *.iff
 *.c
+*.7z
 *.zip
 *.lha
 *.lzx
