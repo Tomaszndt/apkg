@@ -1,0 +1,41 @@
+name="wormhole"
+tags="network, transfer"
+version="1.0"
+cpu=68020
+require=""
+description="WormHole allows you to transfer files to another computer on the same LAN"
+packager="lobotomius@gmail.com"
+source=(
+    "https://kezdobetu.hu/software/downloads/WormHole_Amiga.lha*eef516476215ac370f5b0558c740be3c3319dc94b34b6995b5c8b2c2792b96fd"
+    )
+upstream="https://kezdobetu.hu/software/wormhole.php"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch   filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd WormHole_Amiga || exit 1
+
+    copy "WormHole" "SYS:Tools/"
+    copy "WormHole.info" "SYS:Tools/"
+    copy "card.iff" "SYS:Tools/"
+
+    copy "WormHole.readme" "USER:Doc/Readme/$name-$version/"
+    copy "WormHole.readme.info" "USER:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
