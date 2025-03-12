@@ -5,7 +5,7 @@ cpu=68000
 require=""
 description="apkg directory structure"
 packager="lobotomius@gmail.com"
-source=("dirtree_icons.zip*ee4e3e4ca8a9a8c12199f990ca2bd955212826b5e42d8af646337960384bee7e")
+source=("dirtree_icons.zip*32ee70ec60f704fe5c650cc0723627f4b009856339a7ccf4b7647ee850c040f5")
 upstream=""
 
 function build {
@@ -39,36 +39,34 @@ function build {
 
 	'
 
-	# cd "dirtree_icons" || exit 1
+	cd "dirtree_icons" || exit 1
 
-	makedir "apkg"
-	makedir "Dev"
-	makedir "USER:App"
-	makedir "USER:App/Animation"
-	makedir "USER:App/Database"
-	makedir "USER:App/Internet"
-	makedir "USER:App/Music"
-	makedir "USER:App/Video"
-	makedir "USER:Config"
-	makedir "USER:Doc"
-	makedir "USER:Doc/License"
-	makedir "USER:Doc/Readme"
-	makedir "USER:Games"
-	makedir "USER:Images"
-	makedir "USER:Music"
-	makedir "USER:Music/Mod"
-	makedir "USER:Music/MP3"
-	makedir "USER:Scene"
-	makedir "USER:Cracktro"
-	makedir "USER:Demos"
+	# makedir "apkg"
+	# makedir "Dev"
+	# makedir "USER:App"
+	# makedir "USER:App/Animation"
+	# makedir "USER:App/Database"
+	# makedir "USER:App/Internet"
+	# makedir "USER:App/Music"
+	# makedir "USER:App/Video"
+	# makedir "USER:Config"
+	# makedir "USER:Doc"
+	# makedir "USER:Doc/License"
+	# makedir "USER:Doc/Readme"
+	# makedir "USER:Games"
+	# makedir "USER:Images"
+	# makedir "USER:Music"
+	# makedir "USER:Music/Mod"
+	# makedir "USER:Music/MP3"
+	# makedir "USER:Scene"
+	# makedir "USER:Scene/Cracktro"
+	# makedir "USER:Scene/Demos"
 
-	# copy "Dev.info" "SYS:/"
-	# copy "User.info" "SYS:/" # todo copy to actual assign
+	copy "Dev.info" "SYS:"
 
-	# IFS=$'\n'
-	# for file in $(find User/ -type d); do makedir "$file"; done
-	# for file in $(find User/ -type f -name "*.info"); do copy "$file" "USER:${file#*/}"; done
-	# unset IFS
+	IFS=$'\n'
+	for file in $(find User/ -type f -name "*.info"); do copy "$file" "USER:${file#*/}"; done
+	unset IFS
 
 	# copy "readme.txt" "USER:Doc/Readme/$name-$version/Readme"
 }
