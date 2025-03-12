@@ -95,7 +95,7 @@ function _read_config {
 			right="$(echo ${BASH_REMATCH[2]})"
 			case "$left" in
 				root*)
-					config['root']="$(realpath "$right")/"
+					[[ -z ${config['root']} ]] && config['root']="$(realpath "$right")/"
 				;;
 				repo*)
 					[[ $left =~ repo[[:space:]]+([^ ]+) ]] || {
@@ -103,7 +103,7 @@ function _read_config {
 						exit 1
 					}
 					tmp="${BASH_REMATCH[1]}"
-					repositories["$tmp"]="$right"
+					[[ -z ${repositories["$tmp"]} ]] && repositories["$tmp"]="$right"
 				;;
 				*)
 					config["$left"]="$right"
@@ -136,7 +136,7 @@ short mode i=install, b=build, pi=package-info
 
 -v         verbose output
 -root=path set root path
--repo=path set repo path
+-repo=[name@]path set repo path
 
 EOF
 
@@ -189,7 +189,14 @@ while [[ $# -gt 0 ]]; do
 			argument=${1##*=}
 			case "$switch" in
 				"-v") _verbose=1 ;;
-				"-repo") repo="$argument" ;;
+				"-repo") 
+					repo="$argument"
+					if [[ $argument == *@* ]]; then 
+						repositories["${argument%%@*}"]="${argument#*@}"
+					else
+						repositories['local']="$argument"
+					fi
+				;;
 				"-root") root="$argument" ;;
 				*) _echo "%invalid switch $1" ;;
 			esac
