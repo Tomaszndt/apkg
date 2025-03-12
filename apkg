@@ -21,6 +21,8 @@ _pwd="$(pwd)"
 _filename=""
 return_str=""
 
+declare -A config=()
+declare -A repositories=()
 # os=""
 # system="" # amiga model
 # language="" # ISO code
@@ -75,6 +77,41 @@ function _echo() {
 	_ts_msg_number=$(( _ts_msg_number + 1 ))
 }
 
+function _read_config {
+	local -a lines=()
+	local line
+	local left
+	local right
+	local tmp
+
+	_echo "@reading config file $1"
+
+	readarray lines < "$1" || { _echo "@failed to read $1"; return 1; }
+
+	for line in "${lines[@]}"; do
+		[[ $line =~ [[:space:]]*#.* ]] && continue
+		if [[ $line =~ [[:space:]]*([^=]+)[[:space:]]*=[[:space:]]*\"*([^\"\n]+)\"*[[:space:]]* ]]; then
+			left="${BASH_REMATCH[1]}"
+			right="$(echo ${BASH_REMATCH[2]})"
+			case "$left" in
+				root*)
+					config['root']="$(realpath "$right")/"
+				;;
+				repo*)
+					[[ $left =~ repo[[:space:]]+([^ ]+) ]] || {
+						_echo "!bad repository name in $line"
+						exit 1
+					}
+					tmp="${BASH_REMATCH[1]}"
+					repositories["$tmp"]="$right"
+				;;
+				*)
+					config["$left"]="$right"
+				;;
+			esac
+		fi # message when ignoring lines?
+	done
+}
 
 function usage() {
 	local binary
@@ -497,7 +534,7 @@ function make_dir {
 	fi
 
 	s="$(path_resolve_amiga "$path")"
-	s="$(path_existing_amiga "$s" "${v['root']}" )/"
+	s="$(path_existing_amiga "$s" "${config['root']}" )/"
 
 	[[ ${s:0:1} == '/' ]] && s="${s:1}"
 	[[ ${s:0-1} == '/' ]] && s="${s:0:0-1}"
@@ -568,8 +605,8 @@ function userpatch() {
 	fi # mode==end
 	unset IFS
 
-	cp "$filename" "${v['root']}apkg/backup/${backup}/${filename##*/}"
-	echo "filecopy \"${v['root']}apkg/backup/${backup}/${filename##*/}\" \"$1\"" >> "${v['root']}apkg/$backup.rollback"
+	cp "$filename" "${config['root']}apkg/backup/${backup}/${filename##*/}"
+	echo "filecopy \"${config['root']}apkg/backup/${backup}/${filename##*/}\" \"$1\"" >> "${config['root']}apkg/$backup.rollback"
 	echo "$out" > "$filename"
 }
 
@@ -653,7 +690,7 @@ function add_assign {
 	fi
 }
 
-# 1 path to startup file relative to $root
+# 1 path to startup file relative to ${config['root']}
 function read_assigns {
 	local text
 	local lines
@@ -662,7 +699,7 @@ function read_assigns {
 	local name
 	local tmp
 
-	readarray -t lines < "${v['root']}$1" || return 1
+	readarray -t lines < "${config['root']}$1" || return 1
 	for line in "${lines[@]}"; do
 		[[ $line == *\;* ]] && continue
 		[[ ${line^^} =~ [^\ ]*ASSIGN.* ]] || continue
@@ -777,11 +814,11 @@ function package_info() {
 	pkgname=${basename%%:*}
 	fullname=$(realpath "$1")
 
-	7z e -so "$fullname" "$pkgname.apkg" > "${v['APKG']}tmp/$pkgname.apkg"
+	7z e -so "$fullname" "$pkgname.apkg" > "${config['APKG']}tmp/$pkgname.apkg"
 
 	_echo "information for $1"
 
-	source "${v['APKG']}tmp/$pkgname.apkg"
+	source "${config['APKG']}tmp/$pkgname.apkg"
 
 	_echo "       name $name"
 	_echo "    version $version"
@@ -831,10 +868,13 @@ function meta_get() {
 #
 # 1 repo path
 function repo_init() {
+	local path="$1"
+
+	[[ $path == */ ]] || path="${path}/"
 
 	mkdir -p "$1" &> /dev/null
-	rm "$1"/repo.db &> /dev/null
-	sqlite3 "$1"/repo.db "$_sql_create_table"
+	rm "${1}repo.db" &> /dev/null
+	sqlite3 "${1}repo.db" "$_sql_create_table"
 
 	if [ $? -eq 0 ]; then
 		_echo "@created repository in $1"
@@ -860,10 +900,12 @@ function repo_add_package() {
 	local repopath
 	local tmp
 
-	[[ "$2" ]] && repopath="$2" || repopath="${repo}"
+	[[ "$2" ]] && repopath="$2" || repopath="${repositories['local']}"
 	file="${1}"
 
-	[[ ! -f "${repopath}repo.db" ]] && repo_init "$repopath"
+	[[ $repopath == */ ]] || repopath="${repopath}/"
+
+	[[ ! -f "${repopath}repo.db" ]] && repo_init "${repositories['local']}"
 	[[ "$(sqlite3 "${repopath}repo.db" 'select sqlite_version()')" < "3" ]] && repo_init "$repopath"
 
 	meta=$(package_meta "$file")
@@ -903,13 +945,16 @@ function repo_populate() {
 # 1 repo path
 function repo_update() {
 	local f
+	local path="$1"
+
+	[[ $path == */ ]] || path="${path}/"
 
 	f=$(ls -t "$1")
 
 	if [[ $f =~ ^repo.db ]]; then
 		_echo "@database file up to date"
 	else
-		rm "$1"/repo.db 2&> /dev/null
+		rm "$1"repo.db 2&> /dev/null
 		_echo "@removed database file in $1"
 		repo_populate "$1"
 	fi
@@ -1050,12 +1095,15 @@ function repo_get_pkgfile() {
 #
 # 1 repo path
 function repo_list() {
+	local path="$1"
+
+	[[ $path == */ ]] || path="${path}/"
 
 	repo_update "$1"
 
 	_echo "package listing for $1"
 
-	sqlite3 "$1"/repo.db << SQL 
+	sqlite3 "$1"repo.db << SQL 
 .mode columns 
 select name, version, cpu, built, tags from packages order by name asc
 SQL
@@ -1067,7 +1115,7 @@ SQL
 # make a "binary" package
 # $1 package script name
 _pkgfile=""
-function pkg_make() {
+function _pkg_build() {
 	local _script_file
 	local _downloaded_file
 	local _basename_file
@@ -1077,10 +1125,8 @@ function pkg_make() {
 	local shasum
 	local items=0
 	
-	dlpaths=". ${v['APKG']}downloads/"
-	
 	# is the script file available 
-	_script_file="$_filename"
+	_script_file="$1"
 	[[ -z $_script_file ]] && _echo "%build script not found \"$_filename\"";
 	_script_file=$(realpath "$_script_file")
 
@@ -1118,24 +1164,24 @@ function pkg_make() {
 		if [[ -f "./$_basename_file" ]]; then
 			_downloaded_file="./$_basename_file"
 		fi
-		if [[ -f "${v['APKG']}downloads/$_basename_file" ]]; then
+		if [[ -f "${config['APKG']}downloads/$_basename_file" ]]; then
 			_downloaded_file="./$_basename_file"
 		fi
 
 		if [[ "$_downloaded_file" == "null" ]]; then			
 			_echo "downloading $_source_file"
-			wget -q --show-progress -nc -P "${v['APKG']}downloads" -O "$_basename_file" "$_source_file" #&> /dev/null
-			cp "$_basename_file" "${v['APKG']}downloads" &> /dev/null
+			wget -q --show-progress -nc -P "${config['APKG']}downloads" -O "$_basename_file" "$_source_file" #&> /dev/null
+			cp "$_basename_file" "${config['APKG']}downloads" &> /dev/null
 		else
 			_echo "$_basename_file found in download cache"
-			cp "$_downloaded_file" "${v['APKG']}downloads" &> /dev/null
+			cp "$_downloaded_file" "${config['APKG']}downloads" &> /dev/null
 		fi
 			
 	done
 	
 	# verify checksums
 	for f in "${!sums[@]}"; do
-		shasum=$(sha256sum "${v['APKG']}downloads/$f")
+		shasum=$(sha256sum "${config['APKG']}downloads/$f")
 		shasum=${shasum%% *}
 		if [[ $shasum != "${sums[$f]}" ]]; then
 			_echo "!$f : invalid checksum: $shasum"; 
@@ -1148,18 +1194,18 @@ function pkg_make() {
 
 	local pkgname="$name~$version~$cpu"
 	
-	rm -r "${v['APKG']}tmp/" &> /dev/null 
-	mkdir -p "${v['APKG']}tmp"
+	rm -r "${config['APKG']}tmp/" &> /dev/null 
+	mkdir -p "${config['APKG']}tmp"
 
 	for _file in "${!sums[@]}"; do
-		unpack "${v['APKG']}downloads/$_file" "${v['APKG']}tmp"
+		unpack "${config['APKG']}downloads/$_file" "${config['APKG']}tmp"
 	done
 
-	rm -r "${v['APKG']}cache/$pkgname/" &> /dev/null 
-	mkdir -p "${v['APKG']}cache/$pkgname"
+	rm -r "${config['APKG']}cache/$pkgname/" &> /dev/null 
+	mkdir -p "${config['APKG']}cache/$pkgname"
 
-	pkgdir="${v['APKG']}cache/$pkgname/"
-	srcdir="${v['APKG']}tmp/"
+	pkgdir="${config['APKG']}cache/$pkgname/"
+	srcdir="${config['APKG']}tmp/"
 	local _cwd="$(pwd)"
 
 	_echo "@running build script"
@@ -1207,21 +1253,24 @@ function pkg_make() {
 	cd "$_cwd" || exit 1
 
 	_pkgfile="$pkgname.7z"
-	mv "${pkgdir}${pkgname}.7z" "$repo/"
-	repo_add_package "${repo}${pkgname}.7z"
+	mv "${pkgdir}${pkgname}.7z" "."
+	# mv "${pkgdir}${pkgname}.7z" "${repositories['local']}/"
+	# repo_add_package "${pkgname}.7z"
+	
+	echo "$_pkgfile"
 }
 
-# initializes apkg databases in $root
+# initializes apkg databases in ${config['root']}
 function install_init_root() {
-	if [ ! -d "$root/apkg/" ]; then
-		mkdir -p "$root/apkg"
-		protect "$root/apkg" "rwed" "apkg:$_apkg_version"
-		_echo "@created apkg directory in $root"
+	if [ ! -d "${config['root']}/apkg/" ]; then
+		mkdir -p "${config['root']}/apkg"
+		protect "${config['root']}/apkg" "rwed" "apkg:$_apkg_version"
+		_echo "@created apkg directory in ${config['root']}"
 	fi
-# 	if [ ! -f "$root/apkg/apkg.db" ]; then
-# 		sqlite3 "$root/apkg/apkg.db" "CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
-# 		protect "$root/apkg/apkg.db" "rwed" "apkg:$_apkg_version"
-# 		_echo "@created apkg database file in $root"
+# 	if [ ! -f "${config['root']}/apkg/apkg.db" ]; then
+# 		sqlite3 "${config['root']}/apkg/apkg.db" "CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
+# 		protect "${config['root']}/apkg/apkg.db" "rwed" "apkg:$_apkg_version"
+# 		_echo "@created apkg database file in ${config['root']}"
 # 	fi
 }
 
@@ -1234,7 +1283,7 @@ function package_is_installed() {
 	meta=$(package_meta "$1")
 	pkgname=$(meta_get "$meta" "name")
 
-	count=$(sqlite3 "$root/apkg/installed.db" "select version from packages where name='$pkgname' order by version desc")
+	count=$(sqlite3 "${config['root']}/apkg/installed.db" "select version from packages where name='$pkgname' order by version desc")
 
 	echo "$count"
 }
@@ -1247,7 +1296,7 @@ function is_installed() {
 
 	pkgname="$1"
 
-	version=$(sqlite3 "${root}apkg/installed.db" "select version from packages where name='$pkgname' order by version desc limit 1")
+	version=$(sqlite3 "${config['root']}apkg/installed.db" "select version from packages where name='$pkgname' order by version desc limit 1")
 
 	if [ $version ]; then
 		echo "$version"
@@ -1271,11 +1320,11 @@ function install_register_package() {
 	pkgversion=$(meta_get "$meta" "version")
 	pkgcpu=$(meta_get "$meta" "cpu")
 
-	if [ ! -f "${root}apkg/installed.db" ]; then
-		sqlite3 "${root}apkg/installed.db" "create table 'packages' ('file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL)" 
+	if [ ! -f "${config['root']}apkg/installed.db" ]; then
+		sqlite3 "${config['root']}apkg/installed.db" "create table 'packages' ('file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL)" 
 	fi
 
-	sqlite3 "${root}apkg/installed.db" "insert or ignore into 'packages' ('file', 'name', 'version', 'cpu') values ('$pkgfilename', '$pkgname', '$pkgversion', '$pkgcpu')"
+	sqlite3 "${config['root']}apkg/installed.db" "insert or ignore into 'packages' ('file', 'name', 'version', 'cpu') values ('$pkgfilename', '$pkgname', '$pkgversion', '$pkgcpu')"
 	_echo "@registered package $pkgname version $pkgversion"
 }
 
@@ -1398,61 +1447,61 @@ function install_package() {
 		exit 1
 	fi
 
-	osversion=$(detectos "$root")
+	# osversion=$(detectos "${config['root']}")
 
 	meta=$(package_meta "$filename")
 	pkgname=$(meta_get "$meta" "name")
 	pkgversion=$(meta_get "$meta" "version")
 	backup="$pkgname-$pkgversion"
 
-	[[ -f "$root/apkg/$backup.rollback" ]] && _echo "%$filename already installed"
+	[[ -f "${config['root']}/apkg/$backup.rollback" ]] && _echo "%$filename already installed"
 
 	_echo "#installing $_filename"
 
 	# _echo "detected Amiga OS version $osversion" # not used here at the moment
 	
-	tmpdir="${v['APKG']}tmp/"
+	tmpdir="${config['APKG']}tmp/"
 	rm -r "$tmpdir" #&> /dev/null
 	mkdir -p "$tmpdir"
 	tmpdir_length=${#tmpdir}
 
-	unpack "$1" "${v['APKG']}tmp"
+	unpack "$1" "${config['APKG']}tmp"
 
 	tmp2=$(meta_get "$meta" "buildscript")
 
-	source "${v['APKG']}tmp/$tmp2"
+	source "${config['APKG']}tmp/$tmp2"
 
 	package_check_deps "$require"
 
 	if [[ $? -gt 0 ]]; then _echo "!dependencies not met"; exit 1; fi
 
 	_echo "installing files"
-	mkdir -p "$root/apkg/backup/$backup"
-	true > "$root/apkg/$pkgname-$pkgversion.rollback"
+	mkdir -p "${config['root']}/apkg/backup/$backup"
+	true > "${config['root']}/apkg/$pkgname-$pkgversion.rollback"
 
 	IFS=$'\n'
-	files=$(find "${v['APKG']}tmp" ! -iname "*.uaem" ! -iname "apkg-*" ! -iname "*.apkg")
+	files=$(find "${config['APKG']}tmp" ! -iname "*.uaem" ! -iname "apkg-*" ! -iname "*.apkg")
 	for f in $files; do
 		fbase=$(base "$f")
 		if [[ "$f/" == "$tmpdir" ]]; then continue; fi
 		if [ -d "$f" ]; then
-			[[ ! -d "$root/${f:$tmpdir_length}" ]] && {
-				mkdir -p "$root/${f:$tmpdir_length}"
-				protect "$root/${f:$tmpdir_length}"
-				echo -e "dirdelete ${f:$tmpdir_length}" >> "${root}/apkg/$pkgname-$pkgversion.rollback"
+			[[ ! -d "${config['root']}/${f:$tmpdir_length}" ]] && {
+				mkdir -p "${config['root']}/${f:$tmpdir_length}"
+				protect "${config['root']}/${f:$tmpdir_length}"
+				echo -e "dirdelete ${f:$tmpdir_length}" >> "${config['root']}/apkg/$pkgname-$pkgversion.rollback"
 			}
 		fi
 		if [ -f "$f" ]; then
-			if [ -f "$root/${f:$tmpdir_length}" ]; then
+			if [ -f "${config['root']}/${f:$tmpdir_length}" ]; then
 				# conflicting file
-				install_file "$f" "${root}${f:$tmpdir_length}" "${root}apkg/backup/$backup"
+				install_file "$f" "${config['root']}${f:$tmpdir_length}" "${config['root']}apkg/backup/$backup"
 
-				echo "filedelete ${f:$tmpdir_length}" >> "${root}apkg/$pkgname-$pkgversion.rollback"
-				echo "filecopy ${root}apkg/backup/$backup/$fbase ${root}${f:$tmpdir_length}" >> "${root}apkg/$pkgname-$pkgversion.rollback"
+				echo "filedelete ${f:$tmpdir_length}" >> "${config['root']}apkg/$pkgname-$pkgversion.rollback"
+				echo "filecopy ${config['root']}apkg/backup/$backup/$fbase ${config['root']}${f:$tmpdir_length}" >> "${config['root']}apkg/$pkgname-$pkgversion.rollback"
 			else
-				install_file "$f" "${root}${f:$tmpdir_length}" "${root}apkg/backup/$backup"
+				install_file "$f" "${config['root']}${f:$tmpdir_length}" "${config['root']}apkg/backup/$backup"
 
-				echo "filedelete ${f:$tmpdir_length}" >> "${root}apkg/$pkgname-$pkgversion.rollback"
+				echo "filedelete ${f:$tmpdir_length}" >> "${config['root']}apkg/$pkgname-$pkgversion.rollback"
 			fi
 		fi
 
@@ -1466,9 +1515,9 @@ function install_package() {
 		_echo "@no post_install script"
 	fi
 
-	sort -r "${v['root']}/apkg/$pkgname-$pkgversion.rollback" > "${v['root']}/apkg/$pkgname-$pkgversion.rollback.tmp"
-	rm "${v['root']}/apkg/$pkgname-$pkgversion.rollback"
-	mv "${v['root']}/apkg/$pkgname-$pkgversion.rollback.tmp" "${v['root']}/apkg/$pkgname-$pkgversion.rollback"
+	sort -r "${config['root']}/apkg/$pkgname-$pkgversion.rollback" > "${config['root']}/apkg/$pkgname-$pkgversion.rollback.tmp"
+	rm "${config['root']}/apkg/$pkgname-$pkgversion.rollback"
+	mv "${config['root']}/apkg/$pkgname-$pkgversion.rollback.tmp" "${config['root']}/apkg/$pkgname-$pkgversion.rollback"
 
 	install_register_package "$1"
 
@@ -1514,7 +1563,7 @@ function install_repo() {
 [[ -z "$APKG" ]] && APKG="$HOME/.apkg"
 [[ "$APKG" != */ ]] && APKG="$APKG/"
 [[ ! -d "$APKG" ]] && {
-	_echo "@creating working directory path: '$APKG'"
+	_echo "@creating working directory, path: '$APKG'"
 	mkdir -p "$APKG"
 	}
 [[ ! -d "${APKG}repo" ]] && mkdir "${APKG}repo"
@@ -1530,25 +1579,20 @@ function install_repo() {
 
 declare -A assigns
 
-source "~/.apkg/apkg.config" &> /dev/null
-source "./apkg.config" &> /dev/null
+_read_config "$HOME/.apkg/apkg.config"
+_read_config "./apkg.config"
 
-[[ ! -d "$root" ]] && _echo "%invalid target root path: '$root'"
-[[ ! -d "$repo" ]] && _echo "%invalid repo path: '$repo'"
+for key in "${!config[@]}"; do _echo "@$key = ${config[$key]}"; done
+for key in "${!repositories[@]}"; do _echo "@repo $key = ${repositories[$key]}"; done
 
-root="$(realpath "$root")"
-[[ "$root" != */ ]] && root="$root/"
-[[ "$repo" != */ ]] && repo="$repo/"
+[[ ! -d "${config['root']}" ]] && _echo "%invalid target root path: ${config['root']}"
+[[ ! -d "${repositories['local']}" ]] && _echo "%invalid local repo path: '${repositories['local']}'"
 
-if [[ -z "$cpu" ]]; then cpu="68020"; fi
+if [[ -z ${config['cpu']} ]]; then config['cpu']="68020"; fi
 
-declare -A v # 
-v["root"]="$root"
-v["repo"]="$repo"
-v["cpu"]="$cpu"
-v["APKG"]="$APKG"
+config['APKG']="$APKG"
 
-assigns['SYS:']="$(realpath "${v['root']}")"
+assigns['SYS:']="$(realpath "${config['root']}")"
 assigns['RAM:']="${APKG}RAM"
 add_assign "C:" "SYS:C"
 add_assign "DEVS:" "SYS:Devs"
@@ -1572,7 +1616,7 @@ case $_mode in
 	"build")
 		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 		for _filename in "${_input_names[@]}"; do
-			pkg_make "$_filename"
+			_pkg_build "$_filename"
 		done
 	;;
 	"install")
@@ -1584,7 +1628,7 @@ case $_mode in
 				tmp=1
 			fi
 			if [[ $_filename == *.apkg ]]; then
-				pkg_make "$_filename"
+				_pkg_build "$_filename"
 				install_package "${repo}${_pkgfile}"
 				tmp=1
 			fi
@@ -1596,14 +1640,14 @@ case $_mode in
 		done
 	;;
 	"repo-init")
-		repo_init "$repo"
-		repo_populate "$repo"
+		repo_init "${repositories['local']}"
+		repo_populate "${repositories['local']}"
 	;;
 	"repo-list")
-		repo_list "$repo"
+		repo_list "${repositories['local']}"
 	;;
 	"repo-rescan")
-		repo_populate "$repo"
+		repo_populate "${repositories['local']}"
 	;;
 	"package-info")
 		package_info "$_filename"
