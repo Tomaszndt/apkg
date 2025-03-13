@@ -226,6 +226,41 @@ function path() {
 	fi
 }
 
+# 1 url
+# 2 filename destination file name
+function _get {
+	local url="$1"
+	local schema="file"
+	local output_file="$2"
+
+	[[ $url =~ ([a-zA-Z]+):\/\/(.*) ]] && {
+		schema="${BASH_REMATCH[1]}"
+	}
+
+	echo "$schema"
+	case $schema in
+		"file")
+			cp "$1" "$2"
+		;;
+		"http")
+			[[ $2 ]] && output_file="$2" || output_file="${url##*/}"
+			if [[ -d $output_file ]]; then
+				wget -q -nc -P "$output_file" "$url" || _echo "%download failed"
+			else
+				wget -q -nc -O "$output_file" "$url" || _echo "%download failed"
+			fi
+		;;
+		"https")
+			[[ $2 ]] && output_file="$2" || output_file="${url##*/}"
+			if [[ -d $output_file ]]; then
+				wget -q -nc -P "$output_file" "$url" || _echo "%download failed"
+			else
+				wget -q -nc -O "$output_file" "$url" || _echo "%download failed"
+			fi
+		;;
+	esac
+}
+
 # unpack an archive file
 # $1 filename
 # $2 destination path
