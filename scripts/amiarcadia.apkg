@@ -1,6 +1,6 @@
 name="amiarcadia"
 tags="game, emulator"
-version="34.0"
+version="34.01"
 cpu=68020
 require="amigaos>3.2"
 description=""
