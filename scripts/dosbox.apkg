@@ -1,0 +1,45 @@
+name="dosbox"
+tags="pc, dos, emulation"
+version="0.74.034"
+cpu=68040
+require="ahi"
+description="Amiga port of DOSBox"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/misc/emu/DOSBox_RTG.lha*113266e07da4ace47623c25121eb13d90ae9ef82091ded06c8e8eca5a448eaef")
+upstream="https://aminet.net/package/misc/emu/DOSBox_RTG"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd DOSBox || exit 1
+
+    copy "DOSBox" "USER:App/Emulation/DOSBox/"
+    copy "DOSBox.info" "USER:App/Emulation/DOSBox/"
+
+    copy "dosbox-0.74.conf" "USER:App/Emulation/DOSBox/"
+    copy "dosbox-0.74.conf.info" "USER:App/Emulation/DOSBox/"
+    copy "mapper-0.74.map" "USER:App/Emulation/DOSBox/"
+
+    for file in DOSBox.readme DOSBox.readme.info authors news readme thanks; do
+        copy "$file" "USER:Doc/Readme/$name-$version/"
+    done
+
+    copy "copying" "USER:Doc/License/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
