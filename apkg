@@ -237,10 +237,9 @@ function _get {
 		schema="${BASH_REMATCH[1]}"
 	}
 
-	echo "$schema"
 	case $schema in
 		"file")
-			cp "$1" "$2"
+			cp "$url" "$output_file" || _echo "%download failed"
 		;;
 		"http")
 			[[ $2 ]] && output_file="$2" || output_file="${url##*/}"
@@ -902,7 +901,7 @@ function meta_get() {
 	IFS=$'\n'	
 
 	for field in $haystack; do
-		if [[ $field =~ $needle[[:space:]]+(.*) ]]; then
+		if [[ $field =~ ${needle}[[:space:]]+(.*) ]]; then
 			r="${BASH_REMATCH[1]}"
 		fi
 	done
@@ -910,16 +909,126 @@ function meta_get() {
 	unset IFS
 }
 
-#
+# 1 query    repo@name([=<>!]version)(,field)
+# n options  string (quiet)
+# return     "0" for none 
+function _repo_query {
+	local args=("$@"); local options=""; 
+	[[ ${#args} -gt 1 && ${args[-1]} == options* ]] && { options="${args[-1]}"; unset args[-1]; }
+	local query="$1"
+	local repo="local"
+	local package=""
+	local version="0"
+	local operator=">"
+	local field="version"
+	local tmp=""
+
+	if [[ $query =~ ([^@]+)@([^=<>!,]+) ]]; then
+		repo="${BASH_REMATCH[1]}"
+		package="${BASH_REMATCH[2]}"
+	else
+		repo="local"
+		package="${BASH_REMATCH[2]}"
+	fi
+
+	if [[ $query =~ ([^@=<>!]+)([=<>!]+)([^,]+) ]]; then
+		package="${BASH_REMATCH[1]}"
+		operator="${BASH_REMATCH[2]}"
+		version="${BASH_REMATCH[3]}"
+		case "$operator" in
+			">") : ;;
+			"<") : ;;
+			"=>") : ;;
+			"=<") : ;;
+			"=") : ;;
+			"==") : ;;
+			"!=") : ;;
+			*) _echo "%invalid operator, $operator in $query" ;;
+		esac
+	fi
+
+	[[ $query =~ ([=<>!])?([^,]+),([^,]+) ]] && {
+		field="${BASH_REMATCH[3]}"
+	}
+
+	_repo_get_db "$repo"
+
+	tmp="$(sqlite3 "${APKG}cache/$repo-repo.db" "select $field from packages where name = '$package' and version $operator '$version' order by $field desc limit 1")"
+
+	[[ -z "$tmp" ]] && tmp="0"
+
+	return_str="$tmp"
+	[[ "${options}" != *quiet* ]] && echo "$tmp"
+
+}
+
+# 1 name repo name
+function _repo_get_db {
+	local repo="$1"
+	local url="${repositories["$repo"]}"
+
+	[[ $url == */ ]] && url="${url:1:0-1}"
+
+	[[ -f "${APKG}cache/$repo-repo.db" ]] || {
+
+		_get "${url}/repo.db" "${APKG}cache/$repo-repo.db"
+
+	}
+}
+
+# 1 query (repo@name([=<>!]version)
+# n options  string (quiet)
+function _repo_get_pkgfile {
+	local args=("$@"); local options=""; 
+	[[ ${#args} -gt 1 && ${args[-1]} == options* ]] && { options="${args[-1]}"; unset args[-1]; }
+
+	local query="$1"
+	local repo="local"
+	local package=""
+
+	if [[ $query =~ ([^@]+)@([^=<>!,]+) ]]; then
+		repo="${BASH_REMATCH[1]}"
+		package="${BASH_REMATCH[2]}"
+	else
+		_echo "%_repo_get_pkgfile: requires both repo name and package name ($query)"
+	fi
+
+	_repo_get_db "$repo"
+
+	return_str="$(_repo_query "${repo}@${package},file")"
+
+	_get "${repositories["$repo"]}/${return_str}" "${APKG}cache/${return_str}"
+
+	[[ "${options}" != *quiet* ]] && echo "${APKG}cache/${return_str}"
+}
+
+# is specific package version present in the repo
+# 1 query    repo@name([=<>!]version)
+# n options  string (quiet)
+# return     "0" for none 
+function _repo_has() {
+	local args=("$@")
+
+	local query="$1"
+
+	tmp="$(_repo_query "${query},version")"
+
+	[[ -z "$tmp" ]] && tmp="0"
+
+	return_str="$tmp"
+	[[ "${args[-1]}" != *quiet* ]] && echo "$tmp"
+}
+
+# init local repository
 # 1 repo path
-function repo_init() {
+function _repo_init() {
 	local path="$1"
 
-	[[ $path == */ ]] || path="${path}/"
+	[[ $path != */ ]] && path="${path}/"
 
-	mkdir -p "$1" &> /dev/null
-	rm "${1}repo.db" &> /dev/null
-	sqlite3 "${1}repo.db" "$_sql_create_table"
+	mkdir -p "$path" &> /dev/null
+	rm "${path}repo.db" &> /dev/null
+	sqlite3 "${path}repo.db" "$_sql_create_table"
 
 	if [ $? -eq 0 ]; then
 		_echo "@created repository in $1"
@@ -929,7 +1038,7 @@ function repo_init() {
 	fi
 }
 
-# add package to repository
+# add package to local repository
 # 1 package file
 # 2 repository path
 function repo_add_package() {
@@ -950,8 +1059,8 @@ function repo_add_package() {
 
 	[[ $repopath == */ ]] || repopath="${repopath}/"
 
-	[[ ! -f "${repopath}repo.db" ]] && repo_init "${repopath}"
-	# [[ "$(sqlite3 "${repopath}repo.db" 'select sqlite_version()')" < "3" ]] && repo_init "$repopath"
+	[[ ! -f "${repopath}repo.db" ]] && _repo_init "${repopath}"
+	# [[ "$(sqlite3 "${repopath}repo.db" 'select sqlite_version()')" < "3" ]] && _repo_init "$repopath"
 
 	meta=$(package_meta "$file")
 
@@ -978,7 +1087,7 @@ function repo_add_package() {
 function repo_populate() {
 	local i
 
-	repo_init "$1"
+	_repo_init "$1"
 
 	for i in "$1"/*.7z; do
 		repo_add_package "$i" "$1"
@@ -994,161 +1103,28 @@ function repo_update() {
 
 	[[ $path == */ ]] || path="${path}/"
 
-	f=$(ls -t "$1")
+	f=$(ls -t "${path}")
 
 	if [[ $f =~ ^repo.db ]]; then
 		_echo "@database file up to date"
 	else
-		rm "$1"repo.db 2&> /dev/null
-		_echo "@removed database file in $1"
-		repo_populate "$1"
+		rm "${path}repo.db" 2&> /dev/null
+		_echo "@removed database file in ${path}"
+		repo_populate "${path}"
 	fi
 	
 }
 
-# is specific package version present in the repo
-# 1 name
-# 2 version (optional)
-# return "0" for none 
-function repo_has() {
-	local name="$1"
-	local version="$2"
-	local tmp
-
-	if [ -z "$version" ]; then	
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
-	else
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version = '$version' order by version desc limit 1")
-	fi
-
-	[ -z "$tmp" ] && tmp="0"
-
-	return_str="$tmp"
-	echo "$tmp"
-
-}
-
-# is package version at least of present in the repo
-# 1 name
-# 2 version (optional)
-# return "0" for none
-function repo_has_least() {
-	local name="$1"
-	local version="$2"
-	local tmp
-
-	if [ -z "$version" ]; then	
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
-	else
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version >= '$version' order by version desc limit 1")
-	fi
-
-	[ -z "$tmp" ] && tmp="0"
-
-	return_str="$tmp"
-	echo "$tmp"
-
-}
-
-# is package version at most of $ present in the repo
-# 1 name
-# 2 version (optional)
-# return "0" for none
-function repo_has_most() {
-	local name="$1"
-	local version="$2"
-	local tmp
-
-	if [ -z "$version" ]; then	
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
-	else
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version <= '$version' order by version desc limit 1")
-	fi
-
-	[ -z "$tmp" ] && tmp="0"
-
-	return_str="$tmp"
-	echo "$tmp"
-
-}
-
-# is package version at most of $ present in the repo
-# 1 name
-# 2 version (optional)
-# return "0" for none
-function repo_has_below() {
-	local name="$1"
-	local version="$2"
-	local tmp
-
-	if [ -z "$version" ]; then	
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
-	else
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version < '$version' order by version desc limit 1")
-	fi
-
-	[ -z "$tmp" ] && tmp="0"
-
-	return_str="$tmp"
-	echo "$tmp"
-
-}
-
-# 1 name
-# 2 version (optional)
-# return "0" for none
-function repo_has_over() {
-	local name="$1"
-	local version="$2"
-	local tmp
-
-	if [ -z "$version" ]; then	
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' order by version desc limit 1") || "0"
-	else
-		tmp=$(sqlite3 "${repo}repo.db" "select version from packages where name = '$name' and version > '$version' order by version desc limit 1")
-	fi
-
-	[ -z "$tmp" ] && tmp="0"
-
-	return_str="$tmp"
-	echo "$tmp"
-
-}
-
-# 1 name
-# 2 version
-function repo_get_pkgfile() {
-	local name
-	local version
-
-	name="$1"
-	version="$2"
-
-	if [[ "$version" > "0" ]]; then
-		if [[ "$version" ]]; then
-			return_str=$(sqlite3 "${repo}repo.db" "select file from packages where name = '$name' and version = '$version' order by version desc limit 1")
-		else
-			return_str=$(sqlite3 "${repo}repo.db" "select file from packages where name = '$name' order by version desc limit 1")
-		fi
-	else
-		return_str= # no $name registered in repo
-	fi
-	echo "$return_str"
-}
-
-
 #
-# 1 repo path
+# 1 repo repo name
 function repo_list() {
-	local path="$1"
+	local repo="$1"
 
-	[[ $path == */ ]] || path="${path}/"
+	_repo_get_db "$repo"
 
-	repo_update "$1"
+	_echo "package listing for ${repo}@${repositories[$repo]}"
 
-	_echo "package listing for $1"
-
-	sqlite3 "$1"repo.db << SQL 
+	sqlite3 "${APKG}cache/$repo-repo.db" << SQL 
 .mode columns 
 select name, version, cpu, built, tags from packages order by name asc
 SQL
@@ -1254,7 +1230,8 @@ function _pkg_build() {
 	local _cwd="$(pwd)"
 
 	_echo "@running build script"
-	cd "$srcdir"
+	cd "$srcdir" || _echo "%invalid source directory ($srcdir)"
+	root="${config['root']}"
 	build || _echo "%build script failed"
 	unset IFS
 	
@@ -1306,17 +1283,17 @@ function _pkg_build() {
 }
 
 # initializes apkg databases in ${config['root']}
-function install_init_root() {
+function _install_init_root {
 	if [ ! -d "${config['root']}/apkg/" ]; then
 		mkdir -p "${config['root']}/apkg"
 		protect "${config['root']}/apkg" "rwed" "apkg:$_apkg_version"
 		_echo "@created apkg directory in ${config['root']}"
 	fi
-# 	if [ ! -f "${config['root']}/apkg/apkg.db" ]; then
-# 		sqlite3 "${config['root']}/apkg/apkg.db" "CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
-# 		protect "${config['root']}/apkg/apkg.db" "rwed" "apkg:$_apkg_version"
-# 		_echo "@created apkg database file in ${config['root']}"
-# 	fi
+	if [ ! -f "${config['root']}/apkg/apkg.db" ]; then
+		sqlite3 "${config['root']}/apkg/apkg.db" "CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
+		protect "${config['root']}/apkg/apkg.db" "rwed" "apkg:$_apkg_version"
+		_echo "@created apkg database file in ${config['root']}"
+	fi
 }
 
 # 1 package filename
@@ -1392,7 +1369,6 @@ function install_file() {
 		cp "$destination" "$backup"
 		rm "$destination"
 		cp "$source" "$destination"
-		#echo "$source" "$destination"
 	else
 		cp "$source" "$destination"
 	fi
@@ -1482,8 +1458,9 @@ function install_package() {
 	local backup
 	local pkgname
 	local pkgversion
+	root="${config['root']}"
 
-	install_init_root
+	_install_init_root
 
 	filename=$(realpath "$1")
 
@@ -1569,38 +1546,21 @@ function install_package() {
 	_echo "installation complete"
 }
 
-# 1 package name([:=<>]version)
+# install single package from a repository
+# 1 package package query ( repo@name([=<>!]version) )
 function install_repo() {
+	local query="$1"
 	local pkgname
 	local pkgversion
 	local pkgfile
 	local pkgver
 	local pkgrel=":"
 
-	if [[ $1 =~ ([^:\<\>]+)([=:\<\>])([^:\<\>]+) ]]; then
-		pkgname="${BASH_REMATCH[1]}"
-		pkgversion="${BASH_REMATCH[3]}"
-		pkgrel="${BASH_REMATCH[2]}"
-	else
-		pkgname="$1"
-		pkgversion=""
-		pkgrel=":"
-	fi
-
-	case "$pkgrel" in
-		":") pkgver=$(repo_has "$pkgname" "$pkgversion") ;;
-		"=") pkgver=$(repo_has "$pkgname" "$pkgversion") ;;
-		">") pkgver=$(repo_has_over "$pkgname" "$pkgversion") ;;
-		"<") pkgver=$(repo_has_below "$pkgname" "$pkgversion") ;;
-		">=") pkgver=$(repo_has_least "$pkgname" "$pkgversion") ;;
-		"<=") pkgver=$(repo_has_most "$pkgname" "$pkgversion") ;;
-	esac
-
-	pkgfile="$(repo_get_pkgfile "$pkgname" "$pkgver")"
+	pkgfile="$(_repo_get_pkgfile "$query")"
 
 	[[ "$pkgfile" ]] || _echo "%package ${1} not found in ${repo}"
 	
-	install_package "${repo}${pkgfile}"
+	install_package "${pkgfile}"
 }
 
 #############################
@@ -1622,9 +1582,11 @@ function install_repo() {
 	mkdir "${APKG}RAM/ENV"
 	}
 
+rm -rd "${APKG}cache/"* &> /dev/null
+
 declare -A assigns
 
-_read_config "$HOME/.apkg/apkg.config"
+_read_config "$HOME/.apkg/apkg.config" 
 _read_config "./apkg.config"
 
 for key in "${!config[@]}"; do _echo "@$key = ${config[$key]}"; done
@@ -1646,13 +1608,17 @@ add_assign "FONTS:" "SYS:Fonts"
 add_assign "L:" "SYS:L"
 add_assign "LIBS:" "SYS:Libs"
 add_assign "S:" "SYS:S"
-read_assigns "S/Startup-Sequence" #&> /dev/null
-read_assigns "S/User-Startup" #&> /dev/null
+read_assigns "S/Startup-Sequence" &> /dev/null
+read_assigns "S/User-Startup" &> /dev/null
 
 #
 # print config
 for key in "${!v[@]}"; do _echo "@$key = ${v[$key]}"; done
 for key in "${!assigns[@]}"; do _echo "@assign $key ${assigns[$key]}"; done
+
+# _repo_has "local@ixemul<63"
+# _repo_query "local@make>1,tags" "2nd" "options: quiet"
+# _repo_get_pkgfile "warez@make" "options quiet"
 
 ########
 # top level logic
@@ -1677,7 +1643,7 @@ case $_mode in
 		tmp=0
 		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 		for _filename in "${_input_names[@]}"; do
-			if [[ $_filename == *.7z ]]; then
+			if [[ -f $_filename && $_filename != *.apkg ]]; then
 				install_package "$_filename"
 				tmp=1
 			fi
@@ -1689,16 +1655,17 @@ case $_mode in
 			if [ $tmp -gt 0 ]; then
 				: # done
 			else
+				[[ $_filename != *@* ]] && _filename="local@${_filename}"
 				install_repo "$_filename"
 			fi
 		done
 	;;
 	"repo-init")
-		repo_init "${repositories['local']}"
+		_repo_init "${repositories['local']}"
 		repo_populate "${repositories['local']}"
 	;;
 	"repo-list")
-		repo_list "${repositories['local']}"
+		repo_list "local"
 	;;
 	"repo-rescan")
 		repo_populate "${repositories['local']}"
