@@ -1085,9 +1085,9 @@ function repo_add_package() {
 	tmp=$(sqlite3 "${repopath}repo.db" "select name from packages where name='$name' and version ='$version'")
 	if [[ "$tmp" < "0" ]]; then
 		sqlite3 "${repopath}repo.db" "$query"
-		_echo "@added $name, $version into $repopath"
+		_echo "added $name, $version into $repopath"
 	else
-		_echo "@$name, $version already present in $repopath"
+		_echo "$name $version already present in $repopath"
 	fi
 }
 
