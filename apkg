@@ -965,12 +965,18 @@ function _repo_query {
 
 }
 
-# 1 name repo name
+# 1 name repo name or query
 function _repo_get_db {
 	local repo="$1"
+
+	[[ $repo =~ ([^@]+)+@.* ]] && repo="${BASH_REMATCH[1]}"
+
 	local url="${repositories["$repo"]}"
 
-	[[ $url == */ ]] && url="${url:1:0-1}"
+	[[ $url == */ ]] && { 
+		url="${url:1:0-1}"; 
+		repositories["$repo"]="$url"; 
+	}
 
 	[[ -f "${APKG}cache/$repo-repo.db" ]] || {
 
@@ -989,7 +995,7 @@ function _repo_get_pkgfile {
 	local repo="local"
 	local package=""
 
-	if [[ $query =~ ([^@]+)@([^=<>!,]+) ]]; then
+	if [[ $query =~ ([^@]+)@([^,]+) ]]; then
 		repo="${BASH_REMATCH[1]}"
 		package="${BASH_REMATCH[2]}"
 	else
@@ -1558,7 +1564,6 @@ function install_repo() {
 	local pkgfile
 
 	pkgfile="$(_repo_get_pkgfile "$query")"
-
 
 	[[ "$pkgfile" ]] || _echo "%package ${1} not found in ${repo}"
 	
