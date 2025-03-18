@@ -128,12 +128,13 @@ build        filename            build a package
 build        filename            build a package and register it with local repo
 install      package filename    install a package
 install      name(:version)      install a package
+query        query               run a query
 repo-list    [path]              list repo contents
 repo-rescan  [path]              recreate repository database
 repo-init    [path]              create a repo
 package-info filename            print package metadata
 
-short mode i=install, b=build, m=make, pi=package-info
+short mode q=query, i=install, b=build, m=make, pi=package-info
 
 -v         verbose output
 -root=path set root path
@@ -173,7 +174,9 @@ while [[ $# -gt 0 ]]; do
 				"repo-init") _mode="repo-list"; _scan_mode="switches" ;;
 				"package-info") _mode="package-info"; _scan_mode="files" ;;
 				"pi") _mode="package-info"; _scan_mode="files" ;;
-				"usage") usage; exit ;;
+				"query") _mode="query"; _scan_mode="files" ;;
+				"q") _mode="query"; _scan_mode="files" ;;
+				"usage") usage; exit 0; ;;
 				"version") _mode="version"; _scan_mode="files" ;;
 				*) _echo "%invalid mode specified: \"$1\"" ;;
 			esac
@@ -928,7 +931,7 @@ function _repo_query {
 		package="${BASH_REMATCH[2]}"
 	else
 		repo="local"
-		package="${BASH_REMATCH[2]}"
+		package="${BASH_REMATCH[1]}"
 	fi
 
 	if [[ $query =~ ([^@=<>!]+)([=<>!]+)([^,]+) ]]; then
@@ -1458,7 +1461,7 @@ function install_package() {
 	local backup
 	local pkgname
 	local pkgversion
-	root="${config['root']}"
+	root="${config['root']}" # needed within build scripts
 
 	_install_init_root
 
@@ -1553,10 +1556,9 @@ function install_repo() {
 	local pkgname
 	local pkgversion
 	local pkgfile
-	local pkgver
-	local pkgrel=":"
 
 	pkgfile="$(_repo_get_pkgfile "$query")"
+
 
 	[[ "$pkgfile" ]] || _echo "%package ${1} not found in ${repo}"
 	
@@ -1639,6 +1641,17 @@ case $_mode in
 			rm "$return_str"
 		done
 	;;	
+	"query")
+		[[ ${#_input_names} -eq 0 ]] && _echo "%no queries"
+		for _filename in "${_input_names[@]}"; do
+			tmp="$(_repo_query "$_filename" "quiet")"
+			if [[ $tmp == "0" ]]; then
+				echo "no result for $_filename"
+			else
+				echo "$tmp"
+			fi
+		done
+	;;		
 	"install")
 		tmp=0
 		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
