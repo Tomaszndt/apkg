@@ -1,0 +1,42 @@
+name="speedhaste"
+tags="game, racing, port, 3d"
+version="1.0"
+cpu=68040
+require=""
+description="Speed Haste / Circuit Racer Amiga Port"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/game/race/speedhaste.lha*2944fcb26bdc8f01b9cc22dd361ebf71ae59075755f7c601273994de4ef395db"
+    "https://dosgames.com/files/speedsha.zip*aca95c4c93fd6aa6aecd07effeca23b92f19ef7a28c1a0da801b7212aa916f91"
+)
+upstream="https://aminet.net/package/game/race/speedhaste"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy "SpeedHaste.info" "USER:Games/"
+    copy "SPEEDH.JCL" "USER:Games/SpeedHaste/"
+    copy "SPEED.CFG" "USER:Games/SpeedHaste/"
+    copy "SpeedHaste/SpeedHaste.040" "USER:Games/SpeedHaste/"
+    copy "SpeedHaste/SpeedHaste.060" "USER:Games/SpeedHaste/"
+    copy "SpeedHaste/SpeedHaste.040.info" "USER:Games/SpeedHaste/"
+    copy "SpeedHaste/SpeedHaste.060.info" "USER:Games/SpeedHaste/"
+
+    copy "SpeedHaste/speedhaste.readme" "USER:Doc/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
