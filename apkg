@@ -266,7 +266,7 @@ function _get {
 # unpack an archive file
 # $1 filename
 # $2 destination path
-function unpack() {
+function unpack {
 	ext="${1##*.}"	
 	_echo "@unpacking $1, $ext archive into $2"
 
@@ -295,6 +295,22 @@ function unpack() {
 
 		;;
 	esac	
+}
+
+# 1 archive, archive filename
+# 2 file, file to extract
+function _extract {
+	local archive="$1"
+	local file="$2"
+
+	case $archive in
+		*.7z) 
+			7z e -o"${APKG}tmp/" "$archive" "$file" &> /dev/null
+		;;
+	esac
+
+	return_str="${APKG}tmp/$file"
+	echo "$return_str"
 }
 
 # return uaem formatted stat/permissions string
@@ -876,6 +892,37 @@ function package_info() {
 	_echo "  packgager $packager"
 }
 
+# 1 query
+declare -A _meta_cache=()
+function _meta {
+	local query="$1"
+	local filename
+	local field
+	local key
+	local tmp
+	local nl=$'\n'
+
+	[[ ! $query =~ [^@]+@.* ]] && query="local@${query}"
+	[[ $query =~ ,([^,]+) ]] && field="${BASH_REMATCH[1]}"
+
+	if [[ -z ${_meta_cache["${query%%,*}"]} ]]; then
+
+		filename="$(_repo_get_pkgfile "$query")"
+		filename="$(_extract "$filename" "apkg-metadata")"
+		tmp="$(<"$filename")"
+		_meta_cache["${query%%,*}"]="$tmp"
+
+		for key in buildscript built cpu name packager require tags url version ; do
+			[[ $tmp =~ $key[[:space:]]+([^$nl]+)$nl? ]]
+			_meta_cache["${query%%,*},$key"]="${BASH_REMATCH[1]}"
+		done
+
+	fi
+
+	return_str="${_meta_cache["$query"]}"
+	echo "$return_str"
+}
+
 # return package file metadata
 # 1 package file
 _package_meta_last=""
@@ -1085,8 +1132,10 @@ function repo_add_package() {
 	tmp=$(sqlite3 "${repopath}repo.db" "select name from packages where name='$name' and version ='$version'")
 	if [[ "$tmp" < "0" ]]; then
 		sqlite3 "${repopath}repo.db" "$query"
+		cp --update "$1" "$repopath"
 		_echo "added $name, $version into $repopath"
 	else
+		cp --update "$1" "$repopath"
 		_echo "$name $version already present in $repopath"
 	fi
 }
@@ -1273,7 +1322,16 @@ function _pkg_build() {
 	_echo "generating metadata"
 	cd "$pkgdir" || exit 1
 	touch apkg-metadata
-	echo -e "name $name\nversion $version\ncpu $cpu\ntags $tags\nbuilt $(date +%s)\npackager $packager\nurl $upstream\nbuildscript ${_script_file##*/}" > apkg-metadata
+	echo -e "#apkg $_apkg_version
+name $name
+version $version
+cpu $cpu
+tags $tags
+built $(date +%s)
+packager $packager
+url $upstream
+buildscript ${_script_file##*/}
+require $require" > apkg-metadata
 
 	cp "$_script_file" "."
 
@@ -1590,6 +1648,7 @@ function install_repo() {
 	}
 
 rm -rd "${APKG}cache/"* &> /dev/null
+rm -rd "${APKG}tmp/"* &> /dev/null
 
 declare -A assigns
 
@@ -1626,6 +1685,9 @@ for key in "${!assigns[@]}"; do _echo "@assign $key ${assigns[$key]}"; done
 # _repo_has "local@ixemul<63"
 # _repo_query "local@make>1,tags" "2nd" "options: quiet"
 # _repo_get_pkgfile "warez@make" "options quiet"
+# _extract "./repo/make~4.4.1~68000.7z" "apkg-metadata"
+# _meta "make,tags"
+# _meta "make,cpu"
 
 ########
 # top level logic
