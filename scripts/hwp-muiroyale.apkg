@@ -1,0 +1,41 @@
+name="hwp-muiroyale"
+tags="hollywood, mui, plugin"
+version="1.7"
+cpu=68020
+require=""
+description="Hollywood plugin for MUI GUIs"
+packager="lobotomius@gmail.com"
+source=(
+    "http://aminet.net/dev/hwood/HWP_MUIRoyale.lha*11dcb09a0cfcb1f07e20230faabd57352939b1b537a279e1168dde06436a319a"
+    )
+upstream="http://aminet.net/package/dev/hwood/HWP_MUIRoyale"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local conf
+
+    cd "MUIRoyale" || exit 1
+
+    copy "Platforms/AmigaOS3/muiroyale.hwp" "LIBS:Hollywood/"
+    copy ReadMe "USER:Doc/Readme/$name-$version/"
+    copy "Data/Docs/history.txt" "USER:Doc/Readme/$name-$version/"
+    copy "Data/Docs/MUIRoyale.pdf" "USER:Doc/Readme/$name-$version/"
+
+    copy "Data/Docs/MUIRoyale.guide" "HELP:"
+
+}
+
+# this function is executed on installation after all files have been copied
+#  userpatch filename mode needle tag text
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
