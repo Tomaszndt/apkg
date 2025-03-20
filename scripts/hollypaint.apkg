@@ -1,0 +1,42 @@
+name="hollypaint"
+tags="paint, graphics, hollywood"
+version="1.1"
+cpu=68020
+require="hwp-muiroyale"
+description="Paint application"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/gfx/edit/HollyPaint.zip*c1f78c15e892895de5e9e3aa12e2880a04111ffc9e000c9ce6156bd7bee282b9"
+    )
+upstream="https://aminet.net/package/gfx/edit/HollyPaint"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "HollyPaint" || exit 1
+
+    copy "HollyPaint.68k" "USER:App/Graphics/HollyPaint/HollyPaint"
+    copy "HollyPaint.68k.info" "USER:App/Graphics/HollyPaint/HollyPaint.info"
+
+    copy "hollypaint.xml" "USER:App/Graphics/HollyPaint/"
+
+    copy "ChangeLog" "USER:/Doc/Readme/$name-$version/"
+    copy "HollyPaint.readme" "USER:/Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
