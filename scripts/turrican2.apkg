@@ -1,0 +1,40 @@
+name="turrican2"
+tags="game, turrican"
+version="1.21"
+cpu=68020
+require="whdload"
+description="Free and unofficial remake of the PC-DOS version of Turrican 2"
+packager="lobotomius@gmail.com"
+source=(
+    "Turrican2_AGA_Amiga_v1.21.zip*9ab08560c3a633a852557b7667015a444233cf06df3cb1df4b119197b00978c5"
+    )
+upstream="https://sonicslothgames.itch.io/turrican2aga"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    IFS=$'\n'
+    for file in $(find WHDLoad -type f); do
+        copy "$file" "USER:Games/Turrican2/${file#*/}"
+    done
+    unset IFS
+
+    copy "ReadMe.txt" "USER:/Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
