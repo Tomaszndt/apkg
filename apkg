@@ -266,7 +266,7 @@ function _get {
 # unpack an archive file
 # $1 filename
 # $2 destination path
-function unpack {
+function _unpack {
 	ext="${1##*.}"	
 	_echo "@unpacking $1, $ext archive into $2"
 
@@ -927,7 +927,7 @@ function _meta {
 # 1 package file
 _package_meta_last=""
 _package_meta_cache=""
-function package_meta() {
+function package_meta {
 	local meta="null"
 	if [[ $_package_meta_last != $1 ]]; then
 		meta="$(7z e -so "$1" apkg-metadata 2> /dev/null)"
@@ -1277,7 +1277,7 @@ function _pkg_build() {
 	mkdir -p "${config['APKG']}tmp"
 
 	for _file in "${!sums[@]}"; do
-		unpack "${config['APKG']}downloads/$_file" "${config['APKG']}tmp"
+		_unpack "${config['APKG']}downloads/$_file" "${config['APKG']}tmp"
 	done
 
 	rm -r "${config['APKG']}cache/$pkgname/" &> /dev/null 
@@ -1554,7 +1554,7 @@ function install_package() {
 	mkdir -p "$tmpdir"
 	tmpdir_length=${#tmpdir}
 
-	unpack "$1" "${config['APKG']}tmp"
+	_unpack "$1" "${config['APKG']}tmp"
 
 	tmp2=$(meta_get "$meta" "buildscript")
 
