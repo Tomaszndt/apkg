@@ -1,0 +1,45 @@
+name="zxlive"
+tags="emulator, zx, spectrum"
+version="0.57"
+cpu=68020
+require="amigaos>3"
+description="ZX-Spectrum 48/128k/Pentagon128 Emulator"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/misc/emu/ZXLive.lha*06aec2b024b425bb11c2dd249b24567c436807901589031e97128bb644ae0852"
+    )
+upstream="https://aminet.net/package/misc/emu/ZXLive"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "ZX-Live" || exit 1
+
+    IFS=$'\n'
+    for file in $(find ROMs -type f); do copy "$file" "USER:App/Emulation/ZXLive/${file}"; done
+    for file in $(find ZXFiles -type f); do copy "$file" "USER:App/Emulation/ZXLive/${file}"; done
+    unset IFS
+
+    copy ZX-Live "USER:App/Emulation/ZXLive/"
+    copy ZX-Live.info "USER:App/Emulation/ZXLive/"
+
+    copy "Docs/ZLS.txt" "USER:Doc/Readme/$name-$version/"
+    copy "Docs/ZX-Live.readme" "USER:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
