@@ -2,7 +2,7 @@ name="mmu-library"
 tags="library, mmu, cpu"
 version="47.9"
 cpu=68040
-require="amigaos>3"
+require="amigaos>3.2"
 description="Library to control the MC68K MMUs"
 packager="lobotomius@gmail.com"
 source=("https://aminet.net/util/libs/MMULib.lha*9302468735a1bdb235f481aa9b147d6f4f9593d08956359c670bef5eb792a18a")
@@ -17,12 +17,19 @@ upstream="https://aminet.net/package/util/libs/MMULib"
 #  $pkgdir
 
 function build {
-	# we are in "$srcdir"
-	
+    local file
+
     cd MMULib || exit 1
 
-    copy "Libs/mmu.library" "Libs:mmu.library"
-    copy "Libs/68040.library" "Libs:68040.library"
+    for file in Shell_Only/*; do copy "$file" "C:${file#*/}"; done
+    for file in $(find Libs/ -type f); do copy "$file" "LIBS:${file#*/}"; done
+    for file in $(find EnvArc/ -type f); do copy "$file" "ENVARC:${file#*/}"; done
+
+    for file in $(find MuTools/ -type f ! -name "*guide*"); do copy "$file" "SYS:Tools/${file}"; done
+    copy MuTools.info "SYS:Tools/"
+
+    for file in $(find MuTools/ -type f -name "*guide*"); do copy "$file" "HELP:"; done
+    for file in Read*; do copy "$file" "USER:Doc/Readme/$name-$version/"; done
 
 }
 
