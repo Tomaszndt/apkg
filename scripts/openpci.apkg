@@ -1,0 +1,42 @@
+name="openpci"
+tags="library, pci"
+version="40.2"
+cpu=68040
+require=""
+description="PCI driver for all bridge boards"
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/driver/other/openpci68k.lha*70a806e745ed893af1006ef37c173e28ecf1961e35680c3fd0472d99e33a1af7"
+    )
+upstream="https://aminet.net/package/driver/other/openpci68k"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+    local dir
+
+    copy "Libs/openpci.library" "LIBS:"
+    copy "Libs/mmu/PCIInit" "LIBS:mmu/"
+    copy "c/lspci" "C:"
+
+    copy "ENVARC/PCI-Configuration" "ENVARC:"
+
+    copy PCI.guide "HELP:"
+    copy "openpci68k.readme" "USER:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+
+function post_install {
+    userpatch "${root}Prefs/Env-Archive/MMU-Configuration" "end" "" "$name-$version" "PCIInit"
+}
+
+# vim: ts=4:syntax=sh:
