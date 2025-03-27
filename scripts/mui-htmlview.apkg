@@ -23,7 +23,7 @@ function build {
 
     IFS=$'\n'
     for file in $(find Libs/MUI/AmigaOS3/ -type f); do 
-        echo "$file" "LIBS:${file#*/}"; 
+        copy "$file" "LIBS:${file#*/}"; 
     done
     unset IFS
 
