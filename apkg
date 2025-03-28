@@ -859,6 +859,84 @@ function path_existing_amiga {
 #############################
 # main fuctionality
 
+# 1 query
+# r 
+# ([repo|path])@packagename(,field[=!<>])+(/field)
+# ([repo|path]):packagefile(,field[=!<>])+(/field)
+#
+declare -A _return_q
+function _query {
+	debug=$'\n'
+	local query="$1"
+	local type="@"
+	local repo
+	local fields
+	local field="version"
+	local dbpath
+	local package
+	local tmp
+	local nl=$'\n'
+
+	[[ $query != *@* && $query != *:* ]] && query="local@${query}"
+
+	if [[ $query =~ ([^@:]+)[@:] ]]; then 
+		repo="${BASH_REMATCH[1]}"; 
+	else 
+		_echo "%invalid repository/path in $query";
+	fi
+
+	[[ $query =~ [^@:]*([@:]) ]] && type="${BASH_REMATCH[1]}"
+
+	if [[ $query =~ ,([^/]+) ]]; then 
+		fields="${BASH_REMATCH[1]}"
+	else
+		fields=",version>0"
+	fi
+
+	if [[ $query =~ [@:][^/]+/([^/]+)$ ]]; then
+		field="${BASH_REMATCH[1]}"
+	else
+		field="version"
+	fi
+
+	if [[ $query =~ [@:]([^,/]+) ]]; then
+		package="${BASH_REMATCH[1]}"
+	else
+		_echo "%invalid package name in $query"
+	fi
+
+	if [[ ${repositories["$repo"]} ]]; then
+		dbpath="${repositories["$repo"]}"
+	else
+		if [[ -d "$repo" ]]; then 
+			dbpath="${repo}"
+		else 
+			_echo "%invalid repository in $query";
+		fi
+	fi
+	[[ $dbpath != */ ]] && dbpath="${dbpath}/"
+	[[ $fields == ,* ]] && fields="${fields:1}"
+
+	case $type in
+		"@")
+			fields="${fields/,/, }"
+			_repo_get_db "${repo}"
+			tmp="$(sqlite3 "${APKG}tmp/$repo-repo.db" "select $field from packages where name = '$package' and $fields order by $field desc limit 1")"
+			echo "$tmp"
+		;;
+		":")
+			tmp="$(_extract "$package" "apkg-metadata")"
+			tmp="$(<"$tmp")"
+			[[ $tmp =~ $field[[:space:]]+([^$nl]+)$nl? ]] && tmp="${BASH_REMATCH[1]}"
+			echo "$tmp"
+		;;
+		"*") _echo "%invalid query: $query" ;;
+	esac
+
+	# echo -e "$query $cred'$repo' '$package' '$fields' '$field'$creset"
+
+}
+
 # 1 package file
 function package_info() {
 	local pkgname
@@ -892,6 +970,7 @@ function package_info() {
 	_echo "  packgager $packager"
 }
 
+# query package file in a repo
 # 1 query
 declare -A _meta_cache=()
 function _meta {
@@ -924,7 +1003,7 @@ function _meta {
 }
 
 # return package file metadata
-# 1 package file
+# 1 query ( package,field )
 _package_meta_last=""
 _package_meta_cache=""
 function package_meta {
@@ -959,59 +1038,6 @@ function meta_get() {
 	unset IFS
 }
 
-# 1 query    repo@name([=<>!]version)(,field)
-# n options  string (quiet)
-# return     "0" for none 
-function _repo_query {
-	local args=("$@"); local options=""; 
-	[[ ${#args} -gt 1 && ${args[-1]} == options* ]] && { options="${args[-1]}"; unset args[-1]; }
-	local query="$1"
-	local repo="local"
-	local package=""
-	local version="0"
-	local operator=">"
-	local field="version"
-	local tmp=""
-
-	if [[ $query =~ ([^@]+)@([^=<>!,]+) ]]; then
-		repo="${BASH_REMATCH[1]}"
-		package="${BASH_REMATCH[2]}"
-	else
-		repo="local"
-		package="${BASH_REMATCH[1]}"
-	fi
-
-	if [[ $query =~ ([^@=<>!]+)([=<>!]+)([^,]+) ]]; then
-		package="${BASH_REMATCH[1]}"
-		operator="${BASH_REMATCH[2]}"
-		version="${BASH_REMATCH[3]}"
-		case "$operator" in
-			">") : ;;
-			"<") : ;;
-			"=>") : ;;
-			"=<") : ;;
-			"=") : ;;
-			"==") : ;;
-			"!=") : ;;
-			*) _echo "%invalid operator, $operator in $query" ;;
-		esac
-	fi
-
-	[[ $query =~ ([=<>!])?([^,]+),([^,]+) ]] && {
-		field="${BASH_REMATCH[3]}"
-	}
-
-	_repo_get_db "$repo"
-
-	tmp="$(sqlite3 "${APKG}cache/$repo-repo.db" "select $field from packages where name = '$package' and version $operator '$version' order by $field desc limit 1")"
-
-	[[ -z "$tmp" ]] && tmp="0"
-
-	return_str="$tmp"
-	[[ "${options}" != *quiet* ]] && echo "$tmp"
-
-}
-
 # 1 name repo name or query
 function _repo_get_db {
 	local repo="$1"
@@ -1020,15 +1046,13 @@ function _repo_get_db {
 
 	local url="${repositories["$repo"]}"
 
-	[[ $url == */ ]] && { 
-		url="${url:1:0-1}"; 
+	[[ $url != */ ]] && { 
+		url="${url}/"; 
 		repositories["$repo"]="$url"; 
 	}
 
-	[[ -f "${APKG}cache/$repo-repo.db" ]] || {
-
-		_get "${url}/repo.db" "${APKG}cache/$repo-repo.db"
-
+	[[ -f "${APKG}tmp/${repo}-repo.db" ]] || {
+		_get "${url}repo.db" "${APKG}tmp/${repo}-repo.db"
 	}
 }
 
@@ -1051,28 +1075,11 @@ function _repo_get_pkgfile {
 
 	_repo_get_db "$repo"
 
-	return_str="$(_repo_query "${repo}@${package},file")"
+	return_str="$(_query "${repo}@${package}/file")"
 
 	_get "${repositories["$repo"]}/${return_str}" "${APKG}cache/${return_str}"
 
 	[[ "${options}" != *quiet* ]] && echo "${APKG}cache/${return_str}"
-}
-
-# is specific package version present in the repo
-# 1 query    repo@name([=<>!]version)
-# n options  string (quiet)
-# return     "0" for none 
-function _repo_has() {
-	local args=("$@")
-
-	local query="$1"
-
-	tmp="$(_repo_query "${query},version")"
-
-	[[ -z "$tmp" ]] && tmp="0"
-
-	return_str="$tmp"
-	[[ "${args[-1]}" != *quiet* ]] && echo "$tmp"
 }
 
 # init local repository
@@ -1688,6 +1695,8 @@ for key in "${!assigns[@]}"; do _echo "@assign $key ${assigns[$key]}"; done
 # _extract "./repo/make~4.4.1~68000.7z" "apkg-metadata"
 # _meta "make,tags"
 # _meta "make,cpu"
+# _query "make/cpu"
+# _query "./repo/:make.7z,version>2,cpu=68020"
 
 ########
 # top level logic
@@ -1711,7 +1720,7 @@ case $_mode in
 	"query")
 		[[ ${#_input_names} -eq 0 ]] && _echo "%no queries"
 		for _filename in "${_input_names[@]}"; do
-			tmp="$(_repo_query "$_filename" "quiet")"
+			tmp="$(_query "$_filename")"
 			if [[ $tmp == "0" ]]; then
 				echo "no result for $_filename"
 			else
