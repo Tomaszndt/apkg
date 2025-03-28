@@ -1,0 +1,32 @@
+name="hotdots"
+tags="demoscene, 64k"
+version="1"
+cpu=68060
+require=""
+description="Hot Dots by Focus Design & Unstable Label"
+packager="lobotomius@gmail.com"
+source=("https://ftp.untergrund.net/users/corial/releases/fd_ul_hotdots.zip*323302f1a309c56924ad2c7e24717eedc39b66c2759d44339244905a0490880c")
+upstream="https://demozoo.org/productions/31579/"
+
+# functions
+#
+#  makedir path
+#    relative to $pkgdir
+#
+#  copy $source $destination
+#    source relative to $srcdir, destination to $pkgdir
+#    creates directories as needed
+
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    for file in *; do
+        copy "${file}" "USER:Scene/64k/Focus Design and Unstable Label/HotDots/${file}"
+    done
+
+}
+# vim: ts=4:syntax=sh:
