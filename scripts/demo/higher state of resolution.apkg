@@ -1,0 +1,32 @@
+name="higher state of resolution"
+tags="demoscene, 64k"
+version="1"
+cpu=68060
+require=""
+description="Higher State of Resolution by Dekadence"
+packager="lobotomius@gmail.com"
+source=("https://files.scene.org/get/parties/2016/revision16/amiga_intro/dkd-high.lha*af542757842e828a4b6151a61b11d3d6c42a173718aaf71c26f73e22a5124e56")
+upstream="https://demozoo.org/productions/155052/"
+
+# functions
+#
+#  makedir path
+#    relative to $pkgdir
+#
+#  copy $source $destination
+#    source relative to $srcdir, destination to $pkgdir
+#    creates directories as needed
+
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+	# we are in "$srcdir"
+
+    for file in *; do
+        copy "${file}" "USER:Scene/64k/Dekadence/Higher State of Resolution/${file}"
+    done
+
+}
+# vim: ts=4:syntax=sh:
