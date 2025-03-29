@@ -864,7 +864,7 @@ function path_existing_amiga {
 # ([repo|path])@packagename(,field[=!<>])+(/field)
 # ([repo|path]):packagefile(,field[=!<>])+(/field)
 #
-declare -A _return_q
+declare -A _query_cache=()
 function _query {
 	debug=$'\n'
 	local query="$1"
@@ -914,6 +914,7 @@ function _query {
 			_echo "%invalid repository in $query";
 		fi
 	fi
+	dbpath="$(realpath "$dbpath")"
 	[[ $dbpath != */ ]] && dbpath="${dbpath}/"
 	[[ $fields == ,* ]] && fields="${fields:1}"
 
@@ -925,8 +926,13 @@ function _query {
 			echo "$tmp"
 		;;
 		":")
-			tmp="$(_extract "$package" "apkg-metadata")"
-			tmp="$(<"$tmp")"
+			if [[ ${_query_cache["$dbpath:$package"]} ]]; then 
+				tmp="${_query_cache["$dbpath:$package"]}";
+			else
+				tmp="$(_extract "$package" "apkg-metadata")"
+				tmp="$(<"$tmp")"
+				_query_cache["$dbpath:$package"]="$tmp"
+			fi
 			[[ $tmp =~ $field[[:space:]]+([^$nl]+)$nl? ]] && tmp="${BASH_REMATCH[1]}"
 			echo "$tmp"
 		;;
@@ -1724,7 +1730,7 @@ case $_mode in
 			if [[ $tmp == "0" ]]; then
 				echo "no result for $_filename"
 			else
-				echo "$tmp"
+				echo "$_filename : '$tmp'"
 			fi
 		done
 	;;		
