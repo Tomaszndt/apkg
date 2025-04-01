@@ -5,12 +5,12 @@
 #   asterisk separated array of source url, sha256 sum and optional download file name
 name="iconlib"
 tags="library, icon"
-version="46.4.594"
+version="46.4.595"
 cpu=68020
 require=""
 description="free icon.library in optimized ASM code"
 packager="lobotomius@gmail.com"
-source=("https://aminet.net/util/libs/IconLib_46.4.lha*9c966de4bc6d004a3cbe8b5ec1225313d4a431e703bd172f2a259d3fc27702d7*$name-$version.lha")
+source=("https://aminet.net/util/libs/IconLib_46.4.lha*ada3bcffb2b1a511d2e61bcf48cae8da5ad787b2b77da30934c7f3734b243b11*$name-$version.lha")
 upstream="https://aminet.net/package/util/libs/IconLib_46.4"
 
 # avoid using underscore as the first character in your variable names
@@ -25,11 +25,15 @@ upstream="https://aminet.net/package/util/libs/IconLib_46.4"
 
 function build {
 	# we are in "$srcdir"
-
+    local file
 
     cd "IconLib_46.4" || exit 1
 
     copy "Libs/icon.library" "LIBS:icon.library"
+
+    for file in C/*; do
+        copy "$file" "C:${file#*/}"
+    done
 
 }
 
