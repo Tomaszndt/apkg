@@ -1,12 +1,12 @@
 name="govd"
 tags="desktop, utility, switch, screen"
-version="2.2"
+version="2.3"
 cpu=68020
 require=""
 description="Virtual workbench desktops"
 packager="lobotomius@gmail.com"
 source=(
-    "http://aminet.net/util/wb/GoVD.lha*4c05c7ad708b37b8a1b7a7c58e010f1582b1277fa845243ea981e6b5c6a2f335*$name-$version.lha"
+    "https://aminet.net/util/wb/GoVD.lha*7c87d3290828573e3efc00004cb06c67610c34610e213c9e9a9b667e8ae03290*$name-$version.lha"
     )
 upstream="https://bitplan.pl/govd/index.html"
 
