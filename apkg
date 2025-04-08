@@ -54,21 +54,21 @@ function _echo() {
 	
 		"@")
 			if [[ $_verbose -eq 1 ]]; then
-				echo -e "$prefix$cblue$msg$creset"
+				echo -e "$prefix$cblue$msg$creset" >&2
 			fi
 		;;
 		"n")
-			echo -e "$prefix$msg"
+			echo -e "$prefix$msg" >&2
 		;;
 		"%")
-			echo -e "$prefix$cred$msg$creset"
+			echo -e "$prefix$cred$msg$creset" >&2
 			exit 1
 		;;
 		"!")
-			echo -e "$prefix$cred$msg$creset"
+			echo -e "$prefix$cred$msg$creset" >&2
 		;;
 		"#")
-			echo -e "$prefix$cyellow$msg$creset"
+			echo -e "$prefix$cyellow$msg$creset" >&2
 		;;	
 	esac
 
@@ -125,7 +125,7 @@ mode         arguments           description
 ------------ ------------------- ----------------------------
 usage                            display usage information
 build        filename            build a package
-build        filename            build a package and register it with local repo
+make         filename            build a package and register it with local repo
 install      package filename    install a package
 install      name(:version)      install a package
 query        query               run a query
@@ -247,17 +247,17 @@ function _get {
 		"http")
 			[[ $2 ]] && output_file="$2" || output_file="${url##*/}"
 			if [[ -d $output_file ]]; then
-				wget -q -nc -P "$output_file" "$url" || _echo "%download failed"
+				wget -q -nc -P "$output_file" "$url" || _echo "%[$FUNCNAME] download failed"
 			else
-				wget -q -nc -O "$output_file" "$url" || _echo "%download failed"
+				wget -q -nc -O "$output_file" "$url" || _echo "%[$FUNCNAME] download failed"
 			fi
 		;;
 		"https")
 			[[ $2 ]] && output_file="$2" || output_file="${url##*/}"
 			if [[ -d $output_file ]]; then
-				wget -q -nc -P "$output_file" "$url" || _echo "%download failed"
+				wget -q -nc -P "$output_file" "$url" || _echo "%[$FUNCNAME] download failed"
 			else
-				wget -q -nc -O "$output_file" "$url" || _echo "%download failed"
+				wget -q -nc -O "$output_file" "$url" || _echo "%[$FUNCNAME] download failed"
 			fi
 		;;
 	esac
@@ -268,9 +268,9 @@ function _get {
 # $2 destination path
 function _unpack {
 	ext="${1##*.}"	
-	_echo "@unpacking $1, $ext archive into $2"
+	_echo "@[$FUNCNAME] unpacking $1, $ext archive into $2"
 
-	[[ ! -d "$2" ]] && _echo "!target is not a valid path" && exit 1
+	[[ ! -d "$2" ]] && _echo "%[$FUNCNAME] target is not a valid path"
 
 	case "$ext" in
 		"lha")
@@ -290,11 +290,13 @@ function _unpack {
 			unadf -d "$2" "$1" &> /dev/null
 		;;
 		*)
-			_echo "@unsupported archive type: $ext";
+			_echo "@[$FUNCNAME] unsupported archive type: $ext";
 			cp "$1" "$2";
-
 		;;
 	esac	
+}
+function unpack { 
+	_unpack "$1" "$2"
 }
 
 # 1 archive, archive filename
@@ -305,7 +307,7 @@ function _extract {
 
 	case $archive in
 		*.7z) 
-			7z e -o"${APKG}tmp/" "$archive" "$file" &> /dev/null
+			7z e -y -o"${APKG}tmp/" "$archive" "$file" &> /dev/null
 		;;
 	esac
 
@@ -398,10 +400,9 @@ function dirdelete() {
 	fi
 }
 
-
 # detect amiga os version
 # 1 path to amiga os root directory
-function detectos() {
+function _detectos() {
 	local os="unknown"
 	local sum
 	local aosroot
@@ -522,92 +523,94 @@ function detectos() {
 		"1640a650cb7480344b301fbbbe14ee7d7d1bfd385d23af3ef689ec841bcf6267")
 			os="3.9.4" # bb 3&4
 		;;
-	esac 
+	esac
 
+	_echo "@[$FUNCNAME] detected Amiga OS version $os"
 	echo "$os"
 }
 
 # to use within build scripts
 # copy single file
-# 1 source
-# 2 destination relative to $pkgdir
-# 3 permissions
-function copy() {
-	local perm
+# 1 source, linux path
+# 2 destination, amiga path
+# [3] permissions
+# [4] options
+function copy {
+	local args=("$@"); local options=""; 
+	[[ ${#args} -gt 1 && ${args[-1]} == options* ]] && { options="${args[-1]}"; unset args[-1]; }
+
+	local source="$1"
+	local destination="$2"
+	local perm="$3"
+	local destination_root="$pkgdir"
 	local sbase
 	local spath
 	local dpath
 	local dbase
-	local tmp="$2"
-	local subdir=""
-	local p=""
+	local tmp
 
-	tmp=$(realpath "$1")  || _echo "%invalid file/path: $1"
+
+	[[ ! $destination == *:* ]] && destination="SYS:$destination"
+
+	tmp="$(realpath "$source")"  || _echo "%[$FUNCNAME] invalid file/path: $source"
 	tmp="${tmp/$srcdir/}"
-	sbase=$(base "$tmp")
-	spath=$(path "$tmp")
 
-	dbase=$(base "$2")
-	dpath=$(path "$2")
+	sbase="$(base "$tmp")"; spath="$(path "$tmp")"
+	dbase="$(base "$destination")"; dpath="$(path "$destination")"
 
 	if [[ ! $dbase ]]; then dbase="$sbase"; fi
-	perm="rwed"
-	if [ -n "$3" ]; then
-		perm="$3"
+	if [ -n "$perm" ]; then
+		perm="rwed"
 	fi
 	perm=$(sprotect "$dbase" "$perm" "${pkgname}")
 
-	tmp="$(make_dir "${dpath}")"
+	destination_root="$(makedir "${dpath}" "${options}")"
 
-	cp -f "${srcdir}${spath}${sbase}" "${tmp}/${dbase}" &&
-	echo "$perm" > "${tmp}/${dbase}.uaem" #|| exit 1
+	if cp -f "${srcdir}${spath}${sbase}" "${destination_root}/${dbase}"; then
+		# echo "$perm" > "${destination_root}/${dbase}.uaem"
+		echo "copy \"${tmp/$pkgdir/}/${dbase}\" \"${destination}\" \"options sys=*${config['root']}*\"" >> "${pkgdir}apkg-install"
+	else
+		_echo "%[$FUNCNAME] copy error $source -> $destination"
+	fi
 
-}
-
-function makedir {
-	make_dir "$1" > /dev/null
 }
 
 # to use within build scripts
 # create a directory
 # 1 path relative to $pkgdir
-# 2 icon [wb31] TODO
 # > return_str contains amiga valid path
-declare -A _makedir_cache
-function make_dir {
+function makedir {
+	local args=("$@"); local options=""; 
+	[[ ${#args} -gt 1 && ${args[-1]} == options* ]] && { options="${args[-1]}"; unset args[-1]; }
+
 	local perm
 	local s="$pkgdir"
 	local path="$1"
-	local save
+	local destination_root="$pkgdir"
 
-	[[ "$path" == $pkgdir* ]] && path="${1#$pkgdir/}"
+	[[ "$path" == $pkgdir* ]] && path="${path#"$pkgdir"/}"
 
 	[[ "${path:0:1}" == "/" ]] && path="${path:1}"
 	[[ "${path:0-1}" == "/" ]] && path="${path:0:${#path}-1}"
 
-	if [[ -d "$pkgdir$path" ]]; then 
-		return_str="$pkgdir$path"; 
-		echo "$return_str"; 
-		return 
-	fi
-	if [[ ${_makedir_cache["$path"]} ]]; then
-		return_str="${_makedir_cache["$path"]}"; 
-		echo "$return_str"; 
-		return; 
-	fi
+	[[ ! $path == *:* ]] && path="SYS:$path"
 
 	s="$(path_resolve_amiga "$path")"
 	s="$(path_existing_amiga "$s" "${config['root']}" )/"
 
-	[[ ${s:0:1} == '/' ]] && s="${s:1}"
-	[[ ${s:0-1} == '/' ]] && s="${s:0:0-1}"
-	s="${pkgdir}${s}"
+	[[ $s == /* ]] && s="${s:1}"
+	[[ $s == */ ]] && s="${s:0:0-1}"
+
+	# echo "makedir \"$path\" \"options install\"" >> "${pkgdir}apkg-install"
+
+	[[ $options =~ sys=\*([^*]+)\* ]] && destination_root="${BASH_REMATCH[1]}"
+
+	s="${destination_root}${s}"
 
 	mkdir -p "${s}"
 
-	_makedir_cache["$path"]="$s"
 	return_str="$s"
-	echo "$s"
+	echo "$return_str"
 }
 
 # patch aos startup like files
@@ -866,7 +869,6 @@ function path_existing_amiga {
 #
 declare -A _query_cache=()
 function _query {
-	debug=$'\n'
 	local query="$1"
 	local type="@"
 	local repo
@@ -882,7 +884,7 @@ function _query {
 	if [[ $query =~ ([^@:]+)[@:] ]]; then 
 		repo="${BASH_REMATCH[1]}"; 
 	else 
-		_echo "%invalid repository/path in $query";
+		_echo "%[$FUNCNAME] invalid repository/path in $query";
 	fi
 
 	[[ $query =~ [^@:]*([@:]) ]] && type="${BASH_REMATCH[1]}"
@@ -902,7 +904,7 @@ function _query {
 	if [[ $query =~ [@:]([^,/]+) ]]; then
 		package="${BASH_REMATCH[1]}"
 	else
-		_echo "%invalid package name in $query"
+		_echo "%[$FUNCNAME] invalid package name in $query"
 	fi
 
 	if [[ ${repositories["$repo"]} ]]; then
@@ -911,7 +913,7 @@ function _query {
 		if [[ -d "$repo" ]]; then 
 			dbpath="${repo}"
 		else 
-			_echo "%invalid repository in $query";
+			_echo "%[$FUNCNAME] invalid repository in $query";
 		fi
 	fi
 	dbpath="$(realpath "$dbpath")"
@@ -923,57 +925,31 @@ function _query {
 			fields="${fields/,/, }"
 			_repo_get_db "${repo}"
 			tmp="$(sqlite3 "${APKG}tmp/$repo-repo.db" "select $field from packages where name = '$package' and $fields order by $field desc limit 1")"
-			echo "$tmp"
 		;;
 		":")
-			if [[ ${_query_cache["$dbpath:$package"]} ]]; then 
-				tmp="${_query_cache["$dbpath:$package"]}";
-			else
-				tmp="$(_extract "$package" "apkg-metadata")"
-				tmp="$(<"$tmp")"
-				_query_cache["$dbpath:$package"]="$tmp"
-			fi
-			[[ $tmp =~ $field[[:space:]]+([^$nl]+)$nl? ]] && tmp="${BASH_REMATCH[1]}"
-			echo "$tmp"
+			tmp="$(_extract "$dbpath$package" "apkg-metadata")"
+			tmp="$(<"$tmp")"
+			[[ $tmp =~ $field[[:space:]]+([^$nl]*)$nl? ]] && tmp="${BASH_REMATCH[1]}"
 		;;
-		"*") _echo "%invalid query: $query" ;;
+		"*") _echo "%[$FUNCNAME] invalid query: $query" ;;
 	esac
 
-	# echo -e "$query $cred'$repo' '$package' '$fields' '$field'$creset"
+	_echo "@[$FUNCNAME] $repo, $type, '$package', '$fields', $field = '$tmp'"
+	echo "$tmp"
 
 }
 
 # 1 package file
-function package_info() {
-	local pkgname
-	local basename
-	local fullname
-	
-	local name
-	local version
-	local description
-	local upstream
-	local cpu
-	local require
-	local packager
-	
-	basename=$(base "$1")
-	pkgname=${basename%%:*}
-	fullname=$(realpath "$1")
+function _package_info() {
+	local field
+	local query="$1"
+	local tmp
 
-	7z e -so "$fullname" "$pkgname.apkg" > "${config['APKG']}tmp/$pkgname.apkg"
+	for field in name version cpu tags url require built packager buildscript; do
+		tmp="$(_query "$query/$field")"
+		echo "${field}: ${tmp}"
+	done
 
-	_echo "information for $1"
-
-	source "${config['APKG']}tmp/$pkgname.apkg"
-
-	_echo "       name $name"
-	_echo "    version $version"
-	_echo "description $description"
-	_echo "        url $upstream"
-	_echo "        cpu $cpu"
-	_echo "   requires $require"
-	_echo "  packgager $packager"
 }
 
 # query package file in a repo
@@ -1028,20 +1004,24 @@ function package_meta {
 # 1 meta
 # 2 field
 function meta_get() {
-	local r
-	local field
-	local haystack="$1"
-	local needle="$2"
+	:
+}
 
-	IFS=$'\n'	
+# 
+# 1 repo name or path
+function _repo_path {
+	local r="$1"
 
-	for field in $haystack; do
-		if [[ $field =~ ${needle}[[:space:]]+(.*) ]]; then
-			r="${BASH_REMATCH[1]}"
-		fi
-	done
+	[[ $r =~ ([^@:]+) ]] && r="${BASH_REMATCH[1]}"
+	[[ ${repositories["$r"]} ]] && r="${repositories["$r"]}"
+
+	if [[ ! -d "$r" ]]; then
+		_echo "%[$FUNCNAME] invalid path: '$r'"
+	fi
+
+	r="$(realpath "$r")/"
+
 	echo "$r"
-	unset IFS
 }
 
 # 1 name repo name or query
@@ -1076,7 +1056,7 @@ function _repo_get_pkgfile {
 		repo="${BASH_REMATCH[1]}"
 		package="${BASH_REMATCH[2]}"
 	else
-		_echo "%_repo_get_pkgfile: requires both repo name and package name ($query)"
+		_echo "%[$FUNCNAME] requires both repo name and package name ($query)"
 	fi
 
 	_repo_get_db "$repo"
@@ -1089,30 +1069,31 @@ function _repo_get_pkgfile {
 }
 
 # init local repository
-# 1 repo path
+# 1 repo|path
 function _repo_init() {
-	local path="$1"
+	local repopath="$1"
 
-	[[ $path != */ ]] && path="${path}/"
+	repopath="$(_repo_path "$repopath")"
 
-	mkdir -p "$path" &> /dev/null
-	rm "${path}repo.db" &> /dev/null
-	sqlite3 "${path}repo.db" "$_sql_create_table"
+	mkdir -p "$repopath" &> /dev/null
 
-	if [ $? -eq 0 ]; then
-		_echo "@created repository in $1"
+	rm "${repopath}repo.db" &> /dev/null
+
+	if sqlite3 "${repopath}repo.db" "$_sql_create_table" ; then
+		_echo "@[$FUNCNAME] created repository in $1"
 	else
-		_echo "!failed to initialise repository $1"
+		_echo "![$FUNCNAME] failed to initialise repository in '$1'"
 		return 1
 	fi
+
 }
 
 # add package to local repository
-# 1 package file
-# 2 repository path
+# 1 (repo|path) target repository
+# 1 (repo|path):packagefile
 function repo_add_package() {
-	local meta
-	local file
+	local file="$2"
+	local repo="$1"
 	local name 
 	local version
 	local cpu
@@ -1122,46 +1103,50 @@ function repo_add_package() {
 	local query
 	local repopath
 	local tmp
+	local p
+	local b
 
-	[[ "$2" ]] && repopath="$2" || repopath="${repositories['local']}"
-	file="${1}"
+	p="$(path "$file")"
+	b="$(base "$file")"
 
-	[[ $repopath == */ ]] || repopath="${repopath}/"
+	repopath="$(_repo_path "$repo")"
 
-	[[ ! -f "${repopath}repo.db" ]] && _repo_init "${repopath}"
-	# [[ "$(sqlite3 "${repopath}repo.db" 'select sqlite_version()')" < "3" ]] && _repo_init "$repopath"
+	# [[ ! -f "${repopath}repo.db" ]] && _repo_init "${repopath}"
 
-	meta=$(package_meta "$file")
-
-	name=$(meta_get "$meta" "name")
-	version=$(meta_get "$meta" "version")
-	cpu=$(meta_get "$meta" "cpu")
-	built=$(meta_get "$meta" "built")
-	packager=$(meta_get "$meta" "packager")
-	url=$(meta_get "$meta" "url")
-	tags=$(meta_get "$meta" "tags")
+	name=$(_query "${p}:${b}/name")
+	version=$(_query "${p}:${b}/version")
+	cpu=$(_query "${p}:${b}/cpu")
+	built=$(_query "${p}:${b}/built")
+	packager=$(_query "${p}:${b}/packager")
+	url=$(_query "${p}:${b}/url")
+	tags=$(_query "${p}:${b}/tags")
 
 	query="insert into packages ('file', 'name', 'version', 'cpu', 'tags', 'built', 'packager', 'url') values ('${file##*/}', '$name', '$version', '$cpu', '$tags', '$built', '$packager', '$url' ) "
 	tmp=$(sqlite3 "${repopath}repo.db" "select name from packages where name='$name' and version ='$version'")
 	if [[ "$tmp" < "0" ]]; then
 		sqlite3 "${repopath}repo.db" "$query"
-		cp --update "$1" "$repopath"
-		_echo "added $name, $version into $repopath"
+		cp --update "$file" "$repopath" &> /dev/null
+		_echo "[$FUNCNAME] added $name, $version into $repopath"
 	else
-		cp --update "$1" "$repopath"
-		_echo "$name $version already present in $repopath"
+		cp --update "$file" "$repopath" &> /dev/null
+		_echo "[$FUNCNAME] $name $version already present in $repopath"
 	fi
+
 }
 
 # populate repository database
-# 1 repo path
+# 1 repo
 function repo_populate() {
+	local repo="$1"
 	local i
+	local repopath
 
-	_repo_init "$1"
+	repopath="$(_repo_path "$1")"
 
-	for i in "$1"/*.7z; do
-		repo_add_package "$i" "$1"
+	_repo_init "$repo"
+
+	for i in "${repopath}"/*.7z; do
+		repo_add_package "$repo" "$i"
 	done
 }
 
@@ -1176,11 +1161,11 @@ function repo_update() {
 
 	f=$(ls -t "${path}")
 
-	if [[ $f =~ ^repo.db ]]; then
-		_echo "@database file up to date"
+	if [[ $f =~ ^repo\.db ]]; then
+		_echo "@[$FUNCNAME] database file up to date"
 	else
 		rm "${path}repo.db" 2&> /dev/null
-		_echo "@removed database file in ${path}"
+		_echo "@[$FUNCNAME] removed database file in ${path}"
 		repo_populate "${path}"
 	fi
 	
@@ -1188,14 +1173,14 @@ function repo_update() {
 
 #
 # 1 repo repo name
-function repo_list() {
+function repo_list {
 	local repo="$1"
 
 	_repo_get_db "$repo"
 
-	_echo "package listing for ${repo}@${repositories[$repo]}"
+	_echo "package listing for ${repo} (${repositories[$repo]})"
 
-	sqlite3 "${APKG}cache/$repo-repo.db" << SQL 
+	sqlite3 "${APKG}tmp/$repo-repo.db" << SQL 
 .mode columns 
 select name, version, cpu, built, tags from packages order by name asc
 SQL
@@ -1219,12 +1204,12 @@ function _pkg_build() {
 	
 	# is the script file available 
 	_script_file="$1"
-	[[ -z $_script_file ]] && _echo "%build script not found \"$_filename\"";
+	[[ -z $_script_file ]] && _echo "%[$FUNCNAME] build script not found \"$_filename\"";
 	_script_file=$(realpath "$_script_file")
 
 	source "$_script_file"
 	
-	_echo "#building $name, version $version, $packager"
+	_echo "#[$FUNCNAME] building $name, version $version, $packager"
 
 	# download files
 	for s in "${source[@]}"; do
@@ -1246,7 +1231,7 @@ function _pkg_build() {
 				sums+=(["$_basename_file"]="$_file_checksum")
 			;;
 			*)
-				_echo "!malformed source line $s"
+				_echo "![$FUNCNAME] malformed source line $s"
 				exit 1
 			;;
 		esac
@@ -1261,11 +1246,11 @@ function _pkg_build() {
 		fi
 
 		if [[ "$_downloaded_file" == "null" ]]; then			
-			_echo "downloading $_source_file"
+			_echo "[$FUNCNAME] downloading $_source_file"
 			wget -q --show-progress -nc -P "${config['APKG']}downloads" -O "$_basename_file" "$_source_file" #&> /dev/null
 			cp "$_basename_file" "${config['APKG']}downloads" &> /dev/null
 		else
-			_echo "$_basename_file found in download cache"
+			_echo "[$FUNCNAME] $_basename_file found in download cache"
 			cp "$_downloaded_file" "${config['APKG']}downloads" &> /dev/null
 		fi
 			
@@ -1276,10 +1261,10 @@ function _pkg_build() {
 		shasum=$(sha256sum "${config['APKG']}downloads/$f")
 		shasum=${shasum%% *}
 		if [[ $shasum != "${sums[$f]}" ]]; then
-			_echo "!$f : invalid checksum: $shasum"; 
+			_echo "![$FUNCNAME] invalid checksum: $f= $shasum"; 
 			exit 1
 		else
-			_echo "@$f chcecksum ok"
+			_echo "@[$FUNCNAME] $f chcecksum ok"
 		fi
 		
 	done
@@ -1300,39 +1285,23 @@ function _pkg_build() {
 	srcdir="${config['APKG']}tmp/"
 	local _cwd="$(pwd)"
 
-	_echo "@running build script"
-	cd "$srcdir" || _echo "%invalid source directory ($srcdir)"
+	touch "${pkgdir}apkg-install"
+
+	_echo "@[$FUNCNAME] running build script"
+	cd "$srcdir" || _echo "%invalid source directory '$srcdir')'"
 	root="${config['root']}"
-	build || _echo "%build script failed"
+	build || _echo "%[$FUNCNAME] build script failed"
 	unset IFS
 	
-	cd "$pkgdir" || _echo "%invalid $pkgdir";
+	cd "$pkgdir" || _echo "%[$FUNCNAME] invalid package directory '$pkgdir'";
 
-	_echo "generating install script"
+	_echo "[$FUNCNAME] generating install script"
 
-	IFS=$'\n'
-	files=$(find "$pkgdir" ! -iname "*.apkg" ! -iname apkg-metadata | sort)
-
-	echo "# $name $version" > apkg-install
-	echo "## apkg $_apkg_version" >> apkg-install
-	for file in $files; do
-		if [ -d "$file" ]; then
-			f=${file/$pkgdir/}
-			if [ ${#f} -gt 0 ]; then
-				echo "dircreate $f" >> apkg-install
-			fi
-		fi
-	done
-	for file in $files; do
-		if [ -f "$file" ]; then
-			f=${file/$pkgdir/}
-			echo "filecopy $f $f" >> apkg-install
-		fi
-	done
-	unset IFS
+	tmp="$(sort -r "${pkgdir}apkg-install" | uniq )"
+	echo "$tmp" > "${pkgdir}apkg-install"
 
 	# metadata file
-	_echo "generating metadata"
+	_echo "[$FUNCNAME] generating metadata"
 	cd "$pkgdir" || exit 1
 	touch apkg-metadata
 	echo -e "#apkg $_apkg_version
@@ -1349,15 +1318,13 @@ require $require" > apkg-metadata
 	cp "$_script_file" "."
 
 	# archive all the files
-	_echo "compressing the package"
+	_echo "[$FUNCNAME] compressing the package"
 	7z a -mx=9 "$pkgname.7z" ./* &> /dev/null
 	
 	cd "$_cwd" || exit 1
 
-	_pkgfile="$pkgname.7z"
+	_pkgfile="$(realpath "$pkgname.7z")"
 	mv "${pkgdir}${pkgname}.7z" "."
-	# mv "${pkgdir}${pkgname}.7z" "${repositories['local']}/"
-	# repo_add_package "${pkgname}.7z"
 	
 	return_str="$_pkgfile"
 }
@@ -1365,14 +1332,16 @@ require $require" > apkg-metadata
 # initializes apkg databases in ${config['root']}
 function _install_init_root {
 	if [ ! -d "${config['root']}/apkg/" ]; then
+		_echo "@[$FUNCNAME] creating directory '${config['root']}/apkg/'"
 		mkdir -p "${config['root']}/apkg"
 		protect "${config['root']}/apkg" "rwed" "apkg:$_apkg_version"
-		_echo "@created apkg directory in ${config['root']}"
+		_echo "@[$FUNCNAME] created apkg directory in ${config['root']}"
 	fi
 	if [ ! -f "${config['root']}/apkg/apkg.db" ]; then
+		_echo "@[$FUNCNAME] creating database '${config['root']}/apkg/'"
 		sqlite3 "${config['root']}/apkg/apkg.db" "CREATE TABLE 'packages' ( 'file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL, 'built' TEXT NOT NULL, 'packager' TEXT NOT NULL, 'url' TEXT NOT NULL);"
 		protect "${config['root']}/apkg/apkg.db" "rwed" "apkg:$_apkg_version"
-		_echo "@created apkg database file in ${config['root']}"
+		_echo "@[$FUNCNAME] created apkg database file in ${config['root']}"
 	fi
 }
 
@@ -1410,31 +1379,29 @@ function is_installed() {
 # 1 package file name
 function install_register_package() {
 	local meta
-	local pkgfilename
+	local pkgfile="$1"
 	local pkgname
 	local pkgversion
 	local pkgcpu
 
-
-	meta=$(package_meta "$1")
 	pkgfilename="$1"
-	pkgname=$(meta_get "$meta" "name")
-	pkgversion=$(meta_get "$meta" "version")
-	pkgcpu=$(meta_get "$meta" "cpu")
+	pkgname="$(_query "$(path "$pkgfile"):$(base "$pkgfile")/name")"
+	pkgversion="$(_query "$(path "$pkgfile"):$(base "$pkgfile")/version")"
+	pkgcpu="$(_query "$(path "$pkgfile"):$(base "$pkgfile")/cpu")"
 
 	if [ ! -f "${config['root']}apkg/installed.db" ]; then
 		sqlite3 "${config['root']}apkg/installed.db" "create table 'packages' ('file' TEXT NOT NULL, 'name' TEXT NOT NULL, 'version' TEXT NOT NULL, 'cpu' TEXT NOT NULL)" 
 	fi
 
 	sqlite3 "${config['root']}apkg/installed.db" "insert or ignore into 'packages' ('file', 'name', 'version', 'cpu') values ('$pkgfilename', '$pkgname', '$pkgversion', '$pkgcpu')"
-	_echo "@registered package $pkgname version $pkgversion"
+	_echo "@[$FUNCNAME] registered package $pkgname version $pkgversion"
 }
 
 #
 # 1 source
 # 2 destination
 # 3 backup path
-function install_file() {
+function install_file {
 	local source="$1"
 	local destination="$2"
 	local backup="$3"
@@ -1462,19 +1429,17 @@ function install_file() {
 # 1 require list
 # return 0 if all met, 1 otherwise
 function package_check_deps() {
-	local req
+	local req="$1"
 	local pkgname
 	local pkgversion
 	local relation
 	local iversion
 	local ret=0
 
-	req="$1"
-
 	req=${req//\ /}
 	if [[ $1 = "" ]]; then _echo "@no dependencies"; return 0; fi
 
-	_echo "@package dependency list = '${req//,/, }'"
+	_echo "@[$FUNCNAME] package dependency list = '${req//,/, }'"
 
 	IFS=,
 	for r in $req; do
@@ -1495,27 +1460,26 @@ function package_check_deps() {
 		if [[ $iversion > "0" ]]; then
 			case $relation in
 				"any")
-					_echo "@$pkgname required, $iversion installed"
+					_echo "@[$FUNCNAME] $pkgname required, $iversion installed"
 				;;
 				">")
 					if [[ $iversion > $pkgversion ]]; then
-						_echo "@$pkgname > $pkgversion required, $iversion installed"
+						_echo "@[$FUNCNAME] $pkgname > $pkgversion required, $iversion installed"
 					fi
 				;;
 				"<")
 					if [[ $iversion < $pkgversion ]]; then
-						_echo "@$pkgname > $pkgversion required, $iversion installed"
+						_echo "@[$FUNCNAME] $pkgname > $pkgversion required, $iversion installed"
 					fi
 				;;				
 				"=")
 					if [[ $iversion == $pkgversion ]]; then
-						_echo "@$pkgname > $pkgversion required, $iversion installed"
+						_echo "@[$FUNCNAME] $pkgname > $pkgversion required, $iversion installed"
 					fi
 				;;
 			esac
 		else
-			_echo "!$pkgname version $pkgversion required, none installed"
-			return 1
+			_echo "%[$FUNCNAME] $pkgname version $pkgversion required, none installed"
 		fi
 	
 	done
@@ -1544,32 +1508,26 @@ function install_package() {
 
 	filename=$(realpath "$1")
 
-	if [ ! -f "$filename" ]; then
-		_echo "!file not found $filename";
-		exit 1
-	fi
+	if [ ! -f "$filename" ]; then _echo "%[$FUNCNAME] file not found $filename"; fi
 
-	# osversion=$(detectos "${config['root']}")
+	osversion=$(_detectos "${config['root']}")
 
-	meta=$(package_meta "$filename")
-	pkgname=$(meta_get "$meta" "name")
-	pkgversion=$(meta_get "$meta" "version")
+	pkgname=$(_query "$(path "$filename"):$(base "$filename")/name")
+	pkgversion=$(_query "$(path "$filename"):$(base "$filename")/version")
 	backup="$pkgname-$pkgversion"
 
-	[[ -f "${config['root']}/apkg/$backup.rollback" ]] && _echo "%$filename already installed"
+	[[ -f "${config['root']}/apkg/$backup.rollback" ]] && _echo "%$pkgname $pkgversion already installed"
 
 	_echo "#installing $_filename"
-
-	# _echo "detected Amiga OS version $osversion" # not used here at the moment
 	
 	tmpdir="${config['APKG']}tmp/"
 	rm -r "$tmpdir" #&> /dev/null
 	mkdir -p "$tmpdir"
 	tmpdir_length=${#tmpdir}
 
-	_unpack "$1" "${config['APKG']}tmp"
+	_unpack "$filename" "${config['APKG']}tmp"
 
-	tmp2=$(meta_get "$meta" "buildscript")
+	tmp2=$(_query "$(path "$filename"):$(base "$filename")/buildscript")
 
 	source "${config['APKG']}tmp/$tmp2"
 
@@ -1611,7 +1569,7 @@ function install_package() {
 	unset IFS
 
 	if [[ $(type -t post_install) == "function" ]]; then
-		_echo "running install script"
+		_echo "running post install script"
 		post_install || exit 1
 	else
 		_echo "@no post_install script"
@@ -1695,15 +1653,6 @@ read_assigns "S/User-Startup" &> /dev/null
 for key in "${!v[@]}"; do _echo "@$key = ${v[$key]}"; done
 for key in "${!assigns[@]}"; do _echo "@assign $key ${assigns[$key]}"; done
 
-# _repo_has "local@ixemul<63"
-# _repo_query "local@make>1,tags" "2nd" "options: quiet"
-# _repo_get_pkgfile "warez@make" "options quiet"
-# _extract "./repo/make~4.4.1~68000.7z" "apkg-metadata"
-# _meta "make,tags"
-# _meta "make,cpu"
-# _query "make/cpu"
-# _query "./repo/:make.7z,version>2,cpu=68020"
-
 ########
 # top level logic
 
@@ -1712,14 +1661,14 @@ case $_mode in
 		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 		for _filename in "${_input_names[@]}"; do
 			_pkg_build "$_filename"
-			_echo "created package: $return_str"
+			_echo "[$FUNCNAME] created package: $return_str"
 		done
 	;;
 	"make")
 		[[ ${#_input_names} -eq 0 ]] && _echo "%no input files"
 		for _filename in "${_input_names[@]}"; do
 			_pkg_build "$_filename"
-			repo_add_package "$return_str"
+			repo_add_package "local" "$return_str"
 			rm "$return_str"
 		done
 	;;	
@@ -1766,7 +1715,7 @@ case $_mode in
 		repo_populate "${repositories['local']}"
 	;;
 	"package-info")
-		package_info "$_filename"
+		for _filename in "${_input_names[@]}"; do _package_info "$_filename"; done
 	;;
 	"version")
 		echo $_apkg_version
