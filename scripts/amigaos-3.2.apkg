@@ -22,7 +22,9 @@ function build {
 function post_install {
 	local usrasg='assign >NIL: exists USER:
 if warn
-   makedir SYS:User
+   failat 20
+      makedir >NIL: SYS:User
+   failat 10
    assign USER: SYS:User
 endif'
 
