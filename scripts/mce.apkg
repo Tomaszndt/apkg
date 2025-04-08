@@ -1,12 +1,12 @@
 name="mce"
-tags="filesystem"
-version="15.3"
+tags="cheat, savegame"
+version="15.31"
 cpu=68000
 require="amigaos>3.2, openurl-library"
 description="Multi-game Character Editor"
 packager="lobotomius@gmail.com"
 source=(
-    "https://aminet.net/game/edit/MCE.lha*69b7d7d9b686473e1dce7e2a46d0e0fd896cda3285ebb1b2482f0700c9bd78a2"
+    "https://aminet.net/game/edit/MCE.lha*2c1086d2306dcbc158cddecac64aad05ce2b384f569d58fb973d94c59cac2f91*$name-$version.lha"
     )
 upstream="https://aminet.net/package/game/edit/MCE"
 
