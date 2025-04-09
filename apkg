@@ -240,6 +240,8 @@ function _get {
 		schema="${BASH_REMATCH[1]}"
 	}
 
+	_echo "@[$FUNCNAME] '$url' '$output_file' '$schema'"
+
 	case $schema in
 		"file")
 			cp "$url" "$output_file" || _echo "%download failed"
@@ -402,12 +404,10 @@ function dirdelete() {
 
 # detect amiga os version
 # 1 path to amiga os root directory
-function _detectos() {
+function _detectos {
 	local os="unknown"
 	local sum
-	local aosroot
-
-	aosroot="$1"
+	local aosroot="$1"
 
 	if [ ! -f "${aosroot}/Libs/version.library" ]; then echo "$os"; return 1; fi
 
@@ -498,6 +498,9 @@ function _detectos() {
 			if [[ $sum = "c718e8b86eab55df5fd353d8090b1b2d25d83d1ed70ab89b1433a79930dd5ea1" ]]; then
 				os="3.2.2.1"
 			fi
+		;;
+		"9ff2932161578b35b0fc2c9ffe591a318f316ba1c4f469e37c97d2919b5c25a9")
+			os="3.2.3"
 		;;
 		"86cd464a9b8beab7f365df3b6bf172bfe3a6db2e2e487eb60e3da015b56d603e")
 			# 3.5 or 3.5.1
@@ -1042,7 +1045,7 @@ function _repo_get_db {
 	}
 }
 
-# 1 query (repo@name([=<>!]version)
+# 1 query
 # n options  string (quiet)
 function _repo_get_pkgfile {
 	local args=("$@"); local options=""; 
@@ -1050,18 +1053,13 @@ function _repo_get_pkgfile {
 
 	local query="$1"
 	local repo="local"
-	local package=""
+	# local package=""
 
-	if [[ $query =~ ([^@]+)@([^,]+) ]]; then
-		repo="${BASH_REMATCH[1]}"
-		package="${BASH_REMATCH[2]}"
-	else
-		_echo "%[$FUNCNAME] requires both repo name and package name ($query)"
-	fi
+	[[ $query =~ ([^@]+)@ ]] && 
 
-	_repo_get_db "$repo"
+	_echo "@[$FUNCNAME] '$query'"
 
-	return_str="$(_query "${repo}@${package}/file")"
+	return_str="$(_query "${query}/file")"
 
 	_get "${repositories["$repo"]}/${return_str}" "${APKG}cache/${return_str}"
 
@@ -1428,7 +1426,7 @@ function install_file {
 
 # 1 require list
 # return 0 if all met, 1 otherwise
-function package_check_deps() {
+function _package_check_deps {
 	local req="$1"
 	local pkgname
 	local pkgversion
@@ -1531,7 +1529,7 @@ function install_package() {
 
 	source "${config['APKG']}tmp/$tmp2"
 
-	package_check_deps "$require"
+	_package_check_deps "$require"
 
 	if [[ $? -gt 0 ]]; then _echo "!dependencies not met"; exit 1; fi
 
@@ -1586,11 +1584,13 @@ function install_package() {
 
 # install single package from a repository
 # 1 package package query ( repo@name([=<>!]version) )
-function install_repo() {
+function _install_repo() {
 	local query="$1"
 	local pkgname
 	local pkgversion
 	local pkgfile
+
+	_echo "@[$FUNCNAME] installing $query"
 
 	pkgfile="$(_repo_get_pkgfile "$query")"
 
@@ -1696,11 +1696,9 @@ case $_mode in
 				install_package "${repo}${_pkgfile}"
 				tmp=1
 			fi
-			if [ $tmp -gt 0 ]; then
-				: # done
-			else
-				[[ $_filename != *@* ]] && _filename="local@${_filename}"
-				install_repo "$_filename"
+			if [ $tmp -eq 0 ]; then
+				# [[ $_filename != *@* ]] && _filename="local@${_filename}"
+				_install_repo "$_filename"
 			fi
 		done
 	;;
