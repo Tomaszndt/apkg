@@ -1,12 +1,12 @@
 name="speedhaste"
 tags="game, racing, port, 3d"
-version="1.0"
+version="1.1"
 cpu=68040
 require="ahi>4.18"
 description="Speed Haste / Circuit Racer Amiga Port"
 packager="lobotomius@gmail.com"
 source=(
-    "https://aminet.net/game/race/speedhaste.lha*2944fcb26bdc8f01b9cc22dd361ebf71ae59075755f7c601273994de4ef395db"
+    "https://aminet.net/game/race/speedhaste.lha*0565d6bd526e28de872ef6c07e1ddf4bf9c3c6a1a3910361d4d929a71e5d78e8*$name-$version.lha"
     "https://dosgames.com/files/speedsha.zip*aca95c4c93fd6aa6aecd07effeca23b92f19ef7a28c1a0da801b7212aa916f91"
 )
 upstream="https://aminet.net/package/game/race/speedhaste"
