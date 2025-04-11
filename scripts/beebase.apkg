@@ -45,8 +45,8 @@ function post_install {
     local inject=""
 
 FS= read -r -d '' inject <<EOF
-if exists User/App/Database/BeeBase
-   assign BeeBase: User/App/Database/BeeBase
+if exists User:App/Database/BeeBase
+   assign BeeBase: User:App/Database/BeeBase
 endif
 EOF
 
