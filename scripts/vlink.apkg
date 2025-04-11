@@ -1,0 +1,36 @@
+name="vlink"
+tags="linker, programming"
+version="0.18"
+cpu=68020
+require="amigaos>3"
+description=""
+packager="lobotomius@gmail.com"
+source=(
+    "http://sun.hasenbraten.de/vlink/bin/rel/vlink_AmigaM68k.lha*e33da476c69399a8a6337738eb6ec5d69a45198003b1d32fb048ed599d3d0903"
+    )
+upstream="http://www.compilers.de/vlink.html"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy "vlink" "C:"
+
+    copy "LICENSE" "USER:Doc/License/$name-$version/"
+    copy "history" "USER:Doc/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
