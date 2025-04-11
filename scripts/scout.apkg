@@ -49,9 +49,6 @@ function build {
 
 # this function is executed on installation after all files have been copied
 function post_install {
-    local luausr='setenv LUA_PATH "Dev/Lua/Modules/?;Dev/Lua/?"
-setenv LUA_CPATH "Dev/Lua/Libs/?;Dev/Lua/?"'
-    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$luausr"
 
     echo -e "
 [?25l[38;2;175;175;175;49m▄▄[38;2;0;0;0m▄[38;2;255;255;255m▄[38;2;175;175;175m▄▄[38;2;119;119;119m▄▄[38;2;0;0;0m▄▄[38;2;204;0;51m▄▄▄[38;2;0;0;0m▄▄▄[38;2;0;102;153m▄[38;2;0;0;0m▄▄▄[38;2;23;20;33m▄▄▄▄▄▄▄▄▄▄[0m
