@@ -1,0 +1,49 @@
+name="vbcc"
+tags="c, compiler, programming, language"
+version="0.908"
+cpu=68020
+require="amigaos>3, vasm, vlink"
+description=""
+packager="lobotomius@gmail.com"
+source=(
+    "http://phoenix.owl.de/vbcc/current/vbcc_bin_amigaos68k.lha*0a75cf9da15d1613554e43b09c6db59e0a05d945e358f1b95d5b32d9c637b7be"
+    )
+upstream="http://www.compilers.de/vbcc.html"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "vbcc_bin_amigaos68k" || exit 1
+
+    for file in bin/*; do
+        copy "$file" "SYS:Dev/vbcc/$file"
+    done
+
+    copy "config/vc.config" "SYS:Dev/vbcc/config/"
+
+    for file in doc/*; do
+        copy "$file" "USER:Doc/Readme/$name-$version/${file#*/}"
+    done
+
+    copy "vbcc_version" "SYS:Dev/vbcc/"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    local inject='assign >NIL: vbcc: SYS:Dev/vbcc
+assign >NIL: c: vbcc:bin add
+setenv VBCC vbcc:'
+
+    userpatch "${root}S/Startup-Sequence" "before" ".*IPrefs.*" "$name-$version" "$inject"
+}
+
+# vim: ts=4:syntax=sh:
