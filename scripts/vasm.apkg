@@ -1,0 +1,37 @@
+name="vasm"
+tags="assembler, compiler, programming, language"
+version="2.0a"
+cpu=68020
+require="amigaos>3"
+description=""
+packager="lobotomius@gmail.com"
+source=(
+    "http://sun.hasenbraten.de/vasm/bin/rel/vasmm68k_mot_os3.lha*913a93788d7b12b1eb1be6dbc8a4cea623e711790814b7d340e773ba6f2a643d"
+    )
+upstream="http://www.compilers.de/vasm.html"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    copy "vasmm68k_mot" "C:vasm"
+    copy "vobjdump" "C:"
+
+    copy "LICENSE" "USER:Doc/License/$name-$version/"
+    copy "history" "USER:Doc/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
