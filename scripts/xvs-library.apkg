@@ -1,12 +1,12 @@
 name="xvs-library"
 tags="virus, antivirus, libray"
-version="33.48"
+version="33.49"
 cpu=68020
 require="amigaos>3"
-description="The eXternal Virus Scanner Library"
+description="The eXternal Virus Scanner library"
 packager="lobotomius@gmail.com"
 source=(
-    "https://aminet.net/util/virus/xvslibrary.lha*9d66a1397d96a3ae613b598f5b9bf823f1a5b6dedbecbceaa43624302b545ae1*$name-$version.lha"
+    "https://aminet.net/util/virus/xvslibrary.lha*7642b238e8df256e3519a909682f43b607e61df383e04766b660b773713b2c0a*$name-$version.lha"
     )
 upstream="https://www.vht-dk.dk/amiga/amiga.htm"
 
