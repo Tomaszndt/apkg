@@ -1,0 +1,54 @@
+name="pascal-fpc"
+tags="pascal, compiler, programming, language"
+version="3.2.2"
+cpu=68020
+require="amigaos>3, vasm, vlink"
+description=""
+packager="lobotomius@gmail.com"
+source=(
+    "https://aminet.net/dev/lang/fpc-3.2.2-m68k-amiga.lha*3ebe3d1222d46dce06f02e65643f41ab3bf3000d8d6bd74b50d6fe095aa4af23"
+    )
+upstream="https://www.freepascal.org/"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+    local file
+
+    cd "FPC-3.2.2" || exit 1
+
+    copy "fp/Free Pascal IDE" "SYS:Dev/"
+    copy "fp/Free Pascal IDE.info" "SYS:Dev/"
+
+    for file in compiler/bin/m68k-amiga/*; do copy "$file" "SYS:Dev/fpc/${file#*/}"; done
+    for file in addtools/bin/m68k-amiga/*; do copy "$file" "SYS:Dev/fpc/${file#*/}"; done
+    for file in fp/bin/m68k-amiga/*; do copy "$file" "SYS:Dev/fpc/${file#*/}"; done
+
+    for file in msg/*; do copy "$file" "SYS:Dev/fpc/$file"; done
+
+    IFS=$'\n'
+    for file in $(find ./common/ -type f); do copy "$file" "SYS:Dev/fpc/${file/.\/common\//}"; done
+    for file in $(find ./fcl/ -type f); do copy "$file" "SYS:Dev/fpc/${file/.\/fcl\//}"; done
+    for file in $(find ./other/ -type f); do copy "$file" "SYS:Dev/fpc/${file/.\/other\//}"; done
+    for file in $(find ./useful/ -type f); do copy "$file" "SYS:Dev/fpc/${file/.\/useful\//}"; done
+    for file in $(find ./docs/help/ -type f); do copy "$file" "SYS:Dev/fpc/${file/.\/docs\//}"; done
+    unset IFS
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    inject='assign FPC: SYS:Dev/fpc
+path FPC:bin/m68k-amiga add
+'
+    userpatch "${root}S/User-Startup" "end" "" "$name-$version" "$inject"
+}
+
+# vim: ts=4:syntax=sh:
