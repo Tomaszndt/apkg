@@ -41,6 +41,10 @@ function build {
     for file in $(find ./docs/help/ -type f); do copy "$file" "SYS:Dev/fpc/${file/.\/docs\//}"; done
     unset IFS
 
+    for file in docs/copy*; do copy "$file" "USER:Doc/License/$name-$version/${file#*/}"; done
+    copy "docs/faq.txt" "USER:Doc/Readme/$name-$version/faq.txt"
+    copy "docs/readme.txt" "USER:Doc/Readme/$name-$version/readme.txt"
+    copy "docs/whatsnew.txt" "USER:Doc/Readme/$name-$version/whatsnew.txt"
 }
 
 # this function is executed on installation after all files have been copied
