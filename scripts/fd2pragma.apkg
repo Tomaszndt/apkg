@@ -1,0 +1,40 @@
+name="fd2pragma"
+tags="dev, build, cli"
+version="2.198"
+cpu=68000
+require="amigaos>3"
+description="create pragma, inline files"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/dev/misc/fd2pragma-mos.lha*c4e38cea2dcbaa962a01248b14516c448a716f11086650285beed1467f78263a")
+upstream="https://github.com/dmcoles/gnu_make_amiga"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    cd "fd2pragma-master" || exit 1
+
+    copy "fd2pragma.68k" "C:fd2pragma"
+
+    copy "usefd2pragma" "SYS:Dev/"
+    copy "usefd2pragma.info" "SYS:Dev/ "
+
+    copy "fd2pragma.guide" "HELP:"
+    copy "fd2pragma.guide.info" "HELP:"
+    copy "fd2pragma.readme" "USER:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
