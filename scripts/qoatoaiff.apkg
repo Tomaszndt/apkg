@@ -1,11 +1,11 @@
 name="qoatoaiff"
 tags="qoa, aiff, convert, sound, cli"
-version="0.1"
+version="0.2"
 cpu=68020
 require="amigaos>3"
 description="Port of GNU Make with SAS/C (no ixemul)"
 packager="lobotomius@gmail.com"
-source=("https://aminet.net/mus/misc/qoatoaiff.lha*a0eda77e75f533f1b0d29b5ac92a8a0ffec4b2de26874a3e46769cc11de0b4f0")
+source=("https://aminet.net/mus/misc/qoatoaiff.lha*80e720a947d62bb7529b0a95a960d7de3676f6350307ba45ee587e455adb2819*$name-$version.lha")
 upstream="https://aminet.net/package/mus/misc/qoatoaiff"
 
 # functions
