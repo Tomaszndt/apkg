@@ -1,12 +1,12 @@
 name="tunefinder"
 tags="tool, media, radio, sound, music"
-version="0.6"
+version="0.7b"
 cpu=68000
 require="mui>3.8"
 description="Search+play online radio stations (MUI)"
 packager="lobotomius@gmail.com"
 source=(
-        "https://aminet.net/comm/misc/TuneFinderMUI.lha*ae207d8b54b2333a87c130e858e2cb932157006ce305d78c3706011fcd531389"
+        "https://aminet.net/comm/misc/TuneFinderMUI.lha*20db4834426febafc56f1912d6d05f2048e2a541a033f0bb3cef52110445b841*$name-$version.lha"
     )
 upstream="https://aminet.net/package/util/arc/deark"
 
