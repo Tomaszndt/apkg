@@ -1,0 +1,33 @@
+name="mui-tabgroup"
+tags="gui, mui, library"
+version="19.0"
+cpu=68020
+require="amigaos>3, mui>3.8"
+description="Dynamic tab group custom class for MUI "
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/dev/mui/MCC_TabGroup.lha*7f3f6e19cc4a573964746d8f2fe71a370c8d534c61cb79fd5b1000e7815a4dfb")
+upstream="https://github.com/amigageek/mcc_tabgroup"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+
+    cd "MCC_TabGroup" || exit 1
+
+    for file in Libs/MUI/*; do copy "$file" "Libs/MUI/Libs/mui/${file##*/}"; done
+
+    copy MCC_TabGroup.readme "USER:Doc/Readme/$name-$version/"
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
