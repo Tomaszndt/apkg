@@ -1,12 +1,12 @@
 name="amigaget"
 tags="wget, internet, http"
-version="1.4"
+version="1.7"
 cpu=68040
 require="amigaos>3"
 description=""
 packager="lobotomius@gmail.com"
 source=(
-    "https://aminet.net/comm/net/amigaget.lha*1d9a98c2dfa88902d321403b7074f78fd7f9b15cb9107dcf37709a846680ebaa*$name-$version.lha"
+    "https://aminet.net/comm/net/amigaget.lha*2f18c1e7bd4ee536c0246e825db5145497e3b9b84b66f4515c78c5f10e64353c*$name-$version.lha"
     )
 upstream="https://aminet.net/package/comm/net/amigaget"
 
@@ -22,10 +22,12 @@ upstream="https://aminet.net/package/comm/net/amigaget"
 function build {
     local file
 
-    copy "amigaget/amigaget40" "C:amigaget"
+    cd "amigaget" || exit 1
 
-    copy "amigaget/amigaget.readme" "USER:Doc/Readme/$name-$version/"
-    copy "amigaget/COPYING" "USER:Doc/License/$name-$version/"
+    copy "amigaget" "C:"
+
+    copy "amigaget.readme" "USER:Doc/Readme/$name-$version/"
+    copy "COPYING" "USER:Doc/License/$name-$version/"
 }
 
 # this function is executed on installation after all files have been copied
