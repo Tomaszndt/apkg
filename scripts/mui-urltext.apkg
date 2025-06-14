@@ -1,0 +1,40 @@
+name="mui-urltext"
+tags="gui, mui, library"
+version="19.7"
+cpu=68020
+require="amigaos>3, mui>3.8"
+description="MUI public custom url class"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/dev/mui/MCC_Urltext.lha*164af2cdbbe92fa144f48144be4e8fc7a8d8b0f5d875e4bd6a0cda88659eb711")
+upstream="https://aminet.net/package/dev/mui/MCC_Urltext"
+
+# this function is executed on build
+# functions
+#  makedir path (relative to $pkgdir)
+#  copy source destination (source relative to $srcdir, destination to $pkgdir)
+# variables
+#  $srcdir
+#  $pkgdir
+
+function build {
+    local file
+
+    cd "MCC_Urltext" || exit 1
+
+    IFS=$'\n'
+    for file in MUI/*; do 
+        copy "$file" "LIBS:MUI/Libs/mui/${file#/}"; 
+    done
+    unset IFS
+
+    copy "MCC_Urltext.readme" "USER:Doc/Readme/$name-$version/"
+    copy "Changes" "USER:Doc/Readme/$name-$version/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:

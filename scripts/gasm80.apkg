@@ -1,0 +1,21 @@
+name="gasm80"
+tags="z80, assembler, compiler, cross-dev"
+version="20250506"
+cpu=68000
+description="Generic assembler for Z80/6502"
+require=""
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/dev/cross/gasm80.lha*32cfbc6d3aa40b7ba6b1dd18c8d185b1935ae6b76efb442ce876c6eba77ba43b")
+upstream="https://github.com/nanochess/gasm80"
+
+function build {
+
+    cd "gasm80-master" || exit 1
+
+	copy "gasm80.68k" "C:"	
+
+	copy "README.md" "User:Doc/Readme/$name-$version/README"
+	
+	copy "LICENSE.txt" "User:Doc/License/$name-$version/README"
+}
+# vim: ts=4:syntax=sh:

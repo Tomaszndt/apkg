@@ -1,0 +1,39 @@
+name="iff-datatype"
+tags="datatype, image, iff"
+version="47.7"
+cpu=68020
+require="amigaos>3"
+description="fastest JPEG picture datatype"
+packager="lobotomius@gmail.com"
+source=("https://aminet.net/util/dtype/ILBMdt.lha*d9f5333e539545ecd14d639a44425538480655f698540ee243b061722857bf45")
+upstream="https://aminet.net/package/util/dtype/ILBMdt"
+
+# functions
+#  makedir     path (relative to $pkgdir)
+#  copy        source, destination (source relative to $srcdir, destination to $pkgdir)
+#  userpatch  filename, mode (all, end), needle, tag, text
+# variables
+#  $srcdir
+#  $pkgdir
+
+# this function is executed on build
+function build {
+
+    cd "ILBMdt" || exit 1
+
+    copy "C/fixiff" "C:"
+    copy "ILBMdt.readme" "USER:Doc/Readme/$name-$version/"
+
+    copy "Devs/Datatypes/ILBM" "Devs/DataTypes/"
+    copy "Devs/Datatypes/ILBM.info" "Devs/DataTypes/"
+
+    copy "Classes/Datatypes/ilbm.datatype" "Classes/DataTypes/"
+
+}
+
+# this function is executed on installation after all files have been copied
+function post_install {
+    :
+}
+
+# vim: ts=4:syntax=sh:
